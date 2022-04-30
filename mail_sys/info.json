@@ -3,7 +3,7 @@
 	"name": "mail_sys",
 	"type":"plugin",
 	"ps": "Build Mail Server for yourself, Supports centos7/8, ubuntu 20/21, debian10",
-	"versions": "4.5",
+	"versions": "4.6",
 	"checks": "/www/server/panel/plugin/mail_sys",
 	"author": "official",
 	"home": "http://www.aapanel.com",

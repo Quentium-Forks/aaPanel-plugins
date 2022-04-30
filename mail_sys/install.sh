@@ -23,7 +23,7 @@ if [ -f "/usr/bin/apt-get" ];then
   systemver='ubuntu'
 elif [ -f "/etc/redhat-release" ];then
   systemver=`cat /etc/redhat-release|sed -r 's/.* ([0-9]+)\..*/\1/'`
-  postfixver=`postconf mail_version|sed -r 's/.* ([0-9\.]+)$/\1/'`
+  postfixver=`/sbin/postconf mail_version|sed -r 's/.* ([0-9\.]+)$/\1/'`
 else
   echo 'Unsupported system version'
   exit 0
@@ -77,15 +77,16 @@ install_rspamd()
 #    echo "deb-src [arch=amd64] http://rspamd.com/apt-stable/ buster main" >> /etc/apt/sources.list.d/rspamd.list
 #    apt -y update
 #    wget http://ftp.br.debian.org/debian/pool/main/i/icu/libicu63_63.2-3_amd64.deb
-#    apt install ./libicu63_63.2-3_amd64.deb
+#    sudo apt install ./libicu63_63.2-3_amd64.deb
 #    rm -f ./libicu63_63.2-3_amd64.deb
-#    apt install rspamd -y
+#    sudo apt install rspamd -y
     CODENAME=`lsb_release -c -s`
-    mkdir -p /etc/apt/keyrings
-    wget -O- https://rspamd.com/apt-stable/gpg.key | gpg --dearmor | tee /etc/apt/keyrings/rspamd.gpg > /dev/null
-    echo "deb [arch=amd64 signed-by=/etc/apt/keyrings/rspamd.gpg] http://rspamd.com/apt-stable/ $CODENAME main" | tee /etc/apt/sources.list.d/rspamd.list
-    echo "deb-src [arch=amd64 signed-by=/etc/apt/keyrings/rspamd.gpg] http://rspamd.com/apt-stable/ $CODENAME main"  | tee -a /etc/apt/sources.list.d/rspamd.list
+    sudo mkdir -p /etc/apt/keyrings
+    wget -O- https://rspamd.com/apt-stable/gpg.key | gpg --dearmor | sudo tee /etc/apt/keyrings/rspamd.gpg > /dev/null
+    echo "deb [arch=amd64 signed-by=/etc/apt/keyrings/rspamd.gpg] http://rspamd.com/apt-stable/ $CODENAME main" | sudo tee /etc/apt/sources.list.d/rspamd.list
+    echo "deb-src [arch=amd64 signed-by=/etc/apt/keyrings/rspamd.gpg] http://rspamd.com/apt-stable/ $CODENAME main"  | sudo tee -a /etc/apt/sources.list.d/rspamd.list
     apt-get update
+        export DEBIAN_FRONTEND=noninteractive
     apt-get --no-install-recommends install rspamd -y
     fi
   wget -O /usr/share/rspamd/www/rspamd.zip $download_Url/install/plugin/mail_sys_en/rspamd.zip -T 5
@@ -129,15 +130,15 @@ Install_ubuntu()
 {
   hostname=`hostname`
   # 安装postfix和postfix-sqlite
-  debconf-set-selections <<< "postfix postfix/mailname string ${hostname}"
-  debconf-set-selections <<< "postfix postfix/main_mailer_type string 'Internet Site'"
-  apt install postfix -y
-  apt install postfix-sqlite -y
-  apt install sqlite -y
+  sudo debconf-set-selections <<< "postfix postfix/mailname string ${hostname}"
+  sudo debconf-set-selections <<< "postfix postfix/main_mailer_type string 'Internet Site'"
+  sudo apt install postfix -y
+  sudo apt install postfix-sqlite -y
+  sudo apt install sqlite -y
   # 安装dovecot和dovecot-sieve
-  apt install dovecot-core dovecot-pop3d dovecot-imapd dovecot-lmtpd dovecot-sqlite dovecot-sieve -y
+  sudo apt install dovecot-core dovecot-pop3d dovecot-imapd dovecot-lmtpd dovecot-sqlite dovecot-sieve -y
   # 安装opendkim
-#  apt install -y opendkim opendkim-tools
+#  sudo apt install -y opendkim opendkim-tools
 #  wget -O /etc/opendkim.zip $download_Url/install/plugin/mail_sys_en/opendkim.zip -T 10
 #  rm -rf /etc/opendkim_old
 #  mv /etc/opendkim /etc/opendkim_old
@@ -150,10 +151,10 @@ Install_ubuntu()
 #  echo "deb-src [arch=amd64] http://rspamd.com/apt-stable/ buster main" >> /etc/apt/sources.list.d/rspamd.list
 #  apt -y update
 #  wget http://ftp.br.debian.org/debian/pool/main/i/icu/libicu63_63.2-3_amd64.deb
-#  apt install ./libicu63_63.2-3_amd64.deb
+#  sudo apt install ./libicu63_63.2-3_amd64.deb
 #  rm -f ./libicu63_63.2-3_amd64.deb
-#  apt install rspamd -y
-  apt install cyrus-sasl-plain -y
+#  sudo apt install rspamd -y
+  sudo apt install cyrus-sasl-plain -y
 
 }
 
@@ -274,13 +275,13 @@ Uninstall()
     yum remove rspamd -y
     yum remove dovecot-pigeonhole -y
   else
-    apt remove postfix postfix-sqlite -y && rm -rf /etc/postfix
+    sudo apt remove postfix postfix-sqlite -y && rm -rf /etc/postfix
     dpkg -P postfix postfix-sqlite
-    apt remove dovecot-core dovecot-imapd dovecot-lmtpd dovecot-pop3d dovecot-sqlite dovecot-sieve -y
+    sudo apt remove dovecot-core dovecot-imapd dovecot-lmtpd dovecot-pop3d dovecot-sqlite dovecot-sieve -y
     dpkg -P dovecot-core dovecot-imapd dovecot-lmtpd dovecot-pop3d dovecot-sqlite dovecot-sieve
-    apt remove opendkim opendkim-tools -y
+    sudo apt remove opendkim opendkim-tools -y
     dpkg -P opendkim opendkim-tools
-    apt remove rspamd -y
+    sudo apt remove rspamd -y
     dpkg -P rspamd
   fi
 

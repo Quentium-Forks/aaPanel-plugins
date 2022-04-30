@@ -2579,7 +2579,7 @@
 							<table class='table table-hover'>\
 								<thead><tr><th>"+lan.mail_sys.record_type+"</th><th>"+lan.mail_sys.host_record+"</th><th>"+lan.mail_sys.record_value+"</th></tr> </thead>\
 								<tbody>\
-                                  <tr><td>TXT</td><td>@</td><td>v=spf1 a mx ~all&nbsp;<a href='javascript:;' class='btlink btn_copy' data-clipboard-text='v=spf1 a mx ~all'>( "+lan.mail_sys.copy+" )</a>&nbsp;</td></tr>\
+                                  <tr><td>TXT</td><td>@</td><td>v=spf1 a mx -all&nbsp;<a href='javascript:;' class='btlink btn_copy' data-clipboard-text='v=spf1 a mx -all'>( "+lan.mail_sys.copy+" )</a>&nbsp;</td></tr>\
                                   <tr><td>TXT</td><td>default._domainkey</td><td><span style='width:150px;word-break:break-all;'>"+ dkim_value +"</span>&nbsp;<a href='javascript:;' class='btlink btn_copy' data-clipboard-text='"+ dkim_value +"'>( "+lan.mail_sys.copy+" )</a>&nbsp;</td></tr>\
                                   <tr><td>TXT</td><td>_dmarc</td><td>"+ dmarc_value +"&nbsp;<a href='javascript:;' class='btlink btn_copy' data-clipboard-text='"+ dmarc_value +"'>( "+lan.mail_sys.copy+" )</a>&nbsp;</td></tr>\
 								</tbody>\

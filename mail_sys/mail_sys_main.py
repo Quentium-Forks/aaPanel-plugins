@@ -128,9 +128,17 @@ class mail_sys_main:
         if create_table_str and 'a_record' not in create_table_str:
             self.M('domain').execute('ALTER TABLE `domain` ADD COLUMN `a_record` Text default "";')
 
+    def get_postconf(self):
+        if os.path.exists("/usr/sbin/postconf"):
+            return "/usr/sbin/postconf"
+        elif os.path.exists("/sbin/postconf"):
+            return "/sbin/postconf"
+        else:
+            return "postconf"
+
     def check_mail_sys(self, args):
         if os.path.exists('/etc/postfix/sqlite_virtual_domains_maps.cf'):
-            public.ExecShell('postconf -e "message_size_limit = 102400000"')
+            public.ExecShell('{} -e "message_size_limit = 102400000"'.format(self.get_postconf()))
             # 修改postfix mydestination配置项
             result = public.readFile(self.postfix_main_cf)
             if not result:
@@ -141,7 +149,7 @@ class mail_sys_main:
                                         "The postfix configuration file did not find the mydestination parameter")
             result = result.group(1)
             if 'localhost' in result or '$myhostname' in result or '$mydomain' in result:
-                public.ExecShell('postconf -e "mydestination =" && systemctl restart postfix')
+                public.ExecShell('{} -e "mydestination =" && systemctl restart postfix'.format(self.get_postconf()))
             # 修改dovecot配置
             dovecot_conf = public.readFile("/etc/dovecot/dovecot.conf")
             if not dovecot_conf or not re.search(r"\n*protocol\s*imap", dovecot_conf):
@@ -997,11 +1005,14 @@ systemctl restart  opendkim'''.format(domain=domain)
             return public.returnMsg(False, 'ENTER_ACCOUNT_NAME')
         username = args.username
         local_part, domain = username.split('@')
-
+        res = self.M('mailbox').where('username=?', username).count()
+        if not res:
+            return public.returnMsg(False, "Delete Failed!")
         self.M('mailbox').where('username=?', username).delete()
 
         # 在虚拟用户家目录删除对应邮箱的目录
-        public.ExecShell('rm -rf /www/vmail/{0}/{1}'.format(domain, local_part))
+        if os.path.exists('/www/vmail/{0}/{1}'.format(domain, local_part)):
+            public.ExecShell('rm -rf /www/vmail/{0}/{1}'.format(domain, local_part))
         return public.returnMsg(True, public.GetMsg("DEL_MAILUSER", (username,)))
 
     def send_mail(self, args):
@@ -1914,7 +1925,7 @@ if header :contains "X-Spam-Flag" "YES" {
         conf = conf + smtpd_tls_chain_files + tls_server_sni_maps
         return conf
 
-    def _set_vmail_certificate(self, arecord, args):
+    def _set_vmail_certificate(self, args, arecord, cert_file, cert_key):
         # 设置证书给某个A记录
         conf = public.readFile('/etc/postfix/vmail_ssl.map')
         if not conf:
@@ -1922,17 +1933,26 @@ if header :contains "X-Spam-Flag" "YES" {
         if args.act == 'delete' and arecord in conf:
             reg = '{}.*\n'.format(arecord)
             conf = re.sub(reg, '', conf)
+            reg = '{}.*\n'.format(args.domain)
+            conf = re.sub(reg, '', conf)
         else:
             if arecord in conf:
                 return True
-            cert_path = '/www/server/panel/plugin/mail_sys/cert/{}'.format(args.domain)
-            if not os.path.exists(cert_path):
-                os.makedirs(cert_path)
-            conf += '{} {} {}\n'.format(arecord, cert_path + '/privkey.pem', cert_path + '/fullchain.pem')
+            conf += '{} {} {}\n'.format(args.domain, cert_key, cert_file)
+            conf += '{} {} {}\n'.format(arecord, cert_key, cert_file)
         public.writeFile('/etc/postfix/vmail_ssl.map', conf)
 
+    def _set_dovecot_cert_global(self,cert_file,cert_key,conf):
+        default_cert_key = 'ssl_key\s*=\s*<\s*/etc/pki/dovecot/private/dovecot.pem'
+        default_cert_file = 'ssl_cert\s*=\s*<\s*/etc/pki/dovecot/certs/dovecot.pem'
+        if not re.search(default_cert_file,conf):
+            return conf
+        conf = re.sub(default_cert_file, "ssl_cert = <{}".format(cert_file),conf)
+        conf = re.sub(default_cert_key, "ssl_key = <{}".format(cert_key), conf)
+        return conf
+
     # 修改dovecot的ssl配置
-    def _set_dovecot_certificate(self, a_record, args):
+    def _set_dovecot_certificate(self, args, a_record,cert_file,cert_key):
         dovecot_version = self.get_dovecot_version()
         ssl_file = "/etc/dovecot/conf.d/10-ssl.conf"
         ssl_conf = public.readFile(ssl_file)
@@ -1944,17 +1964,18 @@ if header :contains "X-Spam-Flag" "YES" {
                 if not os.path.exists('/etc/dovecot/dh.pem') or os.path.getsize('/etc/dovecot/dh.pem') < 300:
                     public.ExecShell('openssl dhparam 2048 > /etc/dovecot/dh.pem')
                 if 'ssl_dh = </etc/dovecot/dh.pem' not in ssl_conf:
-                    ssl_conf = ssl_conf + "\nssl_dh = </etc/dovecot/dh.pem"
+                    ssl_conf  = ssl_conf + "\nssl_dh = </etc/dovecot/dh.pem"
         # 将自签证书替换为用户设置的证书
         reg_cert = 'local_name\s+{}'.format(a_record)
         if args.act == 'add' and not re.search(reg_cert, ssl_conf):
+            ssl_conf = self._set_dovecot_cert_global(cert_file,cert_key,ssl_conf)
             domain_ssl_conf = """
 #DOMAIN_SSL_BEGIN_%s
 local_name %s {
-    ssl_cert = </www/server/panel/plugin/mail_sys/cert/%s/fullchain.pem
-    ssl_key = </www/server/panel/plugin/mail_sys/cert/%s/privkey.pem
+    ssl_cert = < %s
+    ssl_key = < %s
 }
-#DOMAIN_SSL_END_%s""" % (a_record, a_record, args.domain, args.domain, a_record)
+#DOMAIN_SSL_END_%s""" % (a_record, a_record, cert_file, cert_key, a_record)
             reg = 'ssl\s*=\s*yes'
             ssl_conf = re.sub(reg, 'ssl = yes' + domain_ssl_conf, ssl_conf)
         if args.act == 'delete':
@@ -1964,11 +1985,11 @@ local_name %s {
         public.writeFile(ssl_file, ssl_conf)
         public.ExecShell('systemctl restart dovecot')
 
-    def _verify_certificate(self, args):
+    def _verify_certificate(self, args,path,csrpath,keypath):
         # 验证并写入证书
-        path = '{}/cert/{}/'.format(self.__setupPath, args.domain)
-        csrpath = path + "fullchain.pem"
-        keypath = path + "privkey.pem"
+        # path = '{}/cert/{}/'.format(self.__setupPath, args.domain)
+        # csrpath = path + "fullchain.pem"
+        # keypath = path + "privkey.pem"
         backup_cert = '/tmp/backup_cert_mail_sys'
         if hasattr(args, "act") and args.act == "add":
             if args.key.find('KEY') == -1: return public.returnMsg(False, 'Private Key ERROR, please check!')
@@ -1981,7 +2002,11 @@ local_name %s {
             if os.path.exists(path): shutil.rmtree(path)
             os.makedirs(path)
             public.writeFile(keypath, args.key)
+            os.chown(keypath, 0, 0)
+            os.chmod(keypath, 0o600)
             public.writeFile(csrpath, args.csr)
+            os.chown(csrpath, 0, 0)
+            os.chmod(csrpath, 0o600)
         # else:
         #     if os.path.exists(csrpath):
         #         public.ExecShell('rm -rf {}'.format(path))
@@ -2008,14 +2033,14 @@ local_name %s {
                 conf = self._set_new_certificate_conf(conf, old_cert_info['cert_file'], old_cert_info['cert_key'])
         public.writeFile(self.postfix_main_cf, conf)
 
-    def _fix_default_cert(self, conf):
+    def _fix_default_cert(self, conf, cert_file, cert_key):
         reg = r'smtpd_tls_chain_files\s*=(.*)'
         tmp = re.search(reg, conf)
         if not tmp:
             return conf
         tmp = tmp.groups()[0]
-        if len(tmp) < 5:
-            conf = self._set_new_certificate_conf(conf, None, None)
+        if len(tmp) < 5 or 'dovecot.pem' in conf:
+            conf = self._set_new_certificate_conf(conf, cert_file, cert_key)
         return conf
 
     def _set_master_ssl(self):
@@ -2044,18 +2069,23 @@ local_name %s {
                 else:
                     args.act = "0"
                 pstr = """
-postconf -e "smtpd_tls_cert_file = /etc/pki/dovecot/certs/dovecot.pem"
-postconf -e "smtpd_tls_key_file = /etc/pki/dovecot/private/dovecot.pem"
-    """
+{postconf} -e "smtpd_tls_cert_file = /etc/pki/dovecot/certs/dovecot.pem"
+{postconf} -e "smtpd_tls_key_file = /etc/pki/dovecot/private/dovecot.pem"
+    """.format(postconf=self.get_postconf())
                 public.ExecShell(pstr)
                 return self.set_ssl(args)
         conf = public.readFile(self.postfix_main_cf)
         domain = args.domain
+        cert_path = '/www/server/panel/plugin/mail_sys/cert/{}'.format(domain)
+        cert_file = "{}/fullchain.pem".format(cert_path)
+        cert_key = "{}/privkey.pem".format(cert_path)
+        if not os.path.exists(cert_path):
+            os.makedirs(cert_path)
         # 备份配置文件
         public.back_file(self.postfix_main_cf)
         # 在main注释smtpd_tls_cert_file，smtpd_tls_key_file参数
         # 添加smtpd_tls_chain_files和tls_server_sni_maps，3.4+支持
-        conf = self._fix_default_cert(conf)
+        conf = self._fix_default_cert(conf,cert_file,cert_key)
         self._modify_old_ssl_perameter(conf)
         # 修改master.cf开启tls/ssl
         self._set_master_ssl()
@@ -2065,18 +2095,19 @@ postconf -e "smtpd_tls_key_file = /etc/pki/dovecot/private/dovecot.pem"
             return public.returnMsg(False, 'The set domain name does not exist')
         # 验证域名证书是否有效
         if args.csr != '':
-            verify_result = self._verify_certificate(args)
+            verify_result = self._verify_certificate(args,cert_path,cert_file,cert_key)
             if verify_result:
                 return verify_result
-        self._set_vmail_certificate(arecord, args)
-        self._set_dovecot_certificate(arecord, args)
-        if args.act == 'delete':
-            pem = "{}/cert/{}/fullchain.pem".format(self.__setupPath,domain)
-            key = "{}/cert/{}/privkey.pem".format(self.__setupPath,domain)
-            if os.path.exists(pem):
-                os.remove(pem)
-            if os.path.exists(key):
-                os.remove(key)
+        # 将证书配置到vmail_ssl.map
+        self._set_vmail_certificate(args, arecord, cert_file, cert_key)
+        self._set_dovecot_certificate(args, arecord, cert_file, cert_key)
+        # if args.act == 'delete':
+        #     pem = "{}/cert/{}/fullchain.pem".format(self.__setupPath,domain)
+        #     key = "{}/cert/{}/privkey.pem".format(self.__setupPath,domain)
+        #     if os.path.exists(pem):
+        #         os.remove(pem)
+        #     if os.path.exists(key):
+        #         os.remove(key)
         public.ExecShell('postmap -F hash:/etc/postfix/vmail_ssl.map && systemctl restart postfix')
         if not self._check_postfix_conf():
             public.restore_file(self.postfix_main_cf)
@@ -2310,17 +2341,21 @@ postconf -e "smtpd_tls_key_file = /etc/pki/dovecot/private/dovecot.pem"
         try:
             import data
             fullchain_file = '/www/server/panel/plugin/mail_sys/cert/{}/fullchain.pem'.format(domain)
+            os.chown(fullchain_file, 0, 0)
+            os.chmod(fullchain_file, 0o600)
             privkey_file = '/www/server/panel/plugin/mail_sys/cert/{}/privkey.pem'.format(domain)
+            os.chown(privkey_file, 0, 0)
+            os.chmod(privkey_file, 0o600)
             ssl_info = data.data().get_cert_end(fullchain_file)
             if not ssl_info:
-                return {'model':[domain]}
+                return {'dns':[domain]}
             ssl_info['src'] = public.readFile(fullchain_file)
             ssl_info['key'] = public.readFile(privkey_file)
             ssl_info['endtime'] = int(
                 int(time.mktime(time.strptime(ssl_info['notAfter'], "%Y-%m-%d")) - time.time()) / 86400)
             return ssl_info
         except:
-            return {'model':[domain]}
+            return {'dns':[domain]}
 
     # 仅支持dns申请
     # 申请证书
@@ -2329,26 +2364,14 @@ postconf -e "smtpd_tls_key_file = /etc/pki/dovecot/private/dovecot.pem"
         domains 邮箱域名 ['example.com']
         auth_to CloudFlareDns|email|token 当auth_to 为 dns时是需要手动添加解析
         auto_wildcard = 1
-        auth_type = model
+        auth_type = dns
         :param args:
         :return:
         """
         import acme_v2
         domains = json.loads(args.domains)
         apply_cert_module = acme_v2.acme_v2()
-        apply_cert = apply_cert_module.apply_cert(domains, 'model', args.auth_to, auto_wildcard=1)
-        # if apply_cert['status']:
-        #     mail_cert_path = self.__setupPath + 'cert/{}'.format(args.domain)
-        #     if not os.path.exists(mail_cert_path):
-        #         os.makedirs(mail_cert_path)
-        #     shutil.copy('/www/server/panel/vhost/cert/youtubad.com/fullchain.pem',mail_cert_path+'/fullchain.pem')
-        #     shutil.copy('/www/server/panel/vhost/cert/youtubad.com/privkey.pem', mail_cert_path + '/privkey.pem')
-        #     args.domain = domain[0]
-        #     args.csr = apply_cert['cert'] + apply_cert['root']
-        #     args.key = apply_cert['private_key']
-        #     args.act = 'add'
-        #     self.set_mail_certificate_multiple(args)
-        #     return apply_cert
+        apply_cert = apply_cert_module.apply_cert(domains, 'dns', args.auth_to, auto_wildcard=1)
         return apply_cert
 
     # 手动验证dns
@@ -2360,7 +2383,7 @@ postconf -e "smtpd_tls_key_file = /etc/pki/dovecot/private/dovecot.pem"
         """
         import acme_v2
         apply_cert_module = acme_v2.acme_v2()
-        return apply_cert_module.apply_cert([], 'model', 'model', index=args.index)
+        return apply_cert_module.apply_cert([], 'dns', 'dns', index=args.index)
 
     def check_rspamd_route(self,args):
         panel_init = public.readFile("/www/server/panel/BTPanel/__init__.py")
@@ -2436,5 +2459,10 @@ postconf -e "smtpd_tls_key_file = /etc/pki/dovecot/private/dovecot.pem"
         tmp = filename.split('|')
         local_file = tmp[0]
         remote_file = tmp[1].format(download_conf_url="http://node.aapanel.com")
+        data = public.readFile("/www/server/panel/plugin/mail_sys/services_file.txt")
+        if not data:
+            return public.returnMsg(False,"Get source file error!")
+        if remote_file not in data or local_file not in data:
+            return public.returnMsg(False, "There is no such file!")
         public.ExecShell("wget {remote_file} -O {local_file} -T 10 --no-check-certificate".format(remote_file=remote_file,local_file=local_file))
         return public.returnMsg(True,"Re-download successful")

@@ -19,6 +19,15 @@ main_cf = "/etc/postfix/main.cf"
 # download_url = public.get_url()
 download_url = "http://node.aapanel.com"
 
+
+def get_postconf():
+    if os.path.exists("/usr/sbin/postconf"):
+        return "/usr/sbin/postconf"
+    elif os.path.exists("/sbin/postconf"):
+        return "/sbin/postconf"
+    else:
+        return "postconf"
+
 class change_to_rspamd:
 
     def change_dkim_server(self):
@@ -28,13 +37,13 @@ class change_to_rspamd:
     def change_postfix_conf(self):
         # postfix配置修改为支持rspamd
         shell = """
-    postconf -e "myhostname = $(hostname)"
-    postconf -e "smtpd_milters = inet:127.0.0.1:11332"
-    postconf -e "non_smtpd_milters = inet:127.0.0.1:11332"
-    postconf -e "milter_mail_macros = i {mail_addr} {client_addr} {client_name} {auth_authen}"
-    postconf -e "milter_protocol = 6"
-    postconf -e "milter_default_action = accept"
-    """
+    {postconf} -e "myhostname = $(hostname)"
+    {postconf} -e "smtpd_milters = inet:127.0.0.1:11332"
+    {postconf} -e "non_smtpd_milters = inet:127.0.0.1:11332"
+    {postconf} -e "milter_mail_macros = i {{mail_addr}} {{client_addr}} {{client_name}} {{auth_authen}}"
+    {postconf} -e "milter_protocol = 6"
+    {postconf} -e "milter_default_action = accept"
+    """.format(postconf=get_postconf())
         public.ExecShell(shell)
 
     def comment_old_spam(self):
@@ -95,7 +104,7 @@ class mail_server_init:
         :return:
         '''
         self.write_logs('|-Set up the postfix service to listen to all network cards...')
-        public.ExecShell('postconf -e "inet_interfaces = all"')
+        public.ExecShell('{postconf} -e "inet_interfaces = all"'.format(postconf=get_postconf()))
         self.write_logs('|-Checking system key directory permissions...')
         if self._check_syssafe():
             self.write_logs('|-Check system key directory permissions: failed')
@@ -262,31 +271,31 @@ fi'''
         # 修改postfix配置
         self.write_logs('|-Initializing postfix...')
         edit_postfix_conf_shell = '''
-postconf -e "myhostname = $(hostname)"
-postconf -e "inet_interfaces = all"
-postconf -e "mydestination ="
+{postconf} -e "myhostname = $(hostname)"
+{postconf} -e "inet_interfaces = all"
+{postconf} -e "mydestination ="
 
-postconf -e "virtual_mailbox_domains = sqlite:/etc/postfix/sqlite_virtual_domains_maps.cf"
-postconf -e "virtual_alias_maps =  sqlite:/etc/postfix/sqlite_virtual_alias_maps.cf, sqlite:/etc/postfix/sqlite_virtual_alias_domain_maps.cf, sqlite:/etc/postfix/sqlite_virtual_alias_domain_catchall_maps.cf"
-postconf -e "virtual_mailbox_maps = sqlite:/etc/postfix/sqlite_virtual_mailbox_maps.cf, sqlite:/etc/postfix/sqlite_virtual_alias_domain_mailbox_maps.cf"
+{postconf} -e "virtual_mailbox_domains = sqlite:/etc/postfix/sqlite_virtual_domains_maps.cf"
+{postconf} -e "virtual_alias_maps =  sqlite:/etc/postfix/sqlite_virtual_alias_maps.cf, sqlite:/etc/postfix/sqlite_virtual_alias_domain_maps.cf, sqlite:/etc/postfix/sqlite_virtual_alias_domain_catchall_maps.cf"
+{postconf} -e "virtual_mailbox_maps = sqlite:/etc/postfix/sqlite_virtual_mailbox_maps.cf, sqlite:/etc/postfix/sqlite_virtual_alias_domain_mailbox_maps.cf"
 
-postconf -e "smtpd_sasl_type = dovecot"
-postconf -e "smtpd_sasl_path = private/auth"
-postconf -e "smtpd_sasl_auth_enable = yes"
-postconf -e "smtpd_recipient_restrictions = permit_sasl_authenticated, permit_mynetworks, reject_unauth_destination"
+{postconf} -e "smtpd_sasl_type = dovecot"
+{postconf} -e "smtpd_sasl_path = private/auth"
+{postconf} -e "smtpd_sasl_auth_enable = yes"
+{postconf} -e "smtpd_recipient_restrictions = permit_sasl_authenticated, permit_mynetworks, reject_unauth_destination"
 
-postconf -e "smtpd_use_tls = yes"
-postconf -e "smtp_tls_security_level = may"
-postconf -e "smtpd_tls_security_level = may"
+{postconf} -e "smtpd_use_tls = yes"
+{postconf} -e "smtp_tls_security_level = may"
+{postconf} -e "smtpd_tls_security_level = may"
 
-postconf -e "virtual_transport = lmtp:unix:private/dovecot-lmtp"
-postconf -e "smtpd_milters = inet:127.0.0.1:11332"
-postconf -e "non_smtpd_milters = inet:127.0.0.1:11332"
-postconf -e "milter_mail_macros = i {mail_addr} {client_addr} {client_name} {auth_authen}"
-postconf -e "milter_protocol = 6"
-postconf -e "milter_default_action = accept"
-postconf -e "message_size_limit = 102400000"
-'''
+{postconf} -e "virtual_transport = lmtp:unix:private/dovecot-lmtp"
+{postconf} -e "smtpd_milters = inet:127.0.0.1:11332"
+{postconf} -e "non_smtpd_milters = inet:127.0.0.1:11332"
+{postconf} -e "milter_mail_macros = i {{mail_addr}} {{client_addr}} {{client_name}} {{auth_authen}}"
+{postconf} -e "milter_protocol = 6"
+{postconf} -e "milter_default_action = accept"
+{postconf} -e "message_size_limit = 102400000"
+'''.format(postconf=get_postconf())
         public.ExecShell(edit_postfix_conf_shell)
         self.write_logs('|-Downloading additional configuration files...')
         download_sql_conf_shell = '''
@@ -392,7 +401,8 @@ systemctl restart  dovecot
             return False
 
     def check_postfix_ver(self):
-        postfix_version = public.ExecShell(r"postconf mail_version|sed -r 's/.* ([0-9\.]+)$/\1/'")[0].strip()
+        postfix_version = public.ExecShell(r"{postconf} mail_version|sed -r 's/.* ([0-9\.]+)$/\1/'".format(
+            postconf=get_postconf()))[0].strip()
         if postfix_version.startswith('3'):
             return public.returnMsg(True,postfix_version)
         else:
@@ -406,7 +416,7 @@ systemctl restart  dovecot
         return public.returnMsg(False,"Please go to the Redis manager --> Performance tuning to setup password")
 
     def check_sqlite(self):
-        if not public.ExecShell('postconf -m | grep sqlite')[0].strip():
+        if not public.ExecShell('{postconf} -m | grep sqlite'.format(postconf=get_postconf()))[0].strip():
             return public.returnMsg(False,"Postfix has been support sqlite")
         return public.returnMsg(True,"Postfix not support sqlite")
 
@@ -414,12 +424,12 @@ systemctl restart  dovecot
         # 修改postfix配置
         self.write_logs('|-Initializing rspamd...')
         edit_postfix_conf_shell = '''
-postconf -e "smtpd_milters = inet:127.0.0.1:11332"
-postconf -e "non_smtpd_milters = inet:127.0.0.1:11332"
-postconf -e "milter_mail_macros = i {mail_addr} {client_addr} {client_name} {auth_authen}"
-postconf -e "milter_protocol = 6"
-postconf -e "milter_default_action = accept"
-'''
+{postconf} -e "smtpd_milters = inet:127.0.0.1:11332"
+{postconf} -e "non_smtpd_milters = inet:127.0.0.1:11332"
+{postconf} -e "milter_mail_macros = i {{mail_addr}} {{client_addr}} {{client_name}} {{auth_authen}}"
+{postconf} -e "milter_protocol = 6"
+{postconf} -e "milter_default_action = accept"
+'''.format(postconf=get_postconf())
         public.ExecShell(edit_postfix_conf_shell)
         self.write_logs('|-Downloading additional configuration files...')
         get_rspamd_conf_shell = """
