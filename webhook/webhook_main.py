@@ -4,7 +4,7 @@
 # +-------------------------------------------------------------------
 # | Copyright (c) 2015-2017 宝塔软件(http://bt.cn) All rights reserved.
 # +-------------------------------------------------------------------
-# | Author: 黄文良 <2879625666@qq.com>
+# | Author: hwliang <hwl@bt.cn>
 # +-------------------------------------------------------------------
 
 #+--------------------------------------------------------------------
@@ -45,14 +45,19 @@ class webhook_main:
     
     #删除Hook
     def DelHook(self,get):
-        data = self.GetList(get);
+        data = self.GetList(get)
         newdata = []
         for hook in data:
             if hook['access_key'] == get.access_key: continue
             newdata.append(hook)
         jsonFile = self.__setupPath + '/list.json'
         shellFile = self.__setupPath + '/script/' + get.access_key
-        os.system('rm -f ' + shellFile + '*')
+        if not os.path.exists(shellFile):
+            return public.returnMsg(False,'Delete Failed!')
+        os.remove(shellFile)
+        log_file = "{}.log".format(shellFile)
+        if os.path.exists(log_file):
+            os.remove(log_file)
         public.writeFile(jsonFile,json.dumps(newdata))
         return public.returnMsg(True,'DEL_SUCCESS')
     
