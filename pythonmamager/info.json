@@ -1,0 +1,16 @@
+{
+	"id":10000,
+	"title":"Python Mamager",
+	"tip":"lib",
+	"name":"pythonmamager",
+	"type":"plugin",
+	"ps":"Manage multi-version Python and projects",
+	"versions":"2.0",
+	"shell":"pythonmamager.sh",
+	"checks":"/www/server/panel/plugin/pythonmamager/pythonmamager_main.py",
+	"author":"official",
+	"home":"http://www.bt.cn/bbs",
+	"date":"2019-03-20",
+	"default":false,
+	"display":1
+}

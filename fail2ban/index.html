@@ -1,0 +1,1176 @@
+<style>
+        #fromSiteConfig input,
+        #fromServerConfig input{
+            width: 250px;
+        }
+        .actStyle{
+            margin:0px;
+            display: block;
+            padding-top: 6px;
+        }
+        .log_box{
+            background-color: #fafafa;
+            border: #ddd 1px solid;
+            padding: 0;
+            float: left;
+            margin-bottom: 15px;
+            width: 100%;
+        }
+        .log_box .line{
+            width: 25%;
+            text-align: center;
+            height: 70px;
+            float: left;
+            margin: 6px 0;
+        }
+        .log_box .line .name{
+            width: auto;
+            display: block;
+            text-align: center;
+            margin: 5px 0 8px;
+            color: #666;
+        }
+        .log_box .line .val{
+            font-size: 18px;
+            display: block;
+            text-align: center;
+            font-weight: bold;
+        }
+        .log_logBox {
+            width: 100%;
+            height: 42px;
+            float:left;
+        }
+        .log_logBox .refreshLogBtn {
+            float: right;
+        }
+        .log_style th{
+            font-weight:normal
+        }
+        .dirTextarea {
+            min-width: 250px;
+            max-width: 250px;
+            min-height: 50px;
+            line-height: 20px;
+        }
+        .cloud_list {
+            display: inline-block;
+            height: 230px;
+            width: 338px;
+            border: 1px solid #ddd;
+            border-radius: 2px;
+            margin: 0 5px 15px;
+            text-align: center;
+        }
+        .cloud_list .cloud_title {
+            width: 100%;
+            height: 35px;
+            line-height: 35px;
+            color: #666;
+            background-color: #f1f1f1;
+            border-bottom: 1px solid #dddddd;
+            margin-bottom: 10px;
+            position: relative;
+        }
+        
+        .cloud_line {
+        	padding: 5px 0
+        }
+        .cloud_line .tname {
+        	display: block;
+        	float: left;
+        	height: 32px;
+        	line-height: 32px;
+        	overflow: hidden;
+        	padding-right: 20px;
+        	text-align: right;
+        	text-overflow: ellipsis;
+        	white-space: nowrap;
+        	width: 75px
+        }
+        .cloud_line .info-r {
+        	margin-bottom: 5px;
+        	margin-left: 75px;
+        	position: relative;
+        	width: 73%;
+        	margin-right: 10px;
+        }
+        .cloud_list .cloud_btn {
+            background: #20a53a;
+            color: #fff;
+            padding: 6px 15px;
+            border: none;
+            outline: none;
+        }
+    </style>
+    <div class="bt-form" id="plugin">
+        <div class="bt-w-main">
+            <div class="bt-w-menu">
+                <p class="bgw">WebSite protection</p>
+                <p>Server protection</p>
+                <p>Black IP</p>
+                <p>White IP</p>
+                <p>Service status</p>
+                <p>CDN Provide</p>
+            </div>
+            <div class="bt-w-con pd15 divtable">
+                <div class="bt-box active">
+                    <div class="mb10">
+                        <button class="btn btn-success btn-sm" onclick="Fail2ban.set_site_config('addNew')" style="margin-top: -3px;">Create</button>
+                        <div class="divtable mtb15">
+                            <table class="table table-hover">
+                            <thead>
+                                <tr><th>Mode</th>
+                                    <th>Status</th>
+                                    <th>Maxretry</th>
+                                    <th>Port</th>
+                                    <th>CDN</th>
+                                    <th>Findtime</th>
+                                    <th>Bantime</th>
+                                    <th style="text-align: right;">Operation</th>
+                                </tr>
+                            </thead>
+                            <tbody id="anti_siteTable"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <ul class="help-info-text c7" style="margin-top:30px">
+                        <li>The log can be used to view the blocked data and release the blocked IP.</li>
+                        <li><font style="color:red">Rules need to be recreated after switching the web server or modifying the log path</font></li>
+                    </ul>
+                </div>
+                <div class="bt-box" style="display: none;">
+                    <div class="mb10">
+                        <button class="btn btn-success btn-sm" onclick="Fail2ban.set_server_config('addNew')" style="margin-top: -3px;">Create</button>
+                        <div class="divtable mtb15">
+                            <table class="table table-hover">
+                            <thead>
+                                <tr><th>Server</th>
+                                    <th>Status</th>
+                                    <th>Maxretry</th>
+                                    <th>Port</th>
+                                    <th>Findtime</th>
+                                    <th>Bantime</th>
+                                    <th style="text-align: right;">Operation</th>
+                                </tr>
+                            </thead>
+                            <tbody id="anti_serverTable"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <ul class="help-info-text c7" style="margin-top:30px">
+                        <li>Used to protect a service, each mode can only be created once.</li>
+                        <li>The log can be used to view the blocked data and release the blocked IP.</li>
+                    </ul>
+                </div>
+                <!--<div class="bt-box" style="display: none;" style="width: 179px;">-->
+                <!--    <div class="mb10">-->
+                <!--    	<input type="text" name="black_ip" class="bt-input-text mr5" placeholder="e.g, 192.168.1.111">-->
+                <!--        <button class="btn btn-success btn-sm" onclick="Fail2ban.set_blackIP_config()" style="margin-top: -3px;">Add</button>-->
+                <!--        <div class="divtable mtb15">-->
+                <!--            <table class="table table-hover">-->
+                <!--            <thead>-->
+                <!--                <tr><th>IP</th>-->
+                <!--                    <th style="text-align: right;">Operation</th>-->
+                <!--                </tr>-->
+                <!--            </thead>-->
+                <!--            <tbody id="black_ip"></tbody>-->
+                <!--            </table>-->
+                <!--        </div>-->
+                <!--    </div>-->
+                <!--</div>-->
+                <div class="bt-box" style="display: none;">
+                    <textarea name="black_ip" id="blackIP" cols="40" rows="15"></textarea>
+                    <button class="btn btn-success btn-sm" onclick="Fail2ban.set_blackIP_config()" style="margin-top: 20px;display: block;">Save</button>
+                    <ul class="help-info-text c7" style="margin-top:30px">
+                        <li>If there are multiple, please separate them with Line break.</br>e.g, 192.168.1.1</br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;192.168.1.0/24</li>
+                    </ul>
+                </div>
+                <div class="bt-box" style="display: none;">
+                    <textarea name="white_ip" id="whileIP" cols="40" rows="15"></textarea>
+                    <button class="btn btn-success btn-sm" onclick="Fail2ban.set_whiteIP_config()" style="margin-top: 20px;display: block;">Save</button>
+                    <ul class="help-info-text c7" style="margin-top:30px">
+                        <li>Adding a whitelisted IP will skip the blocking condition. If there are multiple, please separate them with Line break.</br>e.g, 192.168.1.1</br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;192.168.1.0/24</li>
+                    </ul>
+                </div>
+                <div class="bt-box" style="display: none;">
+                    <div class="mb10 startBox"></div>
+                </div>
+                <div class="bt-box" style="display: none;">
+                    <div class="mb10 cdnBox">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script type="text/html" id="site_anti_config">
+        <form class="bt-form pd20" id="fromSiteConfig">
+            <div class="line">
+                <span class="tname">Status</span>
+                <div class="info-r c4">
+                    <span class="btswitch-p actStyle"><input class="btswitch btswitch-ios" id="fail_checkbox" type="checkbox">
+                    <label class="btswitch-btn fail_label" for="fail_checkbox"></label>
+                    </span>
+                </div>
+            </div>
+            <div class="line">
+                <span class="tname">Maxretry</span>
+                <div class="info-r c4">
+                    <input class="bt-input-text" type="text" name="site_max" placeholder="Maximum number of retries"/> &nbsp;Times
+                </div>
+            </div>
+            <div class="line">
+                <span class="tname">Findtime</span>
+                <div class="info-r c4">
+                    <input class="bt-input-text" type="text" name="site_find" placeholder="Matching period"/> &nbsp;Sec
+                </div>
+            </div>
+            <div class="line">
+                <span class="tname">Bantime</span>
+                <div class="info-r c4">
+                    <input class="bt-input-text" type="text" name="site_ban" placeholder="IP Prohibited time"/> &nbsp;Sec
+                </div>
+            </div>
+            <div class="line">
+                <span class="tname">Port</span>
+                <div class="info-r c4">
+                    <input class="bt-input-text" type="text" name="site_port" placeholder="Port"/>
+                </div>
+            </div>
+            <div class="line">
+                <span class="tname">Mode</span>
+                <div class="info-r c4">
+                    <select class="bt-input-text site_select_mode" ></select>
+                </div>
+            </div>
+            <div class="line">
+                <span class="tname">Site</span>
+                <div class="info-r c4">
+                    <select class="bt-input-text site_select_value" ></select>
+                </div>
+            </div>
+            <div class="line" style="display: none">
+                <span class="tname">Dir/File</span>
+                <div class="info-r c4">
+                    <textarea class="bt-input-text dirTextarea" name="site_dir" placeholder="Enter protection directory/file /dir or /dir/file.php"></textarea>
+                </div>
+            </div>
+            <div class="line">
+                <span class="tname">CDN</span>
+                <div class="info-r c4">
+                    <span class="btswitch-p actStyle"><input class="btswitch btswitch-ios" id="cdn_checkbox" type="checkbox">
+                    <label class="btswitch-btn fail_label" for="cdn_checkbox"></label>
+                    </span>
+                </div>
+            </div>
+            <div class="line" id="cdnProvider" style="display: none">
+                <span class="tname">CDN Provider</span>
+                <div class="info-r c4">
+                    <input class="bt-input-text" type="text" name="cdn_provide" placeholder="Port" disabled="true"/>
+                </div>
+            </div>
+            <div class="line" id="zoneId" style="display: none">
+                <span class="tname">Zone Id</span>
+                <div class="info-r c4">
+                    <input class="bt-input-text" type="text" name="zone_id" placeholder="zone id"/>&nbsp;
+                    <a class="btlink" target="_blank" href="https://forum.aapanel.com/d/3914-how-to-get-zone-id-of-cloudflare">Help</a>
+                </div>
+            </div>
+            <ul class="help-info-text c7">
+                <!--<li>Status：Turn on/off anti-blasting</li>-->
+                <!--<li>Maxretry：Failure maximum tolerance </li>-->
+                <!--<li>Findtime：Set the maximum number of retries in the time range</li>-->
+                <!--<li>bantime：It is forbidden to ip access time.</li>-->
+                <!--<li>Port：Forbidden ip will not be able to access the port, multiple separated by commas. e.g: 80,443</li>-->
+                <!--<li>Mode：Anti-blasting mode</li>-->
+                <li>Simple anti-CC: Check that the site log file has IP access exceeding the maximum number of retries (30 times) during the setup period (300 seconds), and the IP access will be prohibited for 600 seconds (default prohibition time)</li>
+                <li>Anti-Site Scan: Checks that the site log file has a directory or file with IP access protection exceeding the maximum number of retries (30 times) during the setup period (300 seconds), and will prohibit the IP access for 600 seconds (default prohibition time)</li>
+            </ul>
+        </form>
+    </script>
+    <script type="text/html" id="server_anti_config">
+        <form class="bt-form pd20" id="fromServerConfig">
+            <div class="line">
+                <span class="tname">Status</span>
+                <div class="info-r c4">
+                    <span class="btswitch-p actStyle"><input class="btswitch btswitch-ios" id="fail_server_checkbox" type="checkbox">
+                    <label class="btswitch-btn fail_server_label" for="fail_server_checkbox"></label>
+                    </span>
+                </div>
+            </div>
+            <div class="line">
+                <span class="tname">Maxretry</span>
+                <div class="info-r c4">
+                    <input class="bt-input-text" type="text" name="server_max" placeholder="Maximum number of retries"/> &nbsp;Times
+                </div>
+            </div>
+            <div class="line">
+                <span class="tname">Findtime</span>
+                <div class="info-r c4">
+                    <input class="bt-input-text" type="text" name="server_find" placeholder="Matching period"/> &nbsp;Sec
+                </div>
+            </div>
+            <div class="line">
+                <span class="tname">Bantime</span>
+                <div class="info-r c4">
+                    <input class="bt-input-text" type="text" name="server_ban" placeholder="IP Prohibited time"/> &nbsp;Sec
+                </div>
+            </div>
+            <div class="line">
+                <span class="tname">Port</span>
+                <div class="info-r c4">
+                    <input class="bt-input-text" type="text" name="server_port" placeholder="Port"/>
+                </div>
+            </div>
+            <div class="line">
+                <span class="tname">Server</span>
+                <div class="info-r c4">
+                    <select class="bt-input-text server_select_mode" ></select>
+                </div>
+            </div>
+            <ul class="help-info-text c7">
+                <!--<li>Status：Turn on/off anti-blasting</li>-->
+                <!--<li>Maxretry：Failure maximum tolerance </li>-->
+                <!--<li>Findtime：Set the maximum number of retries in the time range</li>-->
+                <!--<li>bantime：It is forbidden to ip access time.</li>-->
+                <!--<li>Port：Forbidden ip will not be able to access the port, multiple separated by commas. e.g: 80,443</li>-->
+                <!--<li>Protection Server：Anti-blasting mode</li>-->
+                <li>Monitor and protect the service log. If there is more than the maximum number of retries (30 times) in the setup period (300 seconds), the IP access will be forbidden for 600 seconds (the default forbidden time).</li>
+            </ul>
+        </form>
+    </script>
+    <script type="text/html" id="site_log_dialog">
+        <div class="pd15 log_style">
+            <div class="log_box"></div>
+            <div class="log_logBox"><button class="btn btn-success btn-sm refreshLogBtn" id="refreshLogBtn">Refresh Log</button></div>
+            <div class="table-box" style="float: left;width: 100%;margin-bottom: 20px;">
+                <div class="tbThead">
+                    <table class="table table-hover">
+                        <thead>
+                            <tr><th>IP</th><th style="text-align: right;">Operation</th></tr>
+                        </thead>
+                    </table>
+                </div>
+                <div class="tbTbody" style="max-height: 180px;overflow: auto;margin-top: -21px;">
+                    <table class="table table-hover">
+                        <tbody id="site_banned_Table"></tbody>
+                    </table>
+                </div>
+            </div>
+            <ul class="help-info-text c7">
+                <li>Currently Failed: The number of current connection failures.</li>
+                <li>Total Banned: The total number of blocked IPs.</li>
+                <li>Total Failed: The number of times the rule is matched.</li>
+                <li>Currently Banned：Current blocked IP number</li>
+            </ul>
+        </div>
+    </script>
+    <script>
+        var Fail2ban = {
+            setCdnStatusMsg: '',
+            serviceStatus: false,
+            site_list: [],
+            mode_list: {
+                site: [],
+                server: []
+            },
+            zh_mode_list: {
+            	0: 'Anti-site-cc',
+            	1: 'Anti-site-scan'
+            },
+            setCdnObj: {},
+            plugin_name: 'fail2ban',
+            init: function(){
+                var _this = this;
+                _this.get_status_verify();
+                _this.get_site_anti();
+                $('.layui-layer-page').width(900);
+                $(".bt-w-menu p").click(function(){
+                    var index = $(this).index();
+                    $(this).addClass("bgw").siblings().removeClass("bgw");
+                    $('.bt-w-con .bt-box').eq(index).show().siblings().hide();
+                    switch(index){
+                        case 0:
+                            if(!serviceStatus){
+                                layer.msg("Please start the Fail2ban service first!",{icon:2});
+                                return;
+                            }
+                            _this.get_site_anti();
+                            break;
+                        case 1:
+                            if(!serviceStatus){
+                                layer.msg("Please start the Fail2ban service first!",{icon:2});
+                                return;
+                            }
+                            _this.get_server_anti();
+                            break;
+                        case 3:
+                            _this.get_whiteIP(function(res){
+                                $('textarea[name=white_ip]').val(res)
+                            });
+                            break;
+                        case 2:
+                            //_this.get_blackIP();
+                            _this.black_IP(function(res){
+                                $('textarea[name=black_ip]').val(res)
+                            });
+                            break;
+                        case 4:
+                            _this.get_status_verify();
+                            break;
+                        case 5:
+                            _this.get_cdn_list()
+                            break;
+                    }
+                });
+                // 点击开关
+                $('#plugin').on('click','.ServiceAdmin',function(){
+                    var index = $(this).attr('data-index');
+                    _this.SetService(index);
+                });
+                // 获取网站/服务器模式
+                _this.get_mode_list(function(res){
+                    _this.mode_list.site = res.site
+                    _this.mode_list.server = res.server
+                });
+                // 获取站点
+                _this.get_all_sitename(function(res){
+                    for(item in res){
+                        _this.site_list.push(item)
+                    }
+                })
+            },
+            // 获取开关状态
+            get_status_verify: function(){
+                this.get_fail2ban_status(function(res){
+                    serviceStatus = res;
+                    var sBody = '<div class="soft-man-con"><p class="status">Current status:<span>'+(res?lan.public.on:lan.public.close)+'</span><span style="color: '+(res?'#20a53a':'red')+'; margin-left: 3px;" class="glyphicon glyphicon '+(res?'glyphicon-play':'glyphicon-pause')+'"></span></p>\
+                    <div class="sfm-opt">\
+                        <button class="btn btn-default btn-sm ServiceAdmin" data-index="'+( res?'stop':'start' )+'">'+(res?lan.public.stop:lan.public.start_up)+'</button>\
+                        <button class="btn btn-default btn-sm ServiceAdmin" data-index="restart" style="display:'+(res?'inline':'none')+';">'+lan.public.restart+'</button>\
+                        <button class="btn btn-default btn-sm ServiceAdmin" data-index="reload">'+lan.public.reload+'</button>\
+                    </div></div>'
+                    $(".startBox").html(sBody);
+                    
+                });
+            },
+            // 获取cdn列表
+            get_cdn_list: function(){
+                var _this = this;
+                this.get_cdn_info(function(res) {
+                    var sBody = '', tempList = [], dataList = {};
+                    if(!res.status) {
+                        tempList = ['cloudflare'];
+                        dataList = {
+                            cloudflare: {
+                                active: '0',
+                                user: '',
+                                token: ''
+                            }
+                        };
+                    } else {
+                        tempList = Object.keys(res.msg);
+                        dataList = res.msg;
+                    }
+                    for (var i = 0; i < tempList.length; i++) {
+                        sBody += '<div class="cloud_list">\
+                            <div class="cloud_title"><span>'+ tempList[i] +'</span><a id="cdnHelpIcon" href="JavaScript:void(0)" class="bt-ico-ask" style="cursor: pointer;cursor: pointer;position: absolute;top: 8px;right: 10px;">?</a></div>\
+                            <div class="cloud_line">\
+                                <span class="tname">Active</span>\
+                                <div class="info-r c4">\
+                                    <span class="btswitch-p actStyle">\
+                                        <input class="btswitch btswitch-ios" id="cdn_config_checkbox'+i+'" type="checkbox" '+(dataList[tempList[i]].active == '1' ? 'checked' : '')+'>\
+                                        <label class="btswitch-btn fail_label active_cdn_status" for="cdn_config_checkbox'+i+'" data-index="'+i+'"></label>\
+                                    </span>\
+                                </div>\
+                            </div>\
+                            <div class="cloud_line">\
+                                <span class="tname">Email</span>\
+                                <div class="info-r c4">\
+                                    <input class="bt-input-text" type="text" name="cdn_user'+i+'" value="'+dataList[tempList[i]].user+'" placeholder="Email" style="width: 100%;"/>\
+                                </div>\
+                            </div>\
+                            <div class="cloud_line">\
+                                <span class="tname">Token</span>\
+                                <div class="info-r c4">\
+                                    <input class="bt-input-text" type="text" name="cdn_token'+i+'" value="'+dataList[tempList[i]].token+'" placeholder="Token" style="width: 100%;"/>\
+                                </div>\
+                            </div>\
+                            <div class="cloud_line">\
+                                <button class="cloud_btn save_cdn_info" data-index="'+i+'">Save</button>\
+                                <button class="cloud_btn save_cdn_auth_info" data-index="'+i+'">Test Connection</button>\
+                            </div>\
+                        </div>'
+                    }
+                    $(".cdnBox").html(sBody); 
+                    
+                    $('.save_cdn_info').on('click', function() {
+                        var tempDataIndex = $(this).data('index');
+                        var obj = {
+                            cdn_provide:tempList[tempDataIndex],
+                            active: $("#cdn_config_checkbox"+tempDataIndex+"").prop("checked") == true ? '1' : '0',
+                            user: $("input[name='cdn_user"+tempDataIndex+"']").val(),
+                            token: $("input[name='cdn_token"+tempDataIndex+"']").val()
+                        }
+                        _this.set_cdn_info(obj,function(res){
+                            layer.msg(res.msg,{ icon:res.status ? 1 : 2 })
+                            // _this.get_cdn_list();
+                        })
+                    })
+                    $('.save_cdn_auth_info').on('click', function() {
+                        var tempDataIndex = $(this).data('index');
+                        var obj = {
+                            cdn_provide:tempList[tempDataIndex],
+                            user: $("input[name='cdn_user"+tempDataIndex+"']").val(),
+                            token: $("input[name='cdn_token"+tempDataIndex+"']").val()
+                        }
+                        _this.save_cdn_auth_info(obj,function(res){
+                            layer.msg(res.msg,{ icon:res.status ? 1 : 2 })
+                        })
+                    })
+                    $('#cdnHelpIcon').hover(function () {
+                        var _this = $(this);
+                        layer.tips('Email: Your cloudflare Email address  </br> Token: Your cloudflare global token  </br>', _this, { time: 0, tips: [1, '#999'], area: ['250px', 'auto'] });
+                    }, function () {
+                        layer.closeAll('tips');
+                    })
+                });
+            },
+            // 设置服务开关
+            SetService:function(status) {
+                var _this = this;
+                this.set_fail2ban_status({type:status},function(res){
+                    if(res.status) {
+                        _this.get_status_verify();
+                        layer.msg(res.msg,{ icon:res.status ? 1 : 2 })
+                    }
+                })
+            },
+            // site 防爆破
+            get_site_anti:function(){
+                var _this = this;
+                this.get_anti_info(function(rdata){
+                    _this.setCdnObj = rdata.cdn
+                    var tableBody = "",res = rdata.site;
+                    if(JSON.stringify(rdata) == "{}"){
+                        tableBody = '<tr><td colspan="7" style="text-align: center;">No data</td></tr>'
+                    }else{
+                        for(var i = 0; i<res.length; i++){
+                            tableBody += '<tr><td>'+ res[i].mode +'</td>\
+                                <td><span class="glyphicon '+(res[i].act == 'true'?'glyphicon-play':'glyphicon-pause')+'" style="color:'+(res[i].act == 'true'?'#20a53a':'red')+';font-size:12px"></span></td>\
+                                <td>'+ res[i].maxretry +'</td>\
+                                <td>'+ res[i].port +'</td>\
+                                <td><span>'+ (res[i].cdn_provide && res[i].cdn_provide != '' ? 'on' : 'off') +'</span></td>\
+                                <td>'+ res[i].findtime +'</td>\
+                                <td>'+ res[i].bantime +'</td>\
+                                <td style="text-align: right;">\
+                                    <a class="btlink edit_site_website" data-index="'+i+'" href="JavaScript:void(0)">'+lan.public.edit+'</a>\
+                                    &nbsp;&nbsp;|&nbsp;&nbsp;<a class="btlink" href="JavaScript:void(0)" onclick="Fail2ban.open_log_view(\''+res[i].mode+'\',\''+res[i].act+'\')">Log</a>\
+                                    &nbsp;&nbsp;|&nbsp;&nbsp;<a class="btlink" style="color:red" href="JavaScript:void(0)" onclick="Fail2ban.del_anti_config(\''+res[i].mode+'\')">Del</a>\
+                                </td></tr>'
+                        }
+                    }
+                    $("#anti_siteTable").html(tableBody);
+                    $('.edit_site_website').on('click', function(event) {
+                        _this.set_site_config('edit', res[$(this).data('index')].mode, res[$(this).data('index')].act, res[$(this).data('index')].maxretry, res[$(this).data('index')].port, res[$(this).data('index')].findtime, res[$(this).data('index')].bantime, (!res[$(this).data('index')].cdn_provide ? '' : res[$(this).data('index')].cdn_provide), res[$(this).data('index')].dir, res[$(this).data('index')].zone_id)
+                    })
+                });
+            },
+            // 获取封锁列表
+            get_banned_log:function(val){
+                var lineObj = '',tbody= '';
+                this.get_status({mode:val},function(res){
+                    if(res.status){
+                        var _data = res.msg
+                        lineObj = '<div class="line"><span class="name">Total banned</span><span class="val">'+_data.total_banned+'</span></div>\
+                        <div class="line"><span class="name">Total failed</span><span class="val">'+_data.total_failed+'</span></div>\
+                        <div class="line"><span class="name">Currently banned</span><span class="val">'+_data.currently_banned+'</span></div>\
+                        <div class="line"><span class="name">Currently failed</span><span class="val">'+_data.currently_failed+'</span></div>'
+                        $('.log_box').html(lineObj);
+    
+                        for(var i =0; i<_data.banned_ip_list.length; i++){
+                            tbody += '<tr>\
+                                <td>'+_data.banned_ip_list[i]+'</td>\
+                                <td style="text-align: right;"><a style="color:red" href="JavaScript:void(0)" onclick="Fail2ban.del_site_banned_ip(\''+_data.banned_ip_list[i]+'\',\''+val+'\')">Del</a></td>\
+                                </tr>'
+                        }
+                        $('#site_banned_Table').html(tbody);
+                    }else{
+                        layer.msg(res.msg,{icon:2})
+                    }
+                })
+            },
+            // 查看封锁日志
+            open_log_view:function(site,status){
+                var _this = this;
+                if(status == 'false'){return layer.msg('Protection has been turned off',{icon:3})}
+                this.selWebSiteLog = site
+                layer.open({
+                    type: 1,
+                    area: '500px',
+                    title: 'Banned Log',
+                    closeBtn: 1,
+                    shift: 0,
+                    content: site_log_dialog.innerHTML,
+                    success:function (){
+                        _this.get_banned_log(site);
+                        $('#refreshLogBtn').on('click', function() {
+                            _this.refresh_log(site)
+                        })
+                    }
+                })
+            },
+            // 创建、修改网站配置
+            set_site_config:function(type,mode,act,max,port,find,ban,cdn_provide,dir,zone){
+                var _this = this,siteOpt='',modeOpt='',dirStatus = false;
+                if (mode == undefined) {act = true,max = '30',port = '80,443',find = '300',ban = '600', zone='', cdn_provide='';}
+                if(cdn_provide && cdn_provide != '') {
+                    cdn= true
+                } else {
+                    cdn = false
+                }
+                _this.setCdnStatusMsg = layer.open({
+                    type: 1,
+                    area: '500px',
+                    title: type == 'addNew'? "Create": "Edit",
+                    closeBtn: 2,
+                    shift: 0,
+                    btn:['Confirm','Cancel'],
+                    content: site_anti_config.innerHTML,
+                    success: function(index){
+                        if(type == 'addNew') {
+                            for(var i = 0; i<_this.mode_list.site.length; i++){
+                                modeOpt += '<option value="'+_this.mode_list.site[i]+'">'+_this.zh_mode_list[i]+'</option>'
+                            }
+                            for(var i = 0; i<_this.site_list.length; i++){
+                                siteOpt += '<option value="'+_this.site_list[i]+'">'+_this.site_list[i]+'</option>'
+                            }
+                            $(".site_select_mode").html(modeOpt).css('width','250px');
+                            $(".site_select_value").html(siteOpt).css('width','250px');
+                            // 选择网站模式时
+                            $('.site_select_mode').change(function(){
+                                switch($('.site_select_mode').val()){
+                                    case 'site-scan':
+                                        dirStatus = true;
+                                        $('#fromSiteConfig >.line:lt(8)').css('display','block');
+                                    break;
+                                    case 'site-cc':
+                                        dirStatus = false;
+                                        $('#fromSiteConfig >.line:eq(7)').css('display','none');
+                                    break;
+                                }
+                            })
+                            $("#fail_checkbox").prop("checked",act)
+                            $("#cdn_checkbox").prop("checked", cdn)
+                        }else{
+                            var val = mode.match(/-\w+/);
+                            if(val == '-scan'){
+                                dirStatus = true;
+                                $('#fromSiteConfig >.line:eq(7)').css('display','block');
+                                $('textarea[name=site_dir]').val(dir);
+                            }
+                            $('#fromSiteConfig >.line:eq(6)').css('display','none');
+                            $(".site_select_mode").html('<option value="'+mode+'">'+mode+'</option>').attr('disabled',true).css({'background-color':'#f1f1f1','width':'250px'});
+                            $("#fail_checkbox").prop("checked", act == 'true'?true: false)
+                            $("#cdn_checkbox").prop("checked", cdn)
+                            if(cdn == true) {
+                                $('#cdnProvider').show()
+                                $('#zoneId').show()
+                                $("input[name='cdn_provide']").val(cdn_provide);
+                                $("input[name='zone_id']").val(zone);
+                            }
+                        }
+                        $("input[name='site_max']").val(max);
+                        $("input[name='site_find']").val(find);
+                        $("input[name='site_ban']").val(ban);
+                        $("input[name='site_port']").val(port);
+                        $("input[name='cdn_provide']").val(cdn_provide);
+                        $("input[name='zone_id']").val(zone);
+                        $('#cdn_checkbox').on('click', function() {
+                            if(!$("#cdn_checkbox").prop("checked")) {
+                                $('#cdnProvider').hide()
+                                $('#zoneId').hide()
+                                $("input[name='cdn_provide']").val('');
+                                $("input[name='zone_id']").val('');
+                            } else {
+                                $('#cdnProvider').show()
+                                $('#zoneId').show()
+                                $("input[name='cdn_provide']").val('cloudflare');
+                                $("input[name='zone_id']").val(zone);
+                            }
+                        })
+                    }
+                    ,yes: function(index){
+                        var modeVal = $(".site_select_mode").val(),siteVal = $(".site_select_value").val(),temp='';
+                        if($("#cdn_checkbox").prop("checked")) {
+                            if(_this.setCdnObj.active == false) {
+                                layer.msg('The CDN configuration is not active <div><a href="JavaScript:void(0)" id="goSetMsgId" style="color: #20a53a;">Go to set up the CDN</a></div>',{icon:false ? 1 : 2 , time: 0, closeBtn: true, shade: 0.3, shadeClose: true})
+                                return
+                            } else if(_this.setCdnObj.setup == false) {
+                                layer.msg('The CDN configuration is not configured <div><a href="JavaScript:void(0)" id="goSetMsgId1" style="color: #20a53a;">Go to set up the CDN</a></div>',{icon:false ? 1 : 2 , time: 0, closeBtn: true, shade: 0.01, shadeClose: true})
+                                return
+                            }
+                            $('#goSetMsgId, goSetMsgId1').on('click', function() {
+                                layer.close(_this.setCdnStatusMsg)
+                                $(".bt-w-menu p").eq(5).click()
+                            })
+                        }
+                        
+                        if(type == 'addNew'){
+                            temp = siteVal + modeVal.match(/-\w+/)
+                        }else{
+                            temp = modeVal
+                        }
+                        var obj = {
+                            type: type == 'addNew'? 'add': 'edit',
+                            act: $("#fail_checkbox").prop("checked"),
+                            findtime: $("input[name='site_find']").val(),
+                            port: $("input[name='site_port']").val(),
+                            mode: temp,
+                            bantime: $("input[name='site_ban']").val(),
+                            zone_id: $("input[name='zone_id']").val(),
+                            cdn_provide: $("input[name='cdn_provide']").val(),
+                            maxretry: $("input[name='site_max']").val()
+                        }
+                        if(dirStatus){obj['dir'] = $("textarea[name='site_dir']").val()}
+                        _this.set_anti(obj,function(res){
+                            if(res.status) layer.close(index);
+                            layer.msg(res.msg,{icon:res.status?1:2})
+                            _this.get_site_anti();
+                        })
+                    }
+                });
+            },
+            // server 防爆破
+            get_server_anti:function(){
+                var _this = this;
+                this.get_anti_info(function(rdata){
+                    var tableBody = "",res = rdata.server;
+                    if(JSON.stringify(rdata) == "{}"){
+                        tableBody = '<tr><td colspan="7" style="text-align: center;">No data</td></tr>'
+                    }else{
+                        for(var i = 0; i<res.length; i++){
+                            tableBody += '<tr><td>'+ res[i].mode +'</td>\
+                                <td><span class="glyphicon '+(res[i].act == 'true'?'glyphicon-play':'glyphicon-pause')+'" style="color:'+(res[i].act == 'true'?'#20a53a':'red')+';font-size:12px"></span></td>\
+                                <td>'+ res[i].maxretry +'</td>\
+                                <td>'+ res[i].port +'</td>\
+                                <td>'+ res[i].findtime +'</td>\
+                                <td>'+ res[i].bantime +'</td>\
+                                <td style="text-align: right;">\
+                                    <a class="btlink" href="JavaScript:void(0)" onclick="Fail2ban.set_server_config(\'edit\',\''+res[i].mode +'\',\''+res[i].act +'\',\''+res[i].maxretry +'\',\''+res[i].port +'\',\''+res[i].findtime +'\',\''+res[i].bantime +'\')">'+lan.public.edit+'</a>\
+                                    &nbsp;&nbsp;|&nbsp;&nbsp;<a class="btlink" href="JavaScript:void(0)" onclick="Fail2ban.open_log_view(\''+res[i].mode+'\',\''+res[i].act+'\')">Log</a>\
+                                    &nbsp;&nbsp;|&nbsp;&nbsp;<a class="btlink" style="color:red" href="JavaScript:void(0)" onclick="Fail2ban.del_anti_config(\''+res[i].mode+'\')">Del</a>\
+                                    </td></tr>'
+                        }
+                    }
+                    $("#anti_serverTable").html(tableBody);
+                });
+            },
+            // 黑名单
+            get_blackIP:function(){
+                var _this = this;
+                this.get_black_ip(function(rdata){
+                    var tableBody = "",res = rdata;
+                    if(JSON.stringify(rdata) == "[]"){
+                        tableBody = '<tr><td colspan="7" style="text-align: center;">No data</td></tr>'
+                    }else{
+                        for(var i = 0; i<res.length; i++){
+                            tableBody += '<tr><td>'+ res[i] +'</td>\
+                                <td style="text-align: right;">\
+                                    <a class="btlink" style="color:red" href="JavaScript:void(0)" onclick="Fail2ban.del_blackIP(\''+res[i]+'\')">Del</a>\
+                                    </td></tr>'
+                        }
+                    }
+                    $("#black_ip").html(tableBody);
+                });
+            },
+            del_blackIP:function(ip){
+                var _this = this,
+                loadT=layer.confirm('Delete ['+ip+'] banned, still continue?',{icon:3, title: 'Delete blacklist IP'},function(){
+                    layer.close(loadT);
+                    _this.del_black_ip(ip);
+                });
+                // var loadT=layer.open({
+                //     type: 1,
+                //     area: '300px',
+                //     title: 'Confirm',
+                //     closeBtn: 2,
+                //     shift: 0,
+                //     icon: 3,
+                //     btn:['Confirm','Cancel'],
+                //     content: text,
+                //     yes: function(index){
+                //     	layer.close(loadT);
+                //         _this.del_black_ip(ip);
+                //     }
+                // });
+            },
+            // 创建、修改服务器配置
+            set_server_config:function(type,mode,act,max,port,find,ban){
+                var _this = this,modeOpt='';
+                if (mode == undefined) {act = true,max = '30',port = '',find = '300',ban = '600';}
+                layer.open({
+                    type: 1,
+                    area: '500px',
+                    title: type == 'addNew'? "Create": "Edit",
+                    closeBtn: 2,
+                    shift: 0,
+                    btn:['Confirm','Cancel'],
+                    content: server_anti_config.innerHTML,
+                    success: function(index){
+                        if(type == 'addNew') {
+                            for(var i = 0; i<_this.mode_list.server.length; i++){
+                                modeOpt += '<option value="'+_this.mode_list.server[i].service+'" data-index="'+i+'">'+_this.mode_list.server[i].service+'</option>'
+                            }
+                            if(_this.mode_list && _this.mode_list.server[0]) {
+                                port = _this.mode_list.server[0].port
+                            }
+                            $(".server_select_mode").html(modeOpt).css('width','250px');
+
+                            $("#fail_server_checkbox").prop("checked",act)
+                        }else{
+                            $(".server_select_mode").html('<option value="'+mode+'">'+mode+'</option>').attr('disabled',true).css({'background-color':'#f1f1f1','width':'250px'});
+                            $("#fail_server_checkbox").prop("checked",act == 'true'? true : false)
+                        }
+                        $("input[name='server_max']").val(max);
+                        $("input[name='server_find']").val(find);
+                        $("input[name='server_ban']").val(ban);
+                        $("input[name='server_port']").val(port);
+                        $(".server_select_mode").on('change', function() {
+                            $("input[name='server_port']").val(_this.mode_list.server[$(this).find("option:selected").data('index')].port)
+                        })
+                    }
+                    ,yes: function(index){
+                        var obj = {
+                            type: type == 'addNew'? 'add': 'edit',
+                            act: $("#fail_server_checkbox").prop("checked"),
+                            maxretry: $("input[name='server_max']").val(),
+                            findtime: $("input[name='server_find']").val(),
+                            bantime: $("input[name='server_ban']").val(),
+                            port: $("input[name='server_port']").val(),
+                            mode: $(".server_select_mode").val()
+                        }
+                        _this.set_anti(obj,function(res){
+                            _this.get_server_anti();
+                            if(res.status) layer.close(index);
+                            layer.msg(res.msg,{icon:res.status?1:2})
+                        })
+                    }
+                });
+            },
+            // 删除防爆破配置
+            del_anti_config:function(val){
+                var _this = this;
+                layer.confirm('Delete ['+val+'] config, still continue?',{icon:3, title: 'Remove anti-blasting settings'},function(){
+                    _this.del_anti({mode:val},function(res){
+                        layer.msg(res.msg,{icon:res.status?1:2,time:1000},function(){
+                            _this.get_site_anti();
+                            _this.get_server_anti();
+                        })
+                    })
+                })
+            },
+            // 设置黑名单
+            // set_blackIP_config:function(){
+            // 	var _this = this;
+            //     var ip = $('input[name=black_ip]').val();
+            //     _this.set_black_ip({ip:ip},function(res){
+            //     	_this.get_blackIP();
+            //         layer.msg(res.msg,{icon:res.status?1:2});
+            //     })
+            // },
+            set_blackIP_config:function(){
+                var ip = $('textarea[name=black_ip]').val();
+                this.set_black_ip({black_ip:ip},function(res){
+                    layer.msg(res.msg,{icon:res.status?1:2})
+                })
+            },
+            // 设置白名单
+            set_whiteIP_config:function(){
+                var ip = $('textarea[name=white_ip]').val();
+                this.set_white_ip({white_ip:ip},function(res){
+                    layer.msg(res.msg,{icon:res.status?1:2})
+                })
+            },
+            // 解除ip封锁
+            del_site_banned_ip:function(ip,site){
+                var _this = this;
+                layer.confirm('Delete [ '+ ip +'] banned，still continue?', {icon: 3, title:'Unblock ip',
+                        closeBtn:2,
+                        btn: ['Confirm','Cancel']
+                },function(index,layers){
+                    _this.ban_ip_release({ip:ip,mode:site},function(res){
+                        layer.close(index);
+                        layer.msg(res.msg,{icon:res.status?1:2});
+                        _this.get_banned_log(site)
+                    })
+                }, function(index,lyaers){
+                    layer.close(index);
+                });
+            },
+            get_fail2ban_status:function(callback){
+                this.send({
+                    tips: "Getting status...",
+                    method: 'get_fail2ban_status',
+                    success: function(res){
+                        if(callback) callback(res);
+                    }
+                })
+            },
+            get_cdn_info:function(callback){
+                this.send({
+                    tips: "Getting status...",
+                    method: 'get_cdn_info ',
+                    success: function(res){
+                        if(callback) {
+                            callback(res)
+                        }
+                    }
+                }, true)
+            },
+            set_fail2ban_status:function(obj,callback){
+                this.send({
+                    tips: "Setting status...",
+                    method: 'set_fail2ban_status',
+                    data:obj,
+                    success: function(res){
+                        if(callback) callback(res);
+                    }
+                })
+            },
+            get_anti_info:function(callback){
+                this.send({
+                    tips: "Getting a list of Fail2ban...",
+                    method: 'get_anti_info',
+                    success: function(res){
+                        if(callback) callback(res);
+                    }
+                });
+            },
+            get_black_ip:function(callback){
+                this.send({
+                    tips: "Getting a list of Fail2ban...",
+                    method: 'get_black_list',
+                    success: function(res){
+                        if(callback) callback(res);
+                    }
+                });
+            },
+            set_black_ip:function(obj,callback){
+                this.send({
+                    tips: 'Setting up blacklist, please wait...',
+                    method: 'ban_ip',
+                    data:obj,
+                    success: function(res){
+                        if(callback) callback(res);
+                    }
+                })
+            },
+            del_black_ip:function(obj,callback){
+            	var _this = this;
+                _this.send({
+                    tips: 'Deleting the black id, please wait...',
+                    method: 'unban_ip',
+                    data:{ip:obj},
+                    success: function(res){
+                    	_this.get_blackIP();
+                    	layer.msg(res.msg,{icon:res.status?1:2});
+                        if(callback) callback(res);
+                    }
+                })
+            },
+            get_status:function(obj,callback){
+                this.send({
+                    tips: 'Get blocked data, please wait...',
+                    method: 'get_status',
+                    data: obj,
+                    success: function(res){
+                        if(callback) callback(res);
+                    }
+                })
+            },
+            get_mode_list:function(callback){
+                this.send({
+                    tips: 'Getting mode, please wait...',
+                    method: 'get_mode_list',
+                    success: function(res){
+                        if(callback) callback(res);
+                    }
+                })
+            },
+            get_all_sitename:function(callback){
+                this.send({
+                    tips: 'Getting site, please wait...',
+                    method: 'get_all_sitename',
+                    success: function(res){
+                        if(callback) callback(res);
+                    }
+                })
+            },
+            set_anti:function(obj,callback){
+                this.send({
+                    tips: 'Anti-blasting settings are being generated, please wait...',
+                    method: 'set_anti',
+                    data:obj,
+                    success: function(res){
+                        if(callback) callback(res);
+                    }
+                })
+            },
+            del_anti:function(obj,callback){
+                this.send({
+                    tips: 'Deleting anti-blasting settings, please wait...',
+                    method: 'del_anti',
+                    data:obj,
+                    success: function(res){
+                        if(callback) callback(res);
+                    }
+                })
+            },
+            set_white_ip:function(obj,callback){
+                this.send({
+                    tips: 'Setting up whitelist, please wait...',
+                    method: 'set_white_ip',
+                    data:obj,
+                    success: function(res){
+                        if(callback) callback(res);
+                    }
+                })
+            },
+            get_whiteIP:function(callback){
+                this.send({
+                    tips: 'Get the white list, please wait...',
+                    method: 'get_white_ip',
+                    success: function(res){
+                        if(callback) callback(res);
+                    }
+                })
+            },
+            black_IP:function(callback){
+                this.send({
+                    tips: 'Get the black list, please wait...',
+                    method: 'get_black_list',
+                    success: function(res){
+                        if(callback) callback(res);
+                    }
+                })
+            },
+            ban_ip_release:function(obj,callback){
+                this.send({
+                    tips: 'Setting up whitelist, please wait...',
+                    method: 'ban_ip_release',
+                    data:obj,
+                    success: function(res){
+                        if(callback) callback(res);
+                    }
+                })
+            },
+            // 刷新日志
+            refresh_log:function(site){
+                var _this = this;
+                this.send({
+                    tips: 'Refresh the log, please wait...',
+                    method: 'get_status',
+                    data: {
+                        mode: _this.selWebSiteLog
+                    },
+                    success: function(res){
+                        _this.get_banned_log(site)
+                        // if(callback) callback(res);
+                    }
+                })
+            },
+            set_cdn_info:function(obj, callback){
+                var _this = this;
+                this.send({
+                    tips: 'Refresh the log, please wait...',
+                    method: 'set_cdn_info',
+                    data: obj,
+                    success: function(res){
+                        if(callback) callback(res);
+                    }
+                })
+            },
+            save_cdn_auth_info:function(obj, callback){
+                var _this = this;
+                this.send({
+                    tips: 'Refresh the log, please wait...',
+                    method: 'test_cdn_auth_info',
+                    data: obj,
+                    success: function(res){
+                        if(callback) callback(res);
+                    }
+                })
+            },
+            // 启动或关闭CDN
+            // run_cdn_status: function(item) {
+            //     var _this = this;
+            //     item.type = 'edit';
+            //     if(item.cdn_provide && item.cdn_provide != '') {
+            //         item.cdn_provide = ''
+            //     } else {
+            //         item.cdn_provide = 'cloudflare'
+            //     }
+            //     _this.set_anti(item,function(res){
+            //         // if(res.status) layer.close(index);
+            //         layer.msg(res.msg,{icon: !res.status ? 2 : 1})
+            //         _this.get_site_anti();
+            //     })
+            // },
+            // 请求方法
+            send:function(obj, showMessage){
+                var loadT = '';
+    			if (obj.load == undefined) obj.load = 0;
+    			if (obj.url == undefined) {
+    				if (obj.plugin_name === undefined && this.plugin_name !== undefined) obj.plugin_name = this.plugin_name
+    				if (!obj.plugin_name || !obj.method) {
+    					layer.msg('The plugin class name, or plugin method name is missing!', {icon: 2 });
+    					return false;
+    				}
+    			}
+    			if (obj.load === 0 || obj.tips != undefined) {
+    				loadT = layer.msg(obj.tips, {
+    					icon: 16,
+    					time: 0,
+    					shade: 0.3
+    				});
+    			} else if (obj.load === 1 || (obj.tips == undefined && obj.load == undefined)) {
+    				loadT = layer.load();
+    			}
+    			$.ajax({
+    				type: 'POST',
+    				url: obj.url != undefined ? obj.url : ('/plugin?action=a&name=' + obj.plugin_name + '&s=' + obj.method),
+    				data: obj.data || {},
+    				timeout: obj.timeout || 99999999,
+    				complete: function (res) {
+    					if (obj.load === 0 || obj.load === 1) layer.close(loadT);
+    				},
+    				success: function (rdata) {
+    					if (obj.check) {
+    						obj.success(rdata);
+    						return false
+    					}
+    					if (rdata.status === false) {
+    						if(!showMessage) {
+                                layer.msg(rdata.msg, { icon: 2 });
+    						} else {
+    						    obj.success(rdata);
+    						}
+    						return false;
+    					}
+    					obj.success(rdata);
+    				},
+    				error: function (ex) {
+    					if (!obj.error) {
+    						obj.msg || obj.msg == undefined ? layer.msg('The request process found an error!', {
+    							icon: 2
+    						}) : '';
+    						return;
+    					}
+    					return obj.error(ex);
+    				}
+    			});
+            }
+        }
+        Fail2ban.init();
+    </script>

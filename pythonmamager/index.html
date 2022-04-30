@@ -1,0 +1,1809 @@
+<style>
+    .plugin_body .box_conter {
+        display: none;
+    }
+
+    .plugin_body .box_conter.active {
+        display: block;
+    }
+
+    .tomcat_log {
+        margin: 0px;
+        width: 560px;
+        height: 470px;
+        background-color: #424251;
+        overflow: auto;
+        line-height: 22px;
+        color: #fff;
+        padding-left: 10px;
+        font-family: arial;
+        margin-top: 10px;
+        outline: none;
+    }
+
+    .bt-form .bt_tab_list {
+        border: 1px solid #ccc;
+        border-bottom: 0;
+        background-color: #ececec;
+    }
+
+    .bt-form .bt_tab_list .bt_tab_index.active {
+        background: #fff;
+    }
+
+    .bt_tab_index {
+        display: inline-block;
+        padding: 10px 25px;
+        border-right: 1px solid #ccc;
+        cursor: pointer;
+        /* font-size: 14px; */
+        color: #666;
+    }
+
+    .box_item {
+        height: 150px;
+        padding: 15px;
+    }
+
+    .box_item .status {
+        height: 30px;
+    }
+
+    .btn_item_block {
+        display: inline-block;
+        margin-right: 50px;
+    }
+
+    .box_item .btn {
+        margin-right: 15px;
+    }
+
+    .box_item .box_title {
+        height: 35px;
+        line-height: 35px;
+        font-size: 14px;
+        border-bottom: 1px solid #f0f0f1;
+        margin-bottom: 15px;
+    }
+
+    .CodeMirror {
+        height: 383px;
+    }
+
+    .box_table_conter {
+        height: 286px;
+        overflow-y: auto;
+        margin-bottom: 16px;
+    }
+
+    .tomcat_list .path,
+    .tomcat_path_list .path {
+        width: 150px;
+    }
+
+    .tomcat_list tr td span,
+    .tomcat_path_list tr td i {
+        display: block;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        font-style: normal;
+    }
+
+    .select_list {
+        width: 180px;
+        height: 35px;
+        line-height: 35px;
+        border: 1px solid #888;
+        border-radius: 2px;
+        display: inline-block;
+        cursor: pointer;
+        position: relative;
+        margin-left: 15px;
+
+        background: #fff url(data:image/jpeg;base64,/9j/4AAQSkZJRgABAQEASABIAAD/2wBDAAICAgICAgICAgIDAgICBAUEAgIEBQYFBQUFBQYHBgYGBgYGBwcICAkICAcKCgsLCgoODg4ODg4ODg4ODg4ODg7/2wBDAQMDAwYFBgsHBwsODAoMDhEQEBAQEREODg4ODg4ODg4ODg4ODg4ODg4ODg4ODg4ODg4ODg4ODg4ODg4ODg4ODg7/wAARCAAHABQDAREAAhEBAxEB/8QAFgAAAwAAAAAAAAAAAAAAAAAABQcJ/8QAJBAAAQMCBAcAAAAAAAAAAAAAAQMEBQIRAAYHQRITITJRYXH/xAAUAQEAAAAAAAAAAAAAAAAAAAAA/8QAFBEBAAAAAAAAAAAAAAAAAAAAAP/aAAwDAQACEQMRAD8Ar9nrS5SSnWj+E5bdOWVtJpmwCdVialaRvcAm3n70BywcKxy/GN4yPT4G7cd29R3qPs4AzgP/2Q==) no-repeat right center;
+    }
+
+    .select_list .select_item {
+        width: 100%;
+        display: block;
+        /* text-align: center; */
+        padding-left: 10px;
+    }
+
+    .select_list .select {
+        width: 180px;
+        position: absolute;
+        left: -1px;
+        top: 33px;
+        border: 1px solid #999;
+        background: #fff;
+        height: 250px;
+        overflow: auto;
+    }
+
+    .select_list .select li {
+        height: 35px;
+        line-height: 35px;
+        padding: 0 10px;
+    }
+
+    .select_list .select li.active {
+        background: #e6e6e6;
+        /* cursor: no-drop; */
+    }
+
+    .select_list .select li:hover {
+        background: #e6e6e6;
+    }
+
+    .install_version_box .btn-danger {
+        color: #fff;
+        background-color: #d9534f;
+        border-color: #d43f3a;
+    }
+
+    .install_version_box {
+        padding: 15px 25px;
+    }
+
+    .project_box {
+        margin-bottom: 5px;
+    }
+
+    .textarea_logs {
+        width: 860px;
+        height: 470px;
+        line-height: 22px;
+        margin: 0px;
+        margin-top: 10px;
+        padding-left: 10px;
+        background-color: #424251;
+        outline: none;
+        overflow: auto;
+        color: #fff;
+        font-family: arial;
+        font-size: 12px;
+    }
+
+    .project_logs,
+    .add_project_log {
+        margin-top: 0;
+    }
+
+    .python_logs {
+        height: 428px;
+    }
+
+    .table_self_conter {
+        display: inline-block;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        vertical-align: bottom;
+    }
+
+    /* .table>tbody>tr>td {
+        vertical-align: top;
+    } */
+
+    .changepath {
+        height: 500px;
+        border-bottom: 1px solid #dddddd;
+    }
+
+    .changepath .path-top {
+        height: 50px;
+        line-height: 50px;
+        padding-left: 10px;
+        border-bottom: #dddddd 1px solid;
+    }
+
+    .changepath .path-con-left {
+        width: 160px;
+        height: 450px;
+        float: left;
+        border-right: #dddddd 1px solid;
+        padding-top: 5px;
+    }
+
+    .changepath .path-con-left dl .open_disk:hover {
+        background: #ececec;
+        cursor: pointer;
+    }
+
+    .changepath .path-con-right {
+        float: left;
+        height: 450px;
+        width: 590px;
+        overflow: hidden;
+    }
+
+    .getfile-btn {
+        background: #f7f7f7 none repeat scroll 0 0;
+        padding: 8px 20px 10px;
+        text-align: right;
+        width: 100%;
+        border-top: 0px;
+    }
+
+    .changepath .path-top .btn span {
+        margin-right: 5px;
+    }
+
+    .changepath .path-con-left dl dt {
+        height: 40px;
+        line-height: 40px;
+        padding-left: 20px;
+        margin-left: 0;
+        background: none;
+    }
+
+    .changepath .path-con-left dl dt span {
+        margin-right: 10px;
+    }
+
+    .file-list .table-hover > tbody > tr {
+        height: 50px;
+        cursor: pointer;
+    }
+
+    .file-list .table > tbody > tr > td {
+        vertical-align: middle;
+    }
+
+    .file-list .dir_block {
+        display: inline-block;
+        vertical-align: top;
+        height: 25px;
+        line-height: 25px;
+    }
+
+    .table_dir .dir_block,
+    .table_files .dir_block {
+        height: 28px;
+        line-height: 28px;
+        display: inline-block;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+
+    .file-list .list-list span.glyphicon-option-horizontal {
+        height: 30px;
+        line-height: 35px;
+        font-size: 15px;
+    }
+
+    .file-list .list-list span.glyphicon-folder-open {
+        margin-right: 15px;
+        font-size: 23px;
+        margin-left: 4px;
+    }
+
+    .file-list {
+        display: block;
+        overflow: auto;
+        height: 417px !important;
+        position: relative;
+        top: -1px;
+    }
+
+    .label_checkbox {
+        position: relative;
+    }
+
+    .list-list tr:last-child {
+        border-bottom: 1px solid #ddd;
+    }
+
+    .divtable .table thead th {
+        border-bottom: 0px solid #e6e6e6;
+    }
+
+    .table_hide th {
+        padding: 0 !important;
+    }
+
+    .list-list .ico-default {
+        background-position: center center;
+        background-repeat: no-repeat;
+        /* display: inline-block; */
+        height: 30px;
+        margin-right: 10px;
+        width: 33px;
+        z-index: 1;
+        float: left;
+    }
+
+    #table_thead {
+        border-bottom: 1px solid #ddd !important;
+    }
+
+    .path-con-right .list-list td {
+        cursor: auto;
+    }
+
+    .drop-down {
+        /* display: none; */
+        /* position: absolute; */
+        width: 80px;
+        text-align: center;
+        /* padding: 5px 5px; */
+    }
+
+    .drop-down .glyphicon.glyphicon-trash {
+        font-size: 12px;
+        color: red;
+        margin-right: 0;
+    }
+
+    .drop-down .del_file {
+        color: red;
+        position: relative;
+    }
+
+    .module-list {
+        display: block;
+        overflow: auto;
+        height: 210px;
+        position: relative;
+        top: -1px;
+    }
+
+    .line .tname {
+        width: 120px
+    }
+
+    .cnblogs_code {
+        padding: 20px 5px;
+        border: 1px solid #e1e1e1;
+        background: #fcfcfc;
+        border-radius: 4px;
+        line-height: 24px;
+    }
+
+    .cnblogs_code span {
+        display: block;
+        margin-left: 15px;
+        margin-bottom: 0;
+    }
+
+    .cnblogs_code .code {
+        display: inline-block;
+        margin-left: 0px;
+        margin-bottom: 5px;
+        background: #efefef;
+        padding: 0 8px;
+        border: 2px;
+    }
+
+    .bt-w-main .bt-w-menu {
+        width: 130px;
+    }
+
+    .bt-w-main .bt-w-con {
+        margin-left: 130px;
+    }
+</style>
+<div class="bt-form">
+    <div class="bt-w-main">
+        <!--菜单部分-->
+        <div class="bt-w-menu">
+            <p class="bgw">Project manager</p>
+            <p>Version</p>
+            <!--            <p>Logs</p>-->
+        </div>
+        <!--内容部分-->
+        <div class="bt-w-con pd15">
+            <div class="plugin_body">
+                <!-- 项目管理 -->
+                <div class="box_conter active divtable">
+                    <button class="btn btn-success btn-sm va0 mb15 add_python">Add Project</button>
+                    <div id="tomcat_fix" class="box_table_conter">
+                        <table class="table table-hover">
+                            <thead>
+                            <tr>
+                                <th>Name</th>
+                                <th>Path</th>
+                                <th>Port</th>
+                                <th>Mode</th>
+                                <th>Ver</th>
+                                <th>CPU</th>
+                                <th>Mem</th>
+                                <th>Status</th>
+                                <th>Auto start</th>
+                                <th style="text-align: right;">Operating</th>
+                            </tr>
+                            </thead>
+                            <tbody class="python_list"></tbody>
+                        </table>
+                    </div>
+                    <div class="cnblogs_code">
+                        <span>Enter the virtual env method:</span>
+                        <span>Input at the command line  <span class="code">Source project_path/project_name_venv/bin/activate</span></span>
+                        <span>E.g：<span class="code">source /data/python/project1_venv/bin/activate</span></span>
+                    </div>
+                </div>
+                <div class="box_conter install_version_box">
+                    <span>Python Version:</span>
+                    <div class="select_list"><span class="select_item">Getting ...</span>
+                        <ul class="select" style="display:none"></ul>
+                    </div>
+                    <button class="btn btn-success btn-sm va0 mlr15 install_python" style="display: none;">Install
+                    </button>
+                    <button class="btn btn-danger btn-sm va0 mlr15 uninstall_python" style="display: inline-block;">
+                        Uninstall
+                    </button>
+                    <ul class="help-info-text c7">
+                        <li style="color:red">Installing the python version may take a long time, please be patient</li>
+                    </ul>
+                </div>
+                <!--                <div class="box_conter python_project_logs">-->
+                <!--                    <div class="project_box">-->
+                <!--                        <span style="margin-right: 10px;">Project:</span>-->
+                <!--                        <select class="bt-input-text mr5 project_select" name="project_select" style="width:180px"><option value="0">tomcat7</option></select>-->
+                <!--                    </div>-->
+                <!--                    <textarea class="project_logs"></textarea>-->
+                <!--                </div>-->
+            </div>
+        </div>
+    </div>
+</div>
+<!--JS脚本部分，不要将JS脚本写在其它地方-->
+
+<script>
+    /**
+     * 插件交互对象
+     * 您的所有JS代码可以写在里面
+     * 若不习惯JS的面向对象编程，可删除此对象，使用传统函数化的方式编写
+     * */
+    var python = {
+        plugin_name: 'pythonmamager',
+        add_python_view: 0,
+        version_list: [],
+        project_list: [],
+        project_info: {
+            pjname: '',
+            path: '',
+            rfile: '',
+            framework: '',
+            version: '',
+            port: '',
+            rtype: '',
+            install_module: false
+        },
+        add_project_logs_view: null,
+        add_project_logs_timer: null,
+        python_logs_timer: null,
+        // 初始化
+        init: function () {
+            var _this = this;
+            $(".layui-layer-page").width(1100);
+            $(".bt-w-menu p").click(function () {
+                var index = $(this).index();
+                $(this).addClass('bgw').siblings().removeClass('bgw').parent().next().find('.box_conter').eq(index).addClass('active').siblings().removeClass('active')
+                switch (index) {
+                    // 项目管理
+                    case 0:
+                        _this.create_project_table();
+                        break;
+                    // 版本管理
+                    case 1:
+                        _this.create_python_version();
+                        break;
+                    // case 2:
+                    //     _this.create_python_logs();
+                    //     break;
+                }
+            });
+            $('.select_list').on('click', '.select li', function () {
+                $(this).addClass('active').siblings().removeClass('active');
+                $('.select_list .select_item').html($(this).html());
+                $('.select_list .select').hide();
+                if ($(this).html().indexOf('Not Installed') == -1) {
+                    $('.uninstall_python').show().prev().hide();
+                } else {
+                    $('.install_python').show().next().hide();
+                }
+            });
+            $('.select_list .select_item').click(function (e) {
+                e.stopPropagation();
+                if ($('.select_list .select').attr('style').indexOf('block') > -1) {
+                    $('.select_list .select').hide();
+                } else {
+                    $('.select_list .select').show();
+                }
+                $(document).click(function (e) {
+                    e.stopPropagation();
+                    $('.select_list .select').hide();
+                });
+            });
+            $('.install_version_box').on('click', '.install_python', function () {
+                var active_val = $('.select .active').attr('data-version');
+                layer.closeAll('dialog');
+                _this.show_add_project_log();
+                _this.install_python_version({load: 2}, {version: active_val}, function (res) {
+                    // _this.show_python_logs();
+                    _this.clear_add_project_log();
+                    if (res.status) {
+                        _this.create_python_version(function () {
+                            layer.msg(res.msg, {icon: 1});
+                        });
+                    } else {
+                        layer.msg(res.msg, {icon: 2});
+                    }
+                }, function () {
+                    _this.clear_add_project_log();
+                });
+            });
+            // 卸载python
+            $('.install_version_box').on('click', '.uninstall_python', function () {
+                var active_val = $('.select .active').attr('data-version');
+                layer.closeAll('dialog');
+                layer.confirm('Make sure to uninstall the [' + active_val + '] program?', {
+                    title: 'Uninstall Python',
+                    icon: 0,
+                    closeBtn: 2,
+                    shift: 5
+                }, function () {
+                    _this.show_python_logs();
+                    _this.remove_python_version({version: active_val}, function (res) {
+                        if (res.status) {
+                            _this.clear_python_logs();
+                            _this.create_python_version(function () {
+                                layer.msg(res.msg, {icon: 1});
+                            });
+                        } else {
+                            layer.msg(res.msg, {icon: 2});
+                        }
+                    });
+                });
+            });
+            // 添加python项目
+            $('.add_python').click(function () {
+                _this.get_install_python_version(function (res) {
+                    var _option = '', _option1 = '', _option2 = '', user_option = '',
+                        arry = ['gunicorn', 'uwsgi', 'python', 'customize'],
+                        arry1 = ['python', 'flask', 'django', 'sanic'], user_arr = ['root', 'www'];
+                    for (var i = 0; i < res.length; i++) {
+                        _option += '<option value="' + res[i] + '">' + res[i] + '</option>'
+                    }
+                    for (var j = 0; j < arry.length; j++) {
+                        _option1 += '<option value="' + (arry[j] == 'customize' ? 'customize' : arry[j]) + '">' + arry[j] + '</option>'
+                    }
+                    for (var z = 0; z < arry1.length; z++) {
+                        _option2 += '<option value="' + arry1[z] + '">' + arry1[z] + '</option>'
+                    }
+                    for (var k = 0; k < user_arr.length; k++) {
+                        user_option += '<option value="' + user_arr[k] + '" ' + (user_arr[k] == 'www' ? 'selected="selected"' : '') + '>' + user_arr[k] + '</option>';
+                    }
+                    python.add_python_view = layer.open({
+                        type: 1,
+                        closeBtn: 2,
+                        title: 'Add a project',
+                        area: '600px', //宽高
+                        btn: ['confirm', 'cancel'],
+                        content: '<div class="bt_conter bt-form pd15" style="height:auto;width:100%;padding-left:70px">\
+                            <div class="line"><span class="tname">Name</span>\
+                                <div class="info-r c4"><input class="bt-input-text" type="text" name="pjname" placeholder="Please enter a project name" autocomplete="off" value="" style="width:270px"></div>\
+                            </div>\
+                            <div class="line"><span class="tname">Path</span>\
+                                <div class="info-r c4"><input class="bt-input-text" id="server_path" type="text" name="path" placeholder="Please select the project path" value="" style="width:270px">\
+                                <span data-id="path" class="glyphicon cursor ml5 glyphicon-folder-open open_select_item" onclick="python.change_path(\'#server_path\',\'dir\')"></span></div>\
+                            </div>\
+                            <div class="line"><span class="tname">Version</span>\
+                                <div class="info-r c4"><select class="bt-input-text mr5 project_version" name="version" style="width:270px">' + _option + '</select></div>\
+                            </div>\
+                            <div class="line"><span class="tname">Framework</span>\
+                                <div class="info-r c4"><select class="bt-input-text mr5 project_framework" name="framework" style="width:270px">' + _option2 + '</select></div>\
+                            </div>\
+                            <div class="line"><span class="tname">Startup mode</span>\
+                                <div class="info-r c4"><select class="bt-input-text mr5 project_version" name="rtype" style="width:270px">' + _option1 + '</select></div>\
+                            </div>\
+                            <div class="line custom_path"><span class="tname">Startup file/dir</span>\
+                                <div class="info-r c4"><input class="bt-input-text" id="server_file" type="text" name="rfile" placeholder="Please select the project startup file" value="" style="width:270px">\
+                                <span data-id="path" class="glyphicon cursor ml5 glyphicon-folder-open open_select_item" onclick="python.change_path(\'#server_file\',\'other\')"></span></div>\
+                            </div>\
+                            <div class="line custom_start" style="display:none"><span class="tname">Custom startup mode</span>\
+                                <div class="info-r c4"><input class="bt-input-text" type="text" name="rfile" placeholder="Please enter a custom startup method" autocomplete="off" value="" style="width:270px"></div>\
+                            </div>\
+                            <div class="line"><span class="tname">Port</span>\
+                                <div class="info-r c4"><input class="bt-input-text" type="text" name="port" placeholder="Enter the project port, no port is left blank" autocomplete="off" value="" style="width:270px"></div>\
+                            </div>\
+                            <div class="line">\
+                                <span class="tname">Run user</span>\
+                                <div class="info-r c4">\
+                                    <select class="bt-input-text mr5 project_version" name="user" style="width:270px">' + user_option + '</select>\
+                                </div>\
+                            </div>\
+                            <div class="line"><span class="tname">Command</span>\
+                                <div class="bt-box" style="margin-left: 125px;">\
+                                <textarea class="bt-input-text" name="command" rows="3" placeholder="Enter the project port, no port is left blank" style="height: 60px; width: 270px;"></textarea>\
+                                </div>\
+                            </div>\
+                            <div class="line"><span class="tname" style="width: 130px">Install module now</span>\
+                                <div class="info-r c4"><input type="checkbox" name="install_module" style="margin-top:8px;height:19px;width:19px;"/></div>\
+                            </div>\
+                            <div class="line"><span class="tname" style="width: 130px">Start with the sys</span>\
+                                <div class="info-r c4"><input type="checkbox" name="auto_start" style="margin-top:8px;height:19px;width:19px;"/></div>\
+                            </div>\
+                            <ul class="help-info-text c7" style="padding-left: 29px;margin-top:5px;">\
+                                <li>Version:To add another version of Python, please <a href="javascript:python.return_version_view();" class="btlink">Installed </a>in python manager</li>\
+                                <li>Gunicorn Is a widely used Python WSGI UNIX HTTP server</li>\
+                                <li>uWsgi Is a high performance WEB server</li>\
+                                <li>python Run the project directly using python</li>\
+                                <li>The project log needs to be located in the project /project_dir/logs/error.log otherwise the log cannot be obtained</li>\
+                                <li>Customized project path needs to fill in the full path</li>\
+                            </ul>\
+                        </div>',
+                        success: function () {
+                            // 判断获取目录
+                            $('[name="rtype"]').change(function (e) {
+                                var val = $(this).val();
+                                if (val == 'customize') {
+                                    $('.custom_start').show().find('input').val('');
+                                    $('.custom_path').hide().find('input').val('');
+                                    $('.help-customize').show();
+                                } else {
+                                    $('.custom_path').show().find('input').val('');
+                                    $('.custom_start').hide().find('input').val('');
+                                    $('.help-customize').hide();
+                                }
+                                if (val == 'python') {
+                                    $('.operation_param_line').show();
+                                } else {
+                                    $('.operation_param_line').hide();
+                                }
+                                _this.get_django_wsgi_path();
+                                _this.get_manager_path();
+                            });
+                            $('[name="framework"]').change(function (e) {
+                                _this.get_django_wsgi_path();
+                                _this.get_manager_path();
+                            });
+                            $('[name="path"]').blur(function (e) {
+                                _this.get_django_wsgi_path();
+                                _this.get_manager_path();
+                            });
+                        },
+                        yes: function (index, layero) {
+                            _this.project_info = {
+                                pjname: $('[name="pjname"]').val(), //项目名称
+                                path: $('[name="path"]').val(), //项目路径
+                                version: $('[name="version"]').val(), //版本号
+                                framework: $('[name="framework"]').val(),
+                                rfile: $('[name="rtype"]').val() == 'customize' ? $('[name="rfile"]')[1].value : $('[name="rfile"]')[0].value,
+                                rtype: $('[name="rtype"]').val(),
+                                port: $('[name="port"]').val(),
+                                // command: $('[name="command"]').val(),
+                                install_module: $('[name="install_module"]').prop('checked') ? 1 : 0,
+                                auto_start: $('[name="auto_start"]').prop('checked') ? 1 : 0,
+                                user: $('[name="user"]').val()
+                            };
+
+                            if (!($('[name="parm"]').parents('.line').is(":hidden"))) {
+                                _this.project_info.parm = $('[name="parm"]').val();
+                            }
+
+                            for (var i in _this.project_info) {
+                                if (_this.project_info[i] === '' && i != 'port' && i != 'parm') {
+                                    if (i == 'pjname') {
+                                        layer.msg('Project name cannot be empty');
+                                    } else if (i == 'path') {
+                                        layer.msg('Project address cannot be empty');
+                                    }
+                                    return false;
+                                }
+                            }
+                            _this.show_add_project_log();
+                            _this.add_project({load: 2}, _this.project_info, function (res) {
+                                _this.clear_add_project_log();
+                                if (res.status) {
+                                    layer.close(index);
+                                    _this.create_project_table(function () {
+                                        layer.msg(res.msg, {icon: 1});
+                                    });
+                                } else {
+                                    layer.msg(res.msg, {icon: 2});
+                                }
+                            }, function () {
+                                _this.clear_add_project_log();
+                            });
+                        }
+                    });
+                });
+            });
+            $('.project_select').change(function () {
+                var project_val = $(this).val();
+                _this.get_project_logs({load: 0}, {pjname: project_val}, function (res) {
+                    $('.project_logs').val(res);
+                    var scrollDom = document.getElementsByClassName('project_logs')[0]
+                    scrollDom.scrollTop = scrollDom.scrollHeight;
+                });
+            });
+            this.create_project_table();
+        },
+        /**
+         * 显示添加项目日志
+         */
+        show_add_project_log: function () {
+            var _this = this;
+            var content = '<textarea class="add_project_log textarea_logs">Empty</textarea>';
+            this.add_project_logs_view = layer.open({
+                type: 1,
+                area: "860px",
+                title: 'Logs',
+                closeBtn: 2,
+                shift: 5,
+                shadeClose: false,
+                content: content,
+                cancel: function () {
+                    layer.msg('Please do not close this window or refresh the page while installing!', {icon: 0});
+                    return false;
+                }
+            });
+            $('.add_project_log').parent().css('font-size', '0');
+            this.get_add_project_log();
+            _this.add_project_logs_timer = setInterval(function () {
+                _this.get_add_project_log();
+            }, 1000);
+        },
+        /**
+         * 获取添加项目日志
+         */
+        get_add_project_log: function () {
+            this.get_logs(function (res) {
+                $('.add_project_log').val(res ? res : 'Empty');
+                var ele = document.getElementsByClassName('add_project_log')[0];
+                if (ele) ele.scrollTop = ele.scrollHeight;
+            });
+        },
+        /**
+         * 清除添加项目日志
+         */
+        clear_add_project_log: function () {
+            if (this.add_project_logs_timer) clearInterval(this.add_project_logs_timer);
+            if (this.add_project_logs_view) layer.close(this.add_project_logs_view);
+        },
+        /**
+         * 获取get_django_wsgi_path
+         */
+        get_django_wsgi_path: function () {
+            this.get_public_path('get_django_wsgi_path', ['uwsgi', 'gunicorn'], ['django']);
+        },
+        /**
+         * 获取get_manager_path
+         */
+        get_manager_path: function () {
+            this.get_public_path('get_manager_path', ['python'], ['django']);
+        },
+        /**
+         * 获取通用路径
+         * @param {String} url 接口名称
+         * @param {Array} rtypes 判断启动方式的值
+         * @param {Array} frameworks 判断框架的值
+         */
+        get_public_path: function (url, rtypes, frameworks) {
+            var path_val = $('[name="path"]').val();
+            var rtype_val = $('[name="rtype"]').val();
+            var framework_val = $('[name="framework"]').val();
+            var path_judge = path_val != '';
+            var rtype_judge = false;
+            var framework_judge = false;
+            rtypes = rtypes || [];
+            frameworks = frameworks || [];
+            for (var i = 0; i < rtypes.length; i++) {
+                if (rtypes[i] == rtype_val) {
+                    rtype_judge = true;
+                    break;
+                }
+            }
+            for (var i = 0; i < frameworks.length; i++) {
+                if (frameworks[i] == framework_val) {
+                    framework_judge = true;
+                    break;
+                }
+            }
+            if (path_judge && rtype_judge && framework_judge) {
+                this.get_path(url, {path: path_val}, function (res) {
+                    $('[name="rfile"]').val(res ? res : '');
+                });
+            } else {
+                $('[name="rfile"]').val('');
+            }
+        },
+        // 返回版本管理视图
+        return_version_view: function () {
+            layer.close(python.add_python_view);
+            $(".bt-w-menu p").eq(1).click();
+        },
+        // 创建python版本界面
+        create_python_version: function (callback) {
+            var _this = this;
+            _this.get_python_version(function (res) {
+                var _html_one = '', _html_two = '', _install = '', _value = '';
+                _this.version_list = res;
+                for (var i = 0; i < _this.version_list.length; i++) {
+                    if (_this.version_list[i][1] == 1) {
+                        _html_one += '<li data-version="' + _this.version_list[i][0] + '" data-install="1">' + _this.version_list[i][0] + '<i style="font-style: normal;color: #20a53a;">&nbsp;&nbsp;[ Installed ]&nbsp;&nbsp;</i></li>'
+                    } else {
+                        _html_two += '<li data-version="' + _this.version_list[i][0] + '" data-install="0">' + _this.version_list[i][0] + '<i style="font-style: normal;">&nbsp;&nbsp;[ Not Installed ]&nbsp;</i></li>'
+                    }
+                }
+                $('.select_list .select').html(_html_one + _html_two);
+                _value = $('.select_list .select li').eq(0).attr('data-version');
+                _install = $('.select_list .select li').eq(0).attr('data-install');
+                $('.select_item').html(_value + '<i style="font-style: normal;' + (_install == 1 ? 'color: #20a53a;' : '') + '">&nbsp;&nbsp;[ ' + (_install == 1 ? 'Installed' : 'Not Installed') + ' ]&nbsp;&nbsp;</i>');
+                $('.select_list .select li').eq(0).addClass('active');
+                if (_install == 1) {
+                    $('.uninstall_python').show();
+                    $('.install_python').hide();
+                } else {
+                    $('.uninstall_python').hide();
+                    $('.install_python').show();
+                }
+                if (callback) callback();
+            });
+        },
+        /**
+         * 显示python日志
+         */
+        show_python_logs: function (callback) {
+            var _this = this;
+            _this.get_python_logs();
+            _this.python_logs_timer = setInterval(function () {
+                _this.get_python_logs();
+            }, 1500);
+        },
+        /**
+         * 获取python日志
+         */
+        get_python_logs: function () {
+            this.get_logs(function (res) {
+                var python_logs_ele = $('.python_logs');
+                python_logs_ele.val(res ? res : 'Empty');
+                var ele = document.getElementsByClassName('python_logs')[0];
+                if (ele) ele.scrollTop = ele.scrollHeight;
+            });
+        },
+        /**
+         * 清除时间戳
+         */
+        clear_python_logs: function () {
+            if (this.python_logs_timer) clearInterval(this.python_logs_timer);
+        },
+        // 单位转换
+        to_size: function (a) {
+            var d = [" MB", " GB", " TB", " PB"];
+            var e = 1024;
+            for (var b = 0; b < d.length; b++) {
+                if (a < e) {
+                    return (b == 0 ? a : a.toFixed(2)) + d[b]
+                }
+                a /= e
+            }
+        },
+        // 创建列表
+        create_project_table: function (callback) {
+            var _this = this;
+            this.get_project_list(function (rdata) {
+                var _html = '';
+                for (var i = rdata.length - 1; i >= 0; i--) {
+                    _html += '<tr>\
+                        <td><span class="table_self_conter" style="width: 50px" title="' + rdata[i].pjname + '">' + rdata[i].pjname + '</span></td>\
+                        <td><a href="javascript:openPath(\'' + rdata[i].path + '\');" class="btlink"><span class="path table_self_conter" style="width: 120px" title="' + rdata[i].path + '">' + rdata[i].path + '</span></a></td>\
+                        <td><span class="table_self_conter" style="width:auto">' + rdata[i].port + '</span></td>\
+                        <td><span class="table_self_conter" style="width:auto">' + rdata[i].rtype + '</span></td>\
+                        <td><span class="table_self_conter" style="width:auto">' + rdata[i].version + '</span></td>\
+                        <td><span class="table_self_conter" style="width:auto">' + rdata[i].cpu + '%</span></td>\
+                        <td><span class="table_self_conter" style="width:auto">' + _this.to_size(rdata[i].mem) + '</span></td>\
+                        <td><a href="javascript:;" class="btlink python_status_click" data-index="' + i + '">' + (rdata[i].status == '0' ? '<span style="color:red;"></span><span style="color:red" class="glyphicon glyphicon-pause"></span>' : '<span style="color:#5CB85C"></span><span style="color:#5CB85C" class="glyphicon glyphicon-play"></span>') + '</a></td>\
+                        <td><a href="javascript:;" class="btlink python_auto_status_click" data-index="' + i + '">' + (rdata[i].auto_start == '0' ? '<span style="color:red;">Close</span>' : '<span style="color:#5CB85C">Open</span>') + '</a></td>\
+                        <td style="width:290px;text-align:right;"><a href="javascript:;" class="btlink project_logs_btn" data-index="' + i + '" title="Log">Log</a>&nbsp;|&nbsp;' + (rdata[i].proxy != '' ? '<a href="javascript:;" class="btlink python_proxy_click" data-index="' + i + '" title="Unmap">Unmap</a>&nbsp;|&nbsp;' : '<a href="javascript:;" class="btlink python_proxy_click" data-index="' + i + '" title="Mapping project">Mapping</a>&nbsp;|&nbsp;') + '<a href="javascript:;" class="btlink python_restart_click" data-index="' + i + '" title="Restart Project">Restart</a>&nbsp;|&nbsp;<a href="javascript:;" class="btlink python_conf_click" data-index="' + i + '" title="Config file">Config</a>&nbsp;|&nbsp;<a href="javascript:;" class="btlink python_module_click" data-index="' + i + '" title="Module management">Module</a>&nbsp;|&nbsp;<a href="javascript:;" class="btlink python_del_click" data-index="' + i + '" title="Del Project">Del</a></td>\
+                    </tr>'
+                }
+                if (rdata.length == 0) {
+                    _html += '<tr ><td colspan="8">There is currently no data</td></tr>'
+                }
+                $('.python_list').html(_html);
+                setTimeout(function () {
+                    // 状态切换事件
+                    $('.python_status_click').click(function () {
+                        var index = $(this).attr('data-index'), res = _this.project_list[index];
+                        var confirm = layer.confirm('Are you sure to ' + (res.status == 0 ? 'Open' : 'Close') + ' Project&nbsp;[' + res.pjname + ']&nbsp;？', {
+                            title: 'Tips',
+                            btn: ['Confirm', 'Cancel'],
+                            icon: 0,
+                            closeBtn: 2
+                        }, function () {
+                            _this.set_project_status(res.status == 0 ? 'start' : 'stop', {pjname: res.pjname}, function (res) {
+                                if (res.status) {
+                                    _this.create_project_table(function () {
+                                        layer.msg(res.msg, {icon: 1});
+                                    });
+                                } else {
+                                    layer.msg(res.msg, {icon: 2});
+                                }
+                            });
+                        });
+                    });
+
+
+                    // 开机启动事件
+                    $('.python_auto_status_click').click(function () {
+                        var index = $(this).attr('data-index'), res = _this.project_list[index];
+                        var confirm = layer.confirm('Are you sure to' + (res.auto_start == '0' ? 'Open' : 'Close') + 'Start with the sys &nbsp;[' + res.pjname + ']&nbsp;？', {
+                            title: 'Tips',
+                            btn: ['Confirm', 'Cancel'],
+                            icon: 0,
+                            closeBtn: 2
+                        }, function () {
+                            _this.edit_auto_start({
+                                pjname: res.pjname,
+                                auto_start: res.auto_start == '0' ? 1 : 0
+                            }, function (res) {
+                                if (res.status) {
+                                    _this.create_project_table(function () {
+                                        layer.msg(res.msg, {icon: 1})
+                                    });
+                                } else {
+                                    layer.msg(res.msg, {icon: 2});
+                                }
+                            });
+                        });
+                    });
+
+                    // 重启事件
+                    $('.python_restart_click').click(function () {
+                        var index = $(this).attr('data-index');
+                        var res = _this.project_list[index];
+                        var confirm = layer.confirm('Are you sure you want to restart the Python project&nbsp;[' + res.pjname + ']&nbsp;?', {
+                            title: 'Tips',
+                            btn: ['Confirm', 'Cancel'],
+                            icon: 0,
+                            closeBtn: 2
+                        }, function () {
+                            if (res.status == 0) {
+                                _this.set_project_status('start', {pjname: res.pjname}, function (res) {
+                                    if (res.status) {
+                                        _this.create_project_table(function () {
+                                            layer.msg(res.msg, {icon: 1});
+                                        });
+                                    } else {
+                                        layer.msg(res.msg, {icon: 2});
+                                    }
+                                });
+                            } else {
+                                _this.set_project_status('stop', {pjname: res.pjname}, function () {
+                                    if (res.status) {
+                                        setTimeout(function () {
+                                            _this.set_project_status('start', {pjname: res.pjname}, function (res) {
+                                                _this.create_project_table(function () {
+                                                    layer.msg(res.msg, {icon: 1});
+                                                });
+                                            });
+                                        }, 500);
+                                    } else {
+                                        layer.msg(res.msg, {icon: 2});
+                                    }
+                                });
+                            }
+                        });
+                    });
+                    // 模块事件
+                    $('.python_module_click').click(function () {
+                        var index = $(this).attr('data-index');
+                        _this.create_packages_view(index, 'table');
+                    });
+                    // 映射事件
+                    $('.python_proxy_click').click(function () {
+                        var i = $(this).attr('data-index');
+                        var res = _this.project_list[i];
+                        if (res.proxy != '') {
+                            layer.confirm('Are you sure you want to cancel the project mapping domain name&nbsp;[' + res.proxy + ']&nbsp;?', {
+                                title: 'Tips',
+                                btn: ['Confirm', 'Cancel'],
+                                icon: 0,
+                                closeBtn: 2
+                            }, function () {
+                                _this.remove_project_proxy({pjname: res.pjname}, function (res) {
+                                    if (res.status) {
+                                        _this.create_project_table(function () {
+                                            layer.msg(res.msg, {icon: 1});
+                                        });
+                                    } else {
+                                        layer.msg(res.msg, {icon: 2});
+                                    }
+                                });
+                            });
+                        } else {
+                            layer.open({
+                                type: 1,
+                                closeBtn: 2,
+                                title: 'Mapping project&nbsp;[' + res.pjname + ']&nbsp;',
+                                area: ['380px', '180px'],
+                                shadeClose: false,
+                                btn: ['Confirm', 'Cancel'],
+                                content: '<div class="bt-form bt-form pd20">' +
+                                    '<div class="line">' +
+                                    '<span class="tname">Domain name</span>' +
+                                    '<div class="info-r"><input name="ip" class="bt-input-text mr5" placeholder="Enter a mapping domain name" type="text" value="" style="width:200px;"></div>' +
+                                    '</div>' +
+                                    '</div>',
+                                yes: function (index, layero) {
+                                    var domain = $('[name=ip]').val()
+                                    _this.set_proxy_project({pjname: res.pjname, domain: domain}, function (res) {
+                                        if (res.status) {
+                                            layer.close(index);
+                                            _this.create_project_table(function () {
+                                                layer.msg(res.msg, {icon: 1});
+                                            });
+                                        } else {
+                                            layer.msg(res.msg, {icon: 2});
+                                        }
+                                    });
+                                }
+                            });
+                        }
+                    });
+                    // 配置事件
+                    $('.python_conf_click').click(function () {
+                        var i = $(this).attr('data-index');
+                        var rdata = _this.project_list[i], code_mirror = '', encoding = '';
+                        _this.get_python_config(rdata.pjname, function (ress) {
+                            if (!ress.status) {
+                                layer.msg(ress.msg, {icon: 2});
+                                return false;
+                            }
+                            var u = ["utf-8", "GBK", "GB2312", "BIG5"], n = '';
+                            for (var p = 0; p < u.length; p++) {
+                                m = ress.uencoding == p[u] ? "selected" : "";
+                                n += '<option value="' + u[p] + '" ' + m + ">" + u[p] + "</option>"
+                            }
+                            layer.open({
+                                type: 1,
+                                closeBtn: 2,
+                                title: 'Edit&nbsp;[' + rdata.pjname + ']&nbsp;Project configuration',
+                                area: ['650px', '550px'],
+                                shadeClose: false,
+                                btn: ['Confirm', 'Cancel'],
+                                content: '<form class="bt-form pd20 pb70">\
+                                            <div class="line">\
+                                                <p style="color:red;margin-bottom:10px;padding-right: 74px;">Tips: Ctrl+F to search for keywords, Ctrl+G to find the next one, Ctrl+S to save, Ctrl+Shift+R to find replacements!\
+                                                    <select class="bt-input-text" name="encoding" style="width: 74px;position: absolute;top: 22px;right: 19px;height: 22px;z-index: 9999;border-radius: 0;">' + n + '</select>\
+                                                </p>\
+                                                <textarea class="mCustomScrollbar bt-input-text" id="edit_python_text" style="width: 100%; margin: 0px auto; line-height: 1.8; position: relative; top: 10px; height: 845px; display: none;" value="">' + ress.data + '</textarea>\
+                                            </div>\
+                                        </form>',
+                                success: function (layero, index) {
+                                    encoding = $('[name="encoding"]').val();
+                                    code_mirror = CodeMirror.fromTextArea(document.getElementById("edit_python_text"), {
+                                        extraKeys: {
+                                            "Ctrl-F": "findPersistent",
+                                            "Ctrl-H": "replaceAll",
+                                            "Ctrl-S": function () {
+                                                _this.save_conf_file({
+                                                    pjname: rdata.pjname,
+                                                    data: code_mirror.getValue(),
+                                                    encoding: encoding
+                                                }, function (res) {
+                                                    layer.msg(res.msg, {icon: res.status ? 1 : 2});
+                                                });
+                                            }
+                                        },
+                                        mode: "text/x-nginx-conf",
+                                        lineNumbers: true,
+                                        matchBrackets: true,
+                                        matchtags: true,
+                                        autoMatchParens: true
+                                    });
+                                },
+                                yes: function (index, layero) {
+                                    _this.save_conf_file({
+                                        pjname: rdata.pjname,
+                                        data: code_mirror.getValue(),
+                                        encoding: encoding
+                                    }, function (res) {
+                                        layer.msg(res.msg, {icon: res.status ? 1 : 2});
+                                    });
+                                }
+                            });
+                        });
+                    });
+                    // 删除事件
+                    $('.python_del_click').click(function () {
+                        var i = $(this).attr('data-index');
+                        var res = _this.project_list[i];
+                        var confirm = layer.confirm('Are you sure you want to delete the Python project&nbsp;[' + res.pjname + ']&nbsp;?', {
+                            title: 'Tips',
+                            btn: ['Confirm', 'Cancel'],
+                            icon: 0,
+                            closeBtn: 2
+                        }, function () {
+                            _this.del_project({pjname: res.pjname}, function (res) {
+                                if (res.status) {
+                                    _this.create_project_table(function () {
+                                        layer.msg(res.msg, {icon: 1});
+                                    });
+                                } else {
+                                    layer.msg(res.msg, {icon: 2});
+                                }
+                            });
+                        });
+                    });
+                    // 查看日志
+                    $('.project_logs_btn').click(function () {
+                        var index = $(this).attr('data-index');
+                        var pjname = _this.project_list[index].pjname;
+                        _this.get_project_logs({load: 0}, {pjname: pjname}, function (res) {
+                            var content = '<textarea class="project_logs textarea_logs">' + (res ? res : 'Empty') + '</textarea>';
+                            layer.open({
+                                type: 1,
+                                area: "860px",
+                                title: 'View[' + pjname + '] logs',
+                                closeBtn: 2,
+                                shift: 5,
+                                shadeClose: false,
+                                content: content
+                            });
+                            var scrollDom = document.getElementsByClassName('project_logs')[0];
+                            scrollDom.scrollTop = scrollDom.scrollHeight;
+                            $('.project_logs').parent().css('font-size', '0');
+                        });
+                    });
+                    if (callback) callback();
+                }, 500);
+            });
+        },
+        // 创建python日志
+        create_python_logs: function () {
+            var _html = '';
+            for (var i = this.project_list.length - 1; i >= 0; i--) {
+                _html += '<option value="' + this.project_list[i].pjname + '">' + this.project_list[i].pjname + '</option>';
+            }
+            $('.project_select').html(_html);
+            this.get_project_logs({load: 2}, {pjname: $('.project_select').val()}, function (res) {
+                $('.project_logs').val(res);
+                var scrollDom = document.getElementsByClassName('project_logs')[0]
+                scrollDom.scrollTop = scrollDom.scrollHeight;
+            })
+        },
+        // 项目日志
+        get_project_logs: function (config, data, callback) {
+            this.send({
+                method: 'GetProjectLog',
+                load: config.load,
+                tips: config.load != 2 ? 'Getting project log, please wait...' : '',
+                data: data,
+                success: function (res) {
+                    if (callback) callback(res);
+                }
+            });
+        },
+        // 获取项目列表
+        get_project_list: function (callback) {
+            var _this = this;
+            this.send({
+                method: 'GetPorjectList',
+                tips: 'Getting a list of projects, please wait...',
+                success: function (res) {
+                    if (res.status === false) {
+                        layer.msg(res.msg, {icon: 2});
+                        return false;
+                    }
+                    _this.project_list = res;
+                    if (callback) callback(res);
+                }
+            });
+        },
+        // 获取项目列表
+        remove_project_proxy: function (data, callback) {
+            var _this = this;
+            this.send({
+                method: 'RemoveProxy',
+                data: {pjname: data.pjname},
+                tips: 'Undoing project mapping, please wait...',
+                success: function (res) {
+                    _this.project_list = res;
+                    if (callback) callback(res);
+                }
+            });
+        },
+        // 获取本地python版本列表
+        get_install_python_version: function (callback) {
+            this.send({
+                method: 'GetPythonV',
+                tips: 'Getting python version, please wait...',
+                success: function (res) {
+                    if (callback) callback(res);
+                }
+            })
+        },
+        // 创建模块视图
+        create_packages_view: function (index, type, callback) {
+            var res = this.project_list[index], _this = this;
+            _this.get_packages_list({pjname: res.pjname}, function (ress) {
+                var package_list = '';
+                for (var i in ress) {
+                    package_list += '<tr><td>' + i + '</td><td>' + ress[i] + '</td><td style="text-align: right;"><a href="javascript:;" class="btlink uninstall_module" data-name="' + i + '">Uninstall</a></td></tr>';
+                }
+                if (callback) callback(package_list);
+                if (type == 'table') {
+                    layer.open({
+                        type: 1,
+                        closeBtn: 2,
+                        title: 'Module management&nbsp;[' + res.pjname + ']&nbsp;',
+                        area: '380px',
+                        shadeClose: false,
+                        content: '<div class="bt-form bt-form pd20">\
+                            <div class="line" style="height: 30px;padding: 0;">\
+                                <input type="text" class="bt-input-text" placeholder="Name" name="module_name" style="width: 186px;"/>\
+                                <input type="text" class="bt-input-text" placeholder="Version" name="module_version" style="margin-left:10px;margin-right:10px;width:80px;"/>\
+                                <button class="btn btn-success btn-sm va0 mb15 install_module">Add</button>\
+                            </div>\
+                            <div class="line" style="height: 35px;line-height: 35px;padding: 0;color: red;">*&nbsp;If the module version is left blank, install the latest version.&nbsp;*</div>\
+                            <div class="divtable_list">\
+                                <div class="divtable" style="border: 1px solid #dddddd;border-bottom: 0;">\
+                                    <table class="table table-hover" id="table_thead" style="border:0 none">\
+                                        <thead><tr><th width="45%">Name</th><th width="35%">Version</th><th width="20%" style="text-align: right;">Operating</th></tr></thead>\
+                                    </table>\
+                                </div>\
+                                <div class="module-list divtable" style="display: block;">\
+                                    <table class="table table-hover" style="margin-top: -44px;">\
+                                        <thead><tr><th width="45%">Name</th><th width="35%">Version</th><th width="20%" style="text-align: right;">Operating</th></tr></thead>\
+                                        <tbody id="module_list">' + package_list + '</tbody>\
+                                    </table>\
+                                </div>\
+                            </div>\
+                        </div>',
+                        success: function (layero, indexs) {
+                            // 安装模块
+                            $('.install_module').click(function () {
+                                var p = $('[name="module_name"]').val(), v = $('[name="module_version"]').val();
+                                _this.set_mamger_package({
+                                    act: 'install',
+                                    pjname: res.pjname,
+                                    p: p,
+                                    v: v
+                                }, function (res) {
+                                    if (res.status) {
+                                        _this.create_packages_view(index, 'list', function (html) {
+                                            $('#module_list').html(html);
+                                            $('[name="module_name"]').val('');
+                                            $('[name="module_version"]').val('');
+                                            layer.msg(res.msg, {icon: 1});
+                                        });
+                                    } else {
+                                        layer.msg(res.msg, {icon: 2});
+                                    }
+                                });
+                            });
+                            // 卸载模块
+                            $('#module_list').on('click', '.uninstall_module', function () {
+                                var name = $(this).attr('data-name');
+                                var confirm = layer.confirm('Are you sure you want to uninstall the module&nbsp;[' + name + ']&nbsp;?', {
+                                    title: 'Warning',
+                                    btn: ['Confirm', 'Cancel'],
+                                    icon: 0,
+                                    closeBtn: 2
+                                }, function () {
+                                    _this.set_mamger_package({
+                                        act: 'uninstall',
+                                        pjname: res.pjname,
+                                        p: name,
+                                        v: ress[name]
+                                    }, function (res) {
+                                        layer.msg(res.msg, {icon: res.status ? 1 : 2});
+                                        if (res.status) {
+                                            _this.create_packages_view(index, 'list', function (html) {
+                                                $('#module_list').html(html)
+                                                layer.msg(res.msg, {icon: 1});
+                                            });
+                                        } else {
+                                            layer.msg(res.msg, {icon: 2});
+                                        }
+                                    });
+                                });
+                            });
+                        }
+                    });
+                } else {
+                    return package_list;
+                }
+            });
+        },
+        // 获取模块列表
+        get_packages_list: function (data, callback) {
+            this.send({
+                method: 'GetPackages',
+                data: {pjname: data.pjname},
+                tips: 'Getting project [' + data.pjname + '] module, please wait...',
+                success: function (res) {
+                    if (callback) callback(res);
+                }
+            })
+        },
+        // 设置模块
+        set_mamger_package: function (data, callback) {
+            this.send({
+                method: 'MamgerPackage',
+                data: {pjname: data.pjname, act: data.act, p: data.p, v: data.v},
+                tips: 'Getting project [' + data.pjname + '] module, please wait...',
+                success: function (res) {
+                    if (callback) callback(res);
+                }
+            })
+        },
+        // 添加项目
+        add_project: function (config, data, callback, error) {
+            this.send({
+                load: config.load,
+                method: 'CreateProject',
+                data: data,
+                tips: 'The dependencies needed to install the project, please wait...',
+                success: function (res) {
+                    if (callback) callback(res);
+                },
+                error: function (err) {
+                    error && error();
+                }
+            })
+        },
+        // 编辑项目
+        edit_project: function () {
+            // this.send({
+            //     method:'',
+            //     data:data,
+            //     tips:'',
+            //     success:function(res){
+
+            //     }
+            // });
+        },
+        // 设置项目状态
+        set_project_status: function (type, data, callback) {
+            var status = type == 'start' ? 'StartProject' : 'StopProject';
+            this.send({
+                method: status,
+                data: data,
+                tips: (type == 'start' ? ' Opening Python project' : 'Close Python project') + ', please wait...',
+                success: function (res) {
+                    if (callback) callback(res);
+                }
+            });
+        },
+        // 编辑开机启动
+        edit_auto_start: function (obj, callback) {
+            this.send({
+                method: 'edit_auto_start',
+                data: obj,
+                tips: 'Setting project start with the sys, please wait...',
+                success: function (res) {
+                    if (callback) callback(res);
+                }
+            })
+        },
+
+        // 映射设置
+        set_proxy_project: function (data, callback) {
+            this.send({
+                method: 'ProxyProject',
+                data: data,
+                tips: 'Mapping Python project, please wait...',
+                success: function (res) {
+                    if (callback) callback(res);
+                }
+            })
+        },
+        // 删除项目
+        del_project: function (data, callback) {
+            this.send({
+                method: 'RemoveProject',
+                data: data,
+                tips: 'Deleting Python project, please wait...',
+                success: function (res) {
+                    if (callback) callback(res);
+                }
+            });
+        },
+        // 获取python可安装的版本
+        get_python_version: function (callback) {
+            this.send({
+                method: 'GetCloudPython',
+                tips: 'Getting python version, please wait...',
+                success: function (res) {
+                    if (res.status === false) {
+                        layer.msg(res.msg, {icon: 2});
+                        return false;
+                    }
+                    if (callback) callback(res);
+                }
+            })
+        },
+        //安装python的版本
+        install_python_version: function (config, data, callback, error) {
+            this.send({
+                method: 'InstallPythonV',
+                data: data,
+                load: config.load,
+                tips: 'Installing Python version [' + data.version + '] ...',
+                success: function (res) {
+                    if (callback) callback(res);
+                },
+                error: function (err) {
+                    error && error(err);
+                }
+            })
+        },
+        get_logs: function (callback) {
+            this.send({
+                method: 'get_logs',
+                load: -1,
+                success: function (res) {
+                    if (callback) callback(res);
+                }
+            })
+        },
+        // 卸载python版本
+        remove_python_version: function (data, callback) {
+            this.send({
+                method: 'RemovePythonV',
+                data: data,
+                tips: 'Uninstalling Python version [' + data.version + '], please wait...',
+                success: function (res) {
+                    if (callback) callback(res);
+                }
+            });
+        },
+        // 获取配置信息
+        get_python_config: function (pjname, callback) {
+            this.send({
+                method: 'GetConfFile',
+                data: {pjname: pjname},
+                tips: 'Getting configuration information, please wait...',
+                success: function (res) {
+                    if (callback) callback(res);
+                }
+            });
+        },
+        // 保存配置信息
+        save_conf_file: function (obj, callback) {
+            this.send({
+                method: 'SaveConfFile',
+                data: {
+                    pjname: obj.pjname,
+                    data: obj.data,
+                    encoding: obj.encoding
+                },
+                tips: 'Saving configuration information, please wait...',
+                success: function (res) {
+                    if (callback) callback(res);
+                }
+            });
+        },
+        // 选择目录
+        change_path: function (el, type) {
+            var _this = this;
+            layer.open({
+                type: 1,
+                area: "750px",
+                title: type == 'files' ? 'Select project startup file' : 'Select project directory',
+                closeBtn: 2,
+                shift: 5,
+                shadeClose: false,
+                content: "<div class='changepath'>\
+                            <div class='path-top'>\
+                                <button type='button' class='btn btn-default btn-sm btn-back-file'><span class='glyphicon glyphicon-share-alt'></span>" + lan.public.return + "</button>\
+                                <div class='place' id='PathPlace'>" + lan.bt.path + "：<span></span></div>\
+                            </div>\
+                            <div class='path-con'>\
+                                <div class='path-con-left'>\
+                                    <dl><dt id='changecomlist' onclick='BackMyComputer()'><span class='glyphicon glyphicon-hdd'></span>" + lan.bt.comp + "</dt></dl>\
+                                </div>\
+                                <div class='path-con-right'>\
+                                    <ul class='default' id='computerDefautl'></ul>\
+                                    <div class='divtable'>\
+                                        <table class='table table-hover' id='table_thead' style='border:0 none'>\
+                                            <thead><tr class='file-list-head'><th width='6%'></th><th width='30%'>" + lan.bt.filename + "</th><th width='25%'>" + lan.bt.etime + "</th><th width='10%'>" + lan.bt.access + "</th><th width='10%'>" + lan.bt.own + "</th><th width='10%'></th></tr></thead>\
+                                        </table>\
+                                    </div>\
+                                    <div class='file-list divtable'>\
+                                        <table class='table table-hover' style='border:0 none;margin-top: -32px;'>\
+                                            <thead><tr class='file-list-head'><th width='6%'></th><th width='30%'>" + lan.bt.filename + "</th><th width='25%'>" + lan.bt.etime + "</th><th width='10%'>" + lan.bt.access + "</th><th width='10%'>" + lan.bt.own + "</th><th width='10%'></th></tr></thead>\
+                                            <tbody id='dir_tbody' class='list-list'></tbody>\
+                                        </table>\
+                                    </div>\
+                                </div>\
+                            </div>\
+                        </div>\
+                        <div class='getfile-btn' style='margin-top:0'>\
+                            <button type='button' class='btn btn-default btn-sm pull-left btn_create_folder'>" + lan.bt.adddir + "</button>\
+                            <button type='button' class='btn btn-danger btn-sm mr5 btn_close'>" + lan.public.close + "</button>\
+                            <button type='button' class='btn btn-success btn-sm btn_path_ok'>" + lan.bt.path_ok + "</button>\
+                        </div>",
+                success: function (layero, index) {
+                    //设置文件目录
+                    switch (type) {
+                        case 'dir':
+                            setCookie('file_paths', $(el).val() || '/www');
+                            break;
+                        case 'files':
+                            setCookie('file_paths', _this.back_file());
+                            break;
+                        case 'other':
+                            if (el == '#server_file') {
+                                setCookie('file_paths', $(el).val() || $('#server_path').val());
+                            } else {
+                                setCookie('file_paths', $(el).val() || '/');
+                            }
+                            break;
+                    }
+                    // 返回目录
+                    $('.btn-back-file').click(function () {
+                        setCookie('file_paths', _this.back_file());
+                        _this.get_dir_dom(type);
+                    });
+                    // 关闭layer
+                    $('.btn_close').click(function () {
+                        layer.close(index);
+                    });
+                    // 选择目录或文件
+                    $('.btn_path_ok').click(function () {
+                        var file_name = $('#dir_tbody .ui-selected').find('.open_files_event').attr('data-name');
+                        var types = $('#dir_tbody .ui-selected').find('.open_files_event').attr('data-type');
+                        switch (type) {
+                            case 'dir':
+                                if (file_name == undefined) file_name = '';
+                                break;
+                            case 'files':
+                                if ($('#dir_tbody .ui-selected').length == 0) {
+                                    layer.msg('Please select a file', {icon: 2});
+                                    return false;
+                                }
+                                break;
+                            case 'other':
+                                if (file_name == undefined) file_name = '';
+                                break;
+                        }
+                        var paths = getCookie('file_paths');
+                        var paths_arry = paths.split('/');
+                        if (paths_arry[paths_arry.length - 1] != '') {
+                            paths += '/'
+                        }
+                        $(el).val(paths + (file_name == '' ? '' : file_name));
+                        if (type == 'dir') {
+                            _this.get_django_wsgi_path();
+                            _this.get_manager_path();
+                        }
+                        layer.close(index);
+                    });
+                    // 新建文件夹
+                    $('.btn_create_folder').click(function () {
+                        var isCreate = $('#dir_tbody tr:eq(0)').hasClass('table_add_dir');
+                        if (isCreate) return false;
+                        $('#dir_tbody').prepend('<tr class="table_add_dir">\
+                                <td></td><td colspan="2"><span class="glyphicon glyphicon-folder-open"></span><input class="newFolderName" type="text" value="" style="width: 250px;height: 30px;vertical-align: bottom;">\
+                                <td colspan="3"><button type="button" class="btn btn-success btn-sm newFolderEvent">Confirm</button>&nbsp;&nbsp;<button type="button" class="btn btn-default btn-sm newFolderClaer">Cancel</button></td>\
+                            </td></tr>');
+                        document.getElementsByClassName('file-list')[0].scrollTop = 0;
+                        setTimeout(function () {
+                            $('.table_add_dir').on('click', '.newFolderEvent', function (e) {
+                                var fileName = $('.newFolderName').val();
+                                if (fileName == '') {
+                                    layer.msg('Please enter a new file name', {icon: 0});
+                                    return false;
+                                }
+                                _this.new_folder_event(getCookie('file_paths') + '/' + fileName, function (res) {
+                                    $(this).parent().parent().remove();
+                                    _this.get_dir_dom(type);
+                                });
+                                e.stopPropagation();
+                            });
+                            $('.table_add_dir').on('click', '.newFolderClaer', function (e) {
+                                $(this).parent().parent().remove();
+                                e.stopPropagation();
+                            });
+                        }, 500);
+                    });
+                    // 磁盘目录跳转
+                    $('.path-con-left').on('click', '.open_disk', function () {
+                        var dir = $(this).attr('data-dir');
+                        setCookie('file_paths', dir)
+                        _this.get_dir_dom(type);
+                    });
+                    // 选择文目录或文件
+                    $('#dir_tbody').on('click', 'tr', function (e) {
+                        $(this).find('input[type="checkbox"]').click();
+                        e.stopPropagation();
+                    });
+                    // 选择文件或目录
+                    $('#dir_tbody').on('click', 'tr input[type="checkbox"]', function (e) {
+                        var checked = $(this).prop('checked');
+                        if (!checked) {
+                            _this.select = '';
+                            $(this).parent().parent().removeClass('ui-selected');
+                        } else {
+                            _this.select = $(this).attr('data-name');
+                            $(this).parent().parent().addClass('ui-selected').siblings().removeClass('ui-selected').find('input').prop('checked', false);
+                        }
+                        e.stopPropagation();
+                    });
+                    // 跳转指定目录，获取选择文件
+                    $('#dir_tbody').on('click', '.open_files_event', function (e) {
+                        var type = $(this).attr('data-type');
+                        var name = $(this).attr('data-name');
+                        var path = getCookie('file_paths');
+                        if (type == 'dir') {
+                            setCookie('file_paths', path + '/' + name);
+                            _this.get_dir_dom(type);
+                        } else {
+                            $(this).parent().prev().find('input[type="checkbox"]').click();
+                        }
+                        e.stopPropagation();
+                    })
+                    // 跳转指定目录
+                    $('#dir_tbody').on('click', '.open_files_event .path-con-left dl', function (e) {
+                        var path = $(this).attr('data-name');
+                        e.stopPropagation();
+                    });
+                    // 跳转指定下一层目录
+                    $('#dir_tbody').on('dblclick', 'tr', function (e) {
+                        $(this).find('.open_files_event').click();
+                        e.stopPropagation();
+                    });
+                    //获取目录DOM
+                    _this.get_dir_dom(type);
+                }
+            });
+        },
+        // 过滤一级目录
+        back_file: function () {
+            c = getCookie('file_paths');
+            if (c == '/') return '/'
+            if (c.substr(c.length - 1, 1) == "/") {
+                c = c.substr(0, c.length - 1)
+            }
+            var d = c.split("/");
+            var a = "";
+            if (d.length > 1) {
+                var e = d.length - 1;
+                for (var b = 0; b < e; b++) {
+                    a += d[b] + "/"
+                }
+                return a.replace("//", "/")
+            } else {
+                a = d[0]
+            }
+            if (d.length == 1) {
+            }
+        },
+        // 获取后缀
+        obtain_suffix: function (fileName) {
+            var extArr = fileName.split(".");
+            var exts = ['folder', 'folder-unempty', 'sql', 'c', 'cpp', 'cs', 'flv', 'css', 'js', 'htm', 'html', 'java', 'log', 'mht', 'php', 'url', 'xml', 'ai', 'bmp', 'cdr', 'gif', 'ico', 'jpeg', 'jpg', 'JPG', 'png', 'psd', 'webp', 'ape', 'avi', 'flv', 'mkv', 'mov', 'mp3', 'mp4', 'mpeg', 'mpg', 'rm', 'rmvb', 'swf', 'wav', 'webm', 'wma', 'wmv', 'rtf', 'docx', 'fdf', 'potm', 'pptx', 'txt', 'xlsb', 'xlsx', '7z', 'cab', 'iso', 'rar', 'zip', 'gz', 'bt', 'file', 'apk', 'bookfolder', 'folder', 'folder-empty', 'folder-unempty', 'fromchromefolder', 'documentfolder', 'fromphonefolder', 'mix', 'musicfolder', 'picturefolder', 'videofolder', 'sefolder', 'access', 'mdb', 'accdb', 'sql', 'c', 'cpp', 'cs', 'js', 'fla', 'flv', 'htm', 'html', 'java', 'log', 'mht', 'php', 'url', 'xml', 'ai', 'bmp', 'cdr', 'gif', 'ico', 'jpeg', 'jpg', 'JPG', 'png', 'psd', 'webp', 'ape', 'avi', 'flv', 'mkv', 'mov', 'mp3', 'mp4', 'mpeg', 'mpg', 'rm', 'rmvb', 'swf', 'wav', 'webm', 'wma', 'wmv', 'doc', 'docm', 'dotx', 'dotm', 'dot', 'rtf', 'docx', 'pdf', 'fdf', 'ppt', 'pptm', 'pot', 'potm', 'pptx', 'txt', 'xls', 'csv', 'xlsm', 'xlsb', 'xlsx', '7z', 'gz', 'cab', 'iso', 'rar', 'zip', 'bt', 'file', 'apk', 'css'];
+            var extLastName = extArr[extArr.length - 1];
+            for (var i = 0; i < exts.length; i++) {
+                if (exts[i] == extLastName) {
+                    return exts[i];
+                }
+            }
+            return 'file';
+        },
+        // 生成列表DOM
+        get_dir_dom: function (type) {
+            var _this = this;
+            this.get_dirk_list(function (res) {
+                $('.path-con-right .file-list').show();
+                var dir = res.DIR, files = res.FILES, disk = res.DISK, path = res.PATH, page = res.PAGE, dir_html = '',
+                    files_html = '', disk_html = '';
+                for (var i = 0; i < dir.length; i++) {
+                    var dir_arry = dir[i].split(';');
+                    dir_html += '<tr class="table_dir"><td class="label_checkbox"><input type="checkbox" name="dir_input" data-name="' + dir_arry[0] + '"/></td><td><a href="javascript:;" data-name="' + dir_arry[0] + '" data-type="dir" class="open_files_event"><span class="glyphicon glyphicon-folder-open"></span><span class="dir_block" style="width:130px;">' + dir_arry[0] + '</span></td><td>' + getLocalTime(dir_arry[2]) + '</td><td>' + dir_arry[3] + '</td><td>' + dir_arry[4] + '</td><td style="text-align: center;"><span class="glyphicon glyphicon-option-horizontal" aria-hidden="true"></span></td></tr>'
+                }
+                for (var j = 0; j < files.length; j++) {
+                    var files_arry = files[j].split(';');
+                    files_html += '<tr class="table_files"><td class="label_checkbox"><input type="checkbox" name="dir_input" data-name="' + files_arry[0] + '"/></td><td><a href="javascript:;"  data-name="' + files_arry[0] + '" data-type="file" class="open_files_event"><span class="ico-default ico-' + _this.obtain_suffix(files_arry[0]) + '"></span><span class="dir_block" style="width:130px;">' + files_arry[0] + '</span></a></td><td>' + getLocalTime(files_arry[2]) + '</td><td>' + files_arry[3] + '</td><td>' + files_arry[4] + '</td><td style="text-align: center;position: relative;"><span class="glyphicon glyphicon-option-horizontal" aria-hidden="true"></span></td></tr>'
+                }
+                for (var z = 0; z < disk.length; z++) {
+                    var disk_info = disk[z];
+                    var dir_list = disk_info.path.split('/');
+                    dir_list = dir_list[dir_list.length - 1];
+                    disk_html += '<dt class="open_disk" data-dir="' + disk_info.path + '"><span class="glyphicon glyphicon-hdd"></span>' + (disk_info.path == '/' ? 'Root Dir (' + disk_info.size[2] + ')' : '<span class="table_self_conter" style="width:100px" title="' + disk_info.path + ' (' + disk_info.size[2] + ')">' + dir_list + ' (' + disk_info.size[2] + ')</span>') + '</dt>'
+                }
+                setCookie('file_paths', path);
+                $('.changepath .path-con-left dl').html(disk_html);
+                $('#dir_tbody').html(dir_html + files_html);
+                $('#PathPlace span').html(path);
+            });
+        },
+        // 新建文件事件
+        new_folder_event: function (path, callback) {
+            this.send({
+                url: '/files?action=CreateDir',
+                tips: 'Creating new file, please wait...',
+                data: {path: path},
+                success: function (res) {
+                    if (callback) callback(res);
+                }
+            })
+        },
+        // 获取文件列表
+        get_dirk_list: function (callback) {
+            var dir = getCookie('file_paths');
+            dir = dir.replace(/\/\//g, "/");
+            this.send({
+                url: '/files?action=GetDir',
+                tips: 'Getting file list, please wait...',
+                data: {path: dir, disk: 'True'},
+                success: function (res) {
+                    if (callback) callback(res);
+                }
+            })
+        },
+        /**
+         * 获取文件路径
+         * @param {*} url 接口名称
+         * @param {*} callback 成功回调
+         */
+        get_path: function (url, data, callback) {
+            this.send({
+                method: url,
+                tips: 'Getting file path, please wait...',
+                data: {
+                    path: data.path
+                },
+                success: function (res) {
+                    if (callback) callback(res);
+                }
+            })
+        },
+        // 请求封装
+        send: function (obj) {
+            var loadT = '';
+            if (obj.load == undefined) obj.load = 0;
+            if (obj.url == undefined) {
+                if (obj.plugin_name === undefined && this.plugin_name !== undefined) obj.plugin_name = this.plugin_name
+                if (!obj.plugin_name || !obj.method) {
+                    layer.msg('The plugin class name, or plugin method name is missing!', {
+                        icon: 2
+                    });
+                    return false;
+                }
+            }
+            if (obj.load === 0) {
+                loadT = layer.msg(obj.tips, {
+                    icon: 16,
+                    time: 0,
+                    shade: 0.3
+                });
+            } else if (obj.load === 1 || (obj.tips == undefined && obj.load == undefined)) {
+                loadT = layer.load();
+            }
+            $.ajax({
+                type: 'POST',
+                url: obj.url != undefined ? obj.url : ('/plugin?action=a&name=' + obj.plugin_name + '&s=' + obj.method),
+                data: obj.data || {},
+                timeout: obj.timeout || 99999999,
+                complete: function (res) {
+                    if (obj.load === 0 || obj.load === 1) layer.close(loadT);
+                },
+                success: function (rdata) {
+                    if (!obj.success) {
+                        obj.msg || obj.msg == undefined ? layer.msg(rdata.msg, {icon: rdata.status ? 1 : 2}) : '';
+                        return;
+                    }
+                    obj.success(rdata);
+                },
+                error: function (ex) {
+                    if (!obj.error) {
+                        obj.msg || obj.msg == undefined ? layer.msg('Request process found error!', {icon: 2}) : '';
+                        return;
+                    }
+                    return obj.error(ex);
+                }
+            });
+        }
+    }
+    python.init();
+</script>

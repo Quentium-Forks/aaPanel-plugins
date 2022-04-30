@@ -1,0 +1,26 @@
+#!/bin/bash
+# chkconfig: 2345 55 25
+# description: pythonmanager
+
+### BEGIN INIT INFO
+# Provides:          bt
+# Required-Start:    $all
+# Required-Stop:     $all
+# Default-Start:     2 3 4 5
+# Default-Stop:      0 1 6
+# Short-Description: starts bt
+# Description:       starts the bt
+### END INIT INFO
+pythonmamager_start(){
+	/usr/bin/python /www/server/panel/plugin/pythonmamager/pythonmamager_main.py
+        echo ${REDISPORT} > /www/server/redis/start.pl
+}
+
+case "$1" in
+    start)
+                pythonmamager_start
+        ;;
+    *)
+        echo "Please use start as first argument"
+        ;;
+esac

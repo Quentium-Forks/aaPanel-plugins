@@ -1,0 +1,33 @@
+#!/www/server/panel/pyenv/bin/python
+#coding: utf-8
+#-------------------------------------------------------------------
+# 宝塔Linux面板
+#-------------------------------------------------------------------
+# Copyright (c) 2015-2099 宝塔软件(http://bt.cn) All rights reserved.
+#-------------------------------------------------------------------
+# Author: hwliang<hwl@bt.cn>
+#-------------------------------------------------------------------
+
+# 使用面板插件模块来运行加密后的方法？
+
+#初始化环境变量
+import os,sys
+os.chdir('/www/server/panel')
+sys.path.insert(0,'class/')
+import public
+
+# 引用插件加载模块
+from pluginAuth import Plugin
+plugin_name = 'pythonmamager' # 插件名称
+def_name = 'auto_start' # 方法名称
+
+#实例化插件主程序
+p = Plugin(plugin_name)
+
+#获取要被执行的函数对像
+if not p.isdef(def_name):
+    raise public.PanelError('指定方法不存在!')
+start = p.get_fun(def_name)
+
+#执行指定函数
+start()

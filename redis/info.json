@@ -1,0 +1,9 @@
+{
+  "title": "redis",
+  "name": "redis",
+  "ps": "redis",
+  "versions": "1.0",
+  "checks": "/www/server/panel/plugin/redis",
+  "author": "宝塔",
+  "home": "https://www.bt.cn"
+}

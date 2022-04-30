@@ -1,0 +1,12 @@
+{
+  "title": "Node.js",
+  "name": "nodejs",
+  "ps": "node.js",
+  "versions": "1.6",
+  "checks": "/www/server/panel/plugin/nodejs",
+  "author": "宝塔",
+  "home": "http://www.bt.cn/bbs",
+  "beta": false,
+  "force_message": "",
+  "not_substituted":[]
+}

@@ -1,0 +1,664 @@
+<style>
+    .bt-w-menu {
+        width: 110px;
+    }
+
+    .bt-w-con {
+        margin-left: 110px;
+    }
+
+    .divtable .table thead {
+        border: 1px solid #ddd;
+    }
+
+    .divtable .table thead th {
+        padding: 8px !important;
+        height: auto;
+    }
+
+    .plugin_body .box_conter {
+        display: none;
+    }
+
+    .plugin_body .box_conter.active {
+        display: block;
+    }
+
+    .bt-textarea-text {
+        border: 1px solid #ccc;
+        width: 520px;
+        height: 150px;
+        line-height: 20px;
+        padding: 5px;
+        padding-left: 5px;
+        border-radius: 2px;
+        -webkit-transition: border-color ease-in-out .15s, -webkit-box-shadow ease-in-out .15s;
+        -o-transition: border-color ease-in-out .15s, box-shadow ease-in-out .15s;
+        transition: border-color ease-in-out .15s, box-shadow ease-in-out .15s;
+    }
+
+    .mt0 {
+        margin-top: 0;
+    }
+
+    .ml5 {
+        margin-left: 5px;
+    }
+
+    .bt-ico-ask {
+        border: 1px solid #fb7d00;
+        border-radius: 8px;
+        color: #fb7d00;
+        cursor: help;
+        display: inline-block;
+        font-family: arial;
+        font-size: 11px;
+        font-style: normal;
+        height: 16px;
+        line-height: 16px;
+        margin-left: 5px;
+        text-align: center;
+        width: 16px;
+    }
+
+    .line .tname {
+        width: 170px;
+        padding-right: 13px;
+    }
+
+    .monitor .line {
+        margin: 0;
+    }
+
+
+    .tatal-num {
+        text-align: center;
+        border-top: 1px solid #eee;
+        border-bottom: 1px solid #eee;
+        margin: 15px 0 10px;
+    }
+
+    .total-virus {
+        display: inline-block;
+        text-align: center;
+        padding: 10px 8%;
+    }
+
+    .total-virus span:nth-child(1) {
+        font-size: 15px;
+        letter-spacing: 1px;
+        color: #444;
+        display: inline-block;
+        margin-bottom: 5px;
+    }
+
+    .total-virus span:nth-child(3) {
+        font-size: 15px;
+        color: #5cb85c;
+    }
+
+    .total-virus span:nth-child(3) i {
+        font-style: normal;
+        font-size: 23px;
+    }
+
+    .anti .title {
+        height: 45px;
+        line-height: 45px;
+    }
+
+    .anti .title .c-tit {
+        height: 45px;
+        line-height: 45px;
+    }
+    .monitor .line{
+        padding-left: 20px;
+    }
+    .monitor .line div{
+        margin-bottom: 5px;
+    }
+    .service .table thead th {
+        box-sizing: content-box;
+        font-size: 11.5px;
+    }
+
+    .service .table tbody td {
+        font-size: 11.5px;
+    }
+</style>
+<div class="bt-form">
+    <div class="bt-w-main">
+        <!--菜单部分-->
+        <div class="bt-w-menu">
+            <p class="bgw">Home</p>
+            <p>Configuration</p>
+            <p>Services</p>
+        </div>
+        <!--内容部分-->
+        <div class="bt-w-con pd15" style="max-height: 555px;overflow: auto;padding-bottom: 0;">
+            <div class="plugin_body">
+                <div class="box_conter anti active">
+                    <div class="soft-man-con bt-form">
+                        <div class="tatal-num">
+                            <div class="total-virus">
+                                <span>Virus mail</span><br>
+                                <span><i data-type="virus"></i> Times</span>
+                            </div>
+                            <div class="total-virus">
+                                <span>Spam</span><br>
+                                <span><i data-type="spam"></i> Times</span>
+                            </div>
+                            <div class="total-virus">
+                                <span>Risk attachment</span><br>
+                                <span><i data-type="ban_file"></i> Times</span>
+                            </div>
+                        </div>
+                        <div class="title c6 plr15" style="border: none;">
+                            <h3 class="c-tit f16">Interception</h3>
+                            <div class="searcTime pull-right">
+                                <span class="gt on" data-date="today">Today</span>
+                                <span class="gt" data-date="yesterday">Yesterday</span>
+                                <span class="gt" data-date="7">Last 7 days</span>
+                            </div>
+                        </div>
+                        <div id="linechart" style="width:100%; height:390px;"></div>
+                    </div>
+                </div>
+                <div class="box_conter monitor">
+                    <div class="line">
+                        <div>Number of work processes</div>
+                        <input type="text" name="max_servers" class="bt-input-text" style="width: 50px;"
+                            placeholder="2">
+                    </div>
+                    <div class="line" style="padding-bottom: 0;">
+                        <div>Monitor domain name</div>
+                            <textarea cols="37" rows="4" name="local_domains_maps" placeholder="One domain name per line, please use Enter to wrap，e.g. aapanel.com&#13;&#10;bt.cn" style="padding: 10px 10px 3px;border: 1px solid #ccc;"></textarea>
+                    </div>
+                    <ul class="help-info-text c7" style="margin:0 0 0 20px;">
+                        <li style="list-style: none;"><font style="color:red">* You must add your domain name before tagging spam</font></li>
+                    </ul>
+                    <div class="line">
+                        <div>Set Bind IP</div>
+                        <input type="text" name="inet_socket_bind" class="bt-input-text" style="width: 113px;" placeholder="119.119.119.119">
+                    </div>
+                    <div class="line">
+                        <div>Set Bind Port</div>
+                        <input type="text" name="inet_socket_port" class="bt-input-text" style="width: 113px;" placeholder="3333">
+                    </div>
+                    <div class="line">
+                        <div>Virus mail operation</div>
+                        <div class="info-r">
+                            <select class="bt-input-text  redisVersion" name="final_virus_destiny"
+                                style="width: auto;height: 33px;padding-left: 10px;font-size: 12px;">
+                                <option value="D_PASS">Pass, send directly to the user</option>
+                                <option value="D_DISCARD">Discard, Discard the email without notify the sender</option>
+                                <option value="D_BOUNCE">Bounce, Bounce the email and notify the sender</option>
+                                <option value="D_REJECT">Reject, Reject the email and notify the sender</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="line">
+                        <div>Spam operation</div>
+                        <div class="info-r">
+                            <select class="bt-input-text  redisVersion" name="final_spam_destiny"
+                                style="width: auto;height: 33px;padding-left: 10px;font-size: 12px;">
+                                <option value="D_PASS">Pass, send directly to the user</option>
+                                <option value="D_DISCARD">Discard, Discard the email without notify the sender</option>
+                                <option value="D_BOUNCE">Bounce, Bounce the email and notify the sender</option>
+                                <option value="D_REJECT">Reject, Reject the email and notify the sender</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="line">
+                        <div>Risky attachment operation</div>
+                        <div class="info-r">
+                            <select class="bt-input-text  redisVersion" name="final_banned_destiny"
+                                style="width: auto;height: 33px;padding-left: 10px;font-size: 12px;">
+                                 <option value="D_PASS">Pass, send directly to the user</option>
+                                <option value="D_DISCARD">Discard, Discard the email without notify the sender</option>
+                                <option value="D_BOUNCE">Bounce, Bounce the email and notify the sender</option>
+                                <option value="D_REJECT">Reject, Reject the email and notify the sender</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="line">
+                        <div>Bad mail operation</div>
+                        <div class="info-r">
+                            <select class="bt-input-text  redisVersion" name="final_bad_header_destiny"
+                                style="width: auto;height: 33px;padding-left: 10px;font-size: 12px;">
+                                <option value="D_PASS">Pass, send directly to the user</option>
+                                <option value="D_DISCARD">Discard, Discard the email without notify the sender</option>
+                                <option value="D_BOUNCE">Bounce, Bounce the email and notify the sender</option>
+                                <option value="D_REJECT">Reject, Reject the email and notify the sender</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="line">
+                        Email score lower than
+                        <input type="text" name="sa_tag_level_deflt" class="bt-input-text" style="width: 50px;" placeholder="2.0"> point, add mail score to the mail source
+                    </div>
+                    <div class="line">
+                        Email score higher than
+                        <input type="text" name="sa_tag2_level_deflt" class="bt-input-text" style="width: 50px;" placeholder="6.2">
+                        point, a spam mark will be added to the header of the email: 
+                        <input type="text" name="sa_spam_subject_tag" class="bt-input-text" style="width: 99px;" placeholder="** Spam **">
+                    </div>
+                    <div class="line">
+                        Email larger than
+                        <input type="text" name="sa_mail_body_size_limit" class="bt-input-text " style="width: 50px;" placeholder="4">
+                        M,the message will not be scanned (too large a setting may exhaust your server resources)
+                    </div>
+                    <div style="margin: 10px 0 20px 20px;">
+                        <button class="btn btn-success btn-sm reset">Reset</button>
+                        <button class="btn btn-success btn-sm save ml5">Save</button>
+                    </div>
+                </div>
+                <div class="box_conter">
+                    <div class="service divtable" style="max-height: 514px;overflow: auto;">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th>Service name</th>
+                                    <th width="290">Service description</th>
+                                    <th>Srvice status</th>
+                                    <th width="83">Operating</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    var anti_spam = {
+        plugin_name: 'anti_spam', //插件方法名
+        cache_site_list: [],
+        init: function () {
+            var _this = this;
+            $('.layui-layer').width('830');
+            $(".bt-w-menu p").click(function () {
+                var index = $(this).index();
+                $('.plugin_body .box_conter').eq(index).addClass('active').siblings().removeClass(
+                    'active');
+                $(this).addClass('bgw').siblings().removeClass('bgw');
+                switch (index) {
+                    case 0: //获取首页信息
+                        _this.get_anti_count();
+                        _this.get_anti_line();
+                        break;
+                    case 1: //设置参数
+                        _this.get_anti_parameter();
+                        break;
+                    case 2: //设置服务
+                        _this.get_service();
+                        break;
+                }
+            });
+            $(".searcTime").on("click", ".gt", function () {
+                $(this).addClass('on').siblings().removeClass('on');
+                _this.get_anti_line();
+            });
+            $(".monitor").on("click", ".reset", function () {
+                _this.get_default_parameter(function (rdata) {
+                    layer.msg('The input data has been reset ,  but need to click "Save" to save', {icon: 1});
+                    for (var i in rdata) {
+                        if(i=='local_domains_maps' && rdata[i]=='.$mydomain') {
+                            // $(".monitor .line [name="+i+"]").val('');
+                            continue;
+                        }
+                        if(i=='local_domains_maps' && rdata[i].value == '  ') continue;
+                        $(".monitor .line [name="+i+"]").val(rdata[i])
+                    }
+                });
+            });
+            $(".monitor").on("click", ".save", function () {
+                var setting = {};
+                for (var i = 0; i < $(".monitor .line [name]").length; i++) {
+                    var _set = $(".monitor .line [name]").eq(i);
+                    setting[_set.attr('name')] = _set.val();
+                }
+                _this.set_spam_parameter(setting, function (res) {
+                    layer.msg(res.msg, {
+                        icon: res.status ? 1 : 2
+                    });
+                });
+            });
+            $(".service").on("click", ".opt", function () {
+                var act = $(this).attr('data-type'),
+                service = $(this).parent().attr('data-name'),
+                _text = $(this).text(),
+                loadT = layer.confirm('Are you sure you to'+_text+'【<span style="color:#20a53a;">'+service+'</span>】service？', {
+                    btn: ['Confirm', 'Cancel'],
+                    icon: 3,
+                    closeBtn: 2,
+                    title: 'Are you sure to '+_text+'？'
+                }, function() {
+                    layer.close(loadT);
+                    _this.set_service_status({service:service,act:act}, function (res) {
+                        _this.get_service();
+                        layer.msg(res.msg, {
+                            icon: res.status ? 1 : 2
+                        });
+                    });
+                });
+            });
+            var loadS = layer.msg('Loading dependencies, please wait...', { icon: 16, time: 0, shade: 0.3 });
+            $.getScript("/static/js/echarts.min.js", function () {
+                _this.get_anti_count();
+                _this.get_anti_line();
+                layer.close(loadS);
+            });
+        },
+        // 渲染总拦截情况
+        get_anti_count: function () {
+            var _this = this;
+            _this.get_process_count(function (rdata) {
+                for (var i in rdata) {
+                    $(".tatal-num i[data-type='" + i + "']").text(rdata[i]);
+                }
+            });
+        },
+        // 渲染折线图
+        get_anti_line: function () {
+            var _this = this,
+                dates = $(".searcTime .gt.on").attr('data-date');
+            _this.get_someday_record({
+                date: dates
+            }, function (rdata) {
+                var myChartNetwork = echarts.init(document.getElementById('linechart'));
+                var aData = [],
+                    bData = [],
+                    xData = [],
+                    zData = [],
+                    now = new Date(),
+                    month = now.getMonth() + 1,
+                    day = now.getDate();
+                if (month < 10) month = "0" + month;
+                if (dates == 7) {
+                    for (var j = rdata.length; j > 0; j--) {
+                        var res = rdata[j - 1];
+                        var days = now.getDate() - j + 1;
+                        if (days < 10) days = "0" + days;
+                        for (var i = 1; i < 25; i++) {
+                            var hour = i;
+                            if (i < 10) hour = "0" + i;
+                            xData.push(month + '/' + days + ' ' + hour + ':00');
+                            zData.push(res.virus[i]);
+                            aData.push(res.spam[i]);
+                            bData.push(res.ban_file[i]);
+                        }
+                    }
+                } else {
+                    if (dates == 'yesterday') day--;
+                    if (day < 10) day = "0" + day;
+                    for (var i = 1; i < 25; i++) {
+                        var hour = i;
+                        if (i < 10) hour = "0" + i;
+                        xData.push(month + '/' + day + ' ' + hour + ':00');
+                        zData.push(rdata.virus[i]);
+                        aData.push(rdata.spam[i]);
+                        bData.push(rdata.ban_file[i]);
+                    }
+                }
+                option = {
+                    tooltip: {
+                        trigger: 'axis',
+                    },
+                    legend: {
+                        data: ['Virus mail', 'Spam', 'Risk attachment'],
+                        top: '15px'
+                    },
+                    calculable: true,
+                    xAxis: {
+                        type: 'category',
+                        boundaryGap: false,
+                        data: xData,
+                        axisLine: {
+                            lineStyle: {
+                                color: "#666"
+                            }
+                        }
+                    },
+                    yAxis: {
+                        scale: true,
+                        name: 'Times',
+                        splitLine: {
+                            show: true,
+                            lineStyle: {
+                                color: "#ddd"
+                            }
+                        },
+                        axisLine: {
+                            lineStyle: {
+                                color: "#666"
+                            }
+                        }
+                    },
+                    series: [{
+                            name: 'Virus mail',
+                            type: 'line',
+                            smooth: true,
+                            symbol: 'none',
+                            sampling: 'average',
+                            itemStyle: {
+                                normal: {
+                                    color: 'rgb(255, 140, 0)'
+                                }
+                            },
+                            data: zData
+                        },
+                        {
+                            name: 'Spam',
+                            type: 'line',
+                            smooth: true,
+                            symbol: 'none',
+                            sampling: 'average',
+                            itemStyle: {
+                                normal: {
+                                    color: 'rgb(30, 144, 255)'
+                                }
+                            },
+                            data: aData
+                        },
+                        {
+                            name: 'Risk attachment',
+                            type: 'line',
+                            smooth: true,
+                            symbol: 'none',
+                            sampling: 'average',
+                            itemStyle: {
+                                normal: {
+                                    color: 'rgb(153, 153, 153)'
+                                }
+                            },
+                            data: bData
+                        }
+                    ]
+                };
+                myChartNetwork.setOption(option);
+                window.addEventListener("resize", function () {
+                    myChartNetwork.resize();
+                });
+            });
+        },
+        // 渲染设置情况
+        get_anti_parameter: function () {
+            var _this = this;
+            _this.get_spam_parameter(function (rdata) {
+                for (var i in rdata) {
+                    if(i=='local_domains_maps' && rdata[i].value=='.$mydomain') continue;
+                    if(i=='local_domains_maps'&& rdata[i].value == '  '){
+                       continue;
+                    }
+                    $(".monitor .line [name="+i+"]").val(rdata[i].value)
+                }
+            });
+        },
+        // 渲染服务情况
+        get_service: function () {
+            var _this = this;
+            _this.get_service_status(function (rdata) {
+                var _tr='';
+                for (var i in rdata) {
+                    var _res = rdata[i].status,
+                    _status = _res?'Running':'Stopped',
+                    _opt = _res?'Stop':'Run',
+                    _type = _res?'stop':'start',
+                    _color = _res?'#20a53a':'#ff0000';
+                    _stop = _res?'style="color:#ff0000"':'',
+                    _ps = rdata[i].ps,
+                    _icon = _res?'play':'pause';
+                    _tr += '<tr>\
+                        <td>'+i+'</td>\
+                        <td>'+_ps+'</td>\
+                        <td>\
+                            <span class="postfix">\
+                                <span style="color:'+_color+';">'+_status+'</span>\
+                                <span style="color:'+_color+'" class="glyphicon glyphicon-'+_icon+'"></span>\
+                            </span>\
+                        </td>\
+                        <td style="text-align: right" data-name="'+i+'">\
+                            <a href="javascript:" class="btlink opt" data-type="'+_type+'" '+_stop+'>'+_opt+'</a>&nbsp;|&nbsp;\
+                            <a href="javascript:" class="btlink opt" data-type="restart">Restart</a>\
+                        </td>\
+                    </tr>';
+                }
+                
+                $(".service tbody").empty().append(_tr);
+            });
+        },
+        // 获取总拦截情况信息
+        get_process_count: function (callback) {
+            this.send({
+                method: 'get_process_count',
+                tips: 'Getting the total number of interceptions, please wait...',
+                success: function (res) {
+                    if (callback) callback(res);
+                }
+            });
+        },
+        // 获取折线图信息
+        get_someday_record: function (obj, callback) {
+            this.send({
+                method: 'get_someday_record',
+                data: obj,
+                tips: 'Obtaining interception data, please wait...',
+                success: function (res) {
+                    if (callback) callback(res);
+                }
+            });
+        },
+        // 获取拦截设置信息
+        get_spam_parameter: function (callback) {
+            this.send({
+                method: 'get_spam_parameter',
+                tips: 'Getting blocking settings, please wait...',
+                success: function (res) {
+                    if (callback) callback(res);
+                }
+            });
+        },
+        // 设置拦截设置信息
+        set_spam_parameter: function (obj, callback) {
+            this.send({
+                method: 'set_spam_parameter',
+                data: obj,
+                tips: 'Setting blocking settings, please wait...',
+                success: function (res) {
+                    if (callback) callback(res);
+                }
+            });
+        },
+        // 重置拦截设置信息
+        get_default_parameter: function (callback) {
+            this.send({
+                method: 'get_default_parameter',
+                success: function (res) {
+                    if (callback) callback(res);
+                }
+            });
+        },
+        // 套件服务状态
+        get_service_status: function (callback) {
+            this.send({
+                method: 'get_service_status',
+                tips: 'Getting service settings, please wait...',
+                success: function (res) {
+                    if (callback) callback(res);
+                }
+            });
+        },
+        // 设置套件服务状态
+        set_service_status: function (obj, callback) {
+            this.send({
+                method: 'set_service_status',
+                data: obj,
+                tips: 'Setting up service, please wait...',
+                success: function (res) {
+                    if (callback) callback(res);
+                }
+            });
+        },
+        // 发送请求封装
+        send: function (obj) {
+            var loadT = '';
+            if (obj.load == undefined) obj.load = 0;
+            if (obj.url == undefined) {
+                if (obj.plugin_name === undefined && this.plugin_name !== undefined) obj.plugin_name = this
+                    .plugin_name
+                if (!obj.plugin_name || !obj.method) {
+                    layer.msg('The plug-in class name, or plug-in method name is missing!', {
+                        icon: 2
+                    });
+                    return false;
+                }
+            }
+            if (obj.tips != undefined&&(obj.load === 0 || obj.tips != '')) {
+                loadT = layer.msg(obj.tips, {
+                    icon: 16,
+                    time: 0,
+                    shade: 0.3
+                });
+            } else if (obj.load === 1 || (obj.tips == undefined && obj.load == undefined)) {
+                loadT = layer.load();
+            }
+            $.ajax({
+                type: 'POST',
+                url: obj.url != undefined ? obj.url : ('/plugin?action=a&name=' + obj.plugin_name +
+                    '&s=' + obj.method),
+                data: obj.data || {},
+                timeout: obj.timeout || 99999999,
+                complete: function (res) {
+                    if (obj.load === 0 || obj.load === 1) layer.close(loadT);
+                },
+                success: function (rdata) {
+                    if (obj.check) {
+                        obj.success(rdata);
+                        return false
+                    }
+                    if (rdata.status === false) {
+                        layer.msg(rdata.msg, {
+                            icon: 2
+                        });
+                        return false;
+                    }
+                    obj.success(rdata);
+                },
+                error: function (ex) {
+                    if (!obj.error) {
+                        obj.msg || obj.msg == undefined ? layer.msg('An error was found during the request!', {
+                            icon: 2
+                        }) : '';
+                        return;
+                    }
+                    return obj.error(ex);
+                }
+            });
+        }
+    }
+    anti_spam.init();
+</script>

@@ -1,0 +1,2143 @@
+<style> 
+    #config_table{
+        overflow-y: auto;
+    }
+    #config_ip_table{
+        overflow-y: auto;
+    }
+    .changepath{
+        height: 500px;
+        border-bottom: 1px solid #dddddd;
+    }
+    .changepath .path-top{
+        height: 50px;
+        line-height: 50px;
+        padding-left: 10px;
+        border-bottom: #dddddd 1px solid;
+    }
+    .changepath .path-con-left{
+        width: 160px;
+        height: 450px;
+        float: left;
+        border-right: #dddddd 1px solid;
+        padding-top: 5px;
+    }
+    .changepath .path-con-left dl .open_disk:hover{
+        background: #ececec;
+        cursor: pointer;
+    }
+    .changepath .path-con-right{
+        float: left;
+        height: 450px;
+        width: 590px;
+        overflow: hidden;
+    }
+    .getfile-btn{
+        background: #f7f7f7 none repeat scroll 0 0;
+        padding: 8px 20px 10px;
+        text-align: right;
+        width: 100%;
+        border-top: 0px;
+    }
+    .changepath .path-top .btn span{
+        margin-right: 5px;
+    }
+    .changepath .path-con-left dl dt{
+        height: 40px;
+        line-height: 40px;
+        padding-left: 20px;
+        margin-left: 0;
+        background: none;
+    }
+    .changepath .path-con-left dl dt span{
+        margin-right: 10px;
+    }
+    .file-list .table-hover>tbody>tr{
+        height: 50px;
+        cursor: pointer;
+    }
+    .file-list .table>tbody>tr>td{
+        vertical-align: middle;
+    }
+    .file-list .dir_block{
+        display: inline-block;
+        vertical-align: top;
+        height: 25px;
+        line-height: 25px;
+    }
+    .table_dir .dir_block,
+    .table_files .dir_block{
+        height: 28px;
+        line-height: 28px;
+        display: inline-block;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+    .file-list .list-list span.glyphicon-option-horizontal{
+        height: 30px;
+        line-height: 35px;
+        font-size: 15px;
+    }
+
+    .file-list .list-list span.glyphicon-folder-open{
+        margin-right: 15px;
+        font-size: 23px;
+        margin-left: 4px;
+    }
+    .file-list{
+        display: block;
+        overflow: auto;
+        height: 417px;
+        position: relative;
+        top: -1px;
+    }
+    .label_checkbox{
+        position: relative;
+    }
+    .list-list tr:last-child{
+        border-bottom: 1px solid #ddd;
+    }
+    .divtable .table thead th{
+        border-bottom: 0px solid #e6e6e6;
+    }
+    .table_hide th{
+        padding: 0 !important;
+    }
+    .list-list .ico-default{
+        background-position: center center;
+        background-repeat: no-repeat;
+        /* display: inline-block; */
+        height: 30px;
+        margin-right: 10px;
+        width: 33px;
+        z-index: 1;
+        float: left;
+    }
+    #table_thead{
+        border-bottom: 1px solid #ddd !important;
+    }
+    .path-con-right .list-list td{
+        cursor: auto;
+    }
+    .file_input {
+        display: none;
+        /*z-index: 1;*/
+        /*opacity: 0;*/
+    }
+    .input_file{
+    	float: left;
+    	height: 35px;
+    	border: 0.1px dashed #D0D0D0;
+    	padding: 0 0 0 10px;
+    	font-size: 14px;
+    	outline: none;
+    	margin-bottom: 20px;
+    }
+    .select_file{
+    	float: left;
+    }
+</style>
+<style>
+    .search-input {
+		display: inline-block;
+		width: 215px;
+		font-size: 0;
+	}
+
+	.search-input input {
+		border: 1px solid #20a53a;
+		display: inline-block;
+		height: 30px;
+		box-sizing: border-box;
+		width: 180px;
+		padding-left: 8px;
+		box-sizing: border-box;
+		outline: none;
+		border-right: none;
+		border-top-left-radius: 2px;
+		border-bottom-left-radius: 2px;
+		font-size: 12px;
+	}
+
+	.search-input button {
+		display: inline-block;
+		height: 30px;
+		line-height: 30px;
+		background: #20a53a;
+		vertical-align: top;
+		color: #fff;
+		border: none;
+		width: 35px;
+		text-align: center;
+		border-top-right-radius: 2px;
+		border-bottom-right-radius: 2px;
+		cursor: pointer;
+		outline: none;
+		font-size: 16px;
+	}
+
+	.search-input button span {
+		position: relative;
+		top: 2px;
+	}
+	#webEdit-con .bt-w-con{
+		display: none;
+	}
+</style>
+<style>
+    .sys-firewall.bt-w-menu{
+        width:140px;
+    }
+    #webEdit-con .bt-w-con{
+        margin-left: 140px;
+    }
+	.select_conter{
+		display: inline-block;
+		border: 1px solid #ccc;
+		color: #444;
+		position: relative;
+		cursor: pointer;
+		line-height: 30px;
+		margin-left: 0px;
+		width: 200px;
+		vertical-align: bottom;
+	}
+	.select_conter .domain_input,
+	.select_conter .domain_inputs{
+		display: inline-block;
+		padding-left: 10px;
+		height: 30px;
+	}
+	.inbox_input:focus{ outline: none;}
+	.select_conter .select_down{
+		display: inline-block;
+		width: 0;
+		height: 0;
+		border-width: 6px;
+		border-style: solid;
+		border-color:#777 transparent transparent transparent;
+		position: absolute;
+		top: 14px;
+		right: 12px;
+		transition: all 500ms;
+	}
+
+	.select_conter .domain_list{
+		display: none;
+		background: #fff;
+		position: absolute;
+		top: 34px;
+		left: -1px;
+		border: 1px solid #ececec;
+	}
+	.select_conter .domain_list.active{
+		display: block;
+	}
+	.select_conter .domain_list li{
+		text-align: left;
+		padding: 0 15px;
+	}
+	.select_conter .domain_list li:hover{
+		background: #20a53a;
+		color: #fff;
+	}
+	.select_conter .domain_list li.active{
+		background: #20a53a;
+		color: #fff;
+	}
+    #rule-table .table_self_ip, #ip_rule-table .table_self_ip, #forward_table .table_self_ip {
+	    max-width: 95px;
+        display: inline-block;
+        overflow: hidden;
+        text-overflow: ellipsis;
+	}
+</style>
+<div class="bt-w-main">
+	 <div class="bt-w-menu sys-firewall">
+		  <p class="bgw">Port Rules</p>
+		  <p>IP Rules</p>
+		  <p>Port forwarding</p>
+		  <p>Area Rules</p>
+		  <p>Status</p>
+	 </div>
+	 <div id="webEdit-con" class="pd15">
+		  <div class="bt-w-con" style="display:block;">
+				<div class="mb5">
+    				<button class="btn btn-success btn-sm add_firewall_rule">Add rule</button>
+				    <button class="btn btn-default btn-sm rule_import" style="margin-left:10px" data-name="port_rule">Import rules</button>
+				    <button class="btn btn-default btn-sm rule_export" style="margin-left:10px" data-name="port_rule">Export rules</button>
+				    <div class="pull-right">
+    					<div class="search-input">
+    						<input type="text" class="search_port_val" placeholder="Please enter the port"/>
+    						<button type="submit" class="search_port_btn">
+    							<span class="glyphicon glyphicon-search" aria-hidden="true"></span>
+    						</button>
+    					</div>
+    				</div>
+				</div>
+				<div class="divtable mt10" id="config_table">
+					 <table width="100%" border="0" cellpadding="0" cellspacing="0" class="table table-hover">
+						  <thead>
+						      <tr>
+						          <th width="80">Protocol</th>
+						          <th width="100">Port</th>
+						          <th width="60">Strategy</th>
+						          <th>Source IP</th>
+						          <th class='breif'>Remarks</th>
+						          <th>Add Time</th>
+						          <th style="text-align: right;">Operating</th>
+						      </tr>
+						  </thead>
+						  <tbody id="rule-table"></tbody>
+					 </table>
+				</div>
+				<div id="rule_page" class="page"></div>
+		  </div>
+		  <div class="bt-w-con">
+				<div class="mb5">
+				    <button class="btn btn-success btn-sm add_ip_rule">Add rule</button>
+				    <button class="btn btn-default btn-sm rule_import" style="margin-left:10px" data-name="ip_rule">Import rules</button>
+				    <button class="btn btn-default btn-sm rule_export" style="margin-left:10px" data-name="ip_rule">Export rules</button>
+				    <div class="pull-right">
+    					<div class="search-input">
+    						<input type="text" class="search_ip_val" placeholder="Please enter IP"/>
+    						<button type="submit" class="search_ip_btn">
+    							<span class="glyphicon glyphicon-search" aria-hidden="true"></span>
+    						</button>
+    					</div>
+    				</div>
+				</div>
+				<div class="divtable mt10" id="config_ip_table">
+					 <table width="100%" border="0" cellpadding="0" cellspacing="0" class="table table-hover">
+						  <thead>
+						      <tr>
+						          <th>Source IP</th>
+						          <th style="width: 65px">Strategy</th>
+						          <th>Remarks</th>
+						          <th>Add Time</th>
+						          <th style="text-align: right;">Operating</th>
+						      </tr>
+						  </thead>
+						  <tbody id="ip_rule-table"></tbody>
+					 </table>
+				</div>
+				<div id="ip_page" class="page"></div>
+		  </div>
+		  <div class="bt-w-con">
+		        <div class="mb5">
+		            <button class="btn btn-success btn-sm add_forward_rule">Add rule</button>
+				    <button class="btn btn-default btn-sm rule_import" style="margin-left:10px" data-name="trans_rule">Import rules</button>
+				    <button class="btn btn-default btn-sm rule_export" style="margin-left:10px" data-name="trans_rule">Export rules</button>
+		            <div class="pull-right">
+    					<div class="search-input">
+    						<input type="text" class="search_trans_val" placeholder="Please enter forwarding port"/>
+    						<button type="submit" class="search_trans_btn">
+    							<span class="glyphicon glyphicon-search" aria-hidden="true"></span>
+    						</button>
+    					</div>
+    				</div>
+		            <!--<input class="btswitch btswitch-ios" id="close_anti" type="checkbox">-->
+		            <!--<label class="btswitch-btn" for="close_anti" onclick="firewall.trans_switch()" style="float:right" data-status='close'></label>-->
+		            <!--<span class="" style="float:right;margin-right:10px;line-height:2.4">转发开关</span>-->
+		        </div>
+				<div class="divtable mt10" id="config_forward_table">
+					 <table width="100%" border="0" cellpadding="0" cellspacing="0" class="table table-hover">
+						  <thead>
+						      <tr>
+						          <th width="90">Protocol</th>
+						          <th width="110">Forwarded port</th>
+						          <th>Remarks</th>
+						          <th>Target IP</th>
+						          <th width="90">Target port</th>
+						          <th>Add time</th>
+						          <th style="text-align: right;">Operating</th>
+						      </tr>
+						  </thead>
+						  <tbody id="forward_table"></tbody>
+					 </table>
+				</div>
+				<div id="forward_page" class="page"></div>
+		  </div>
+		  <div class="bt-w-con">
+				<div class="mb5">
+				    <button class="btn btn-success btn-sm add_country_rule">Add rule</button>
+				    <button class="btn btn-default btn-sm rule_import" style="margin-left:10px" data-name="country_rule">Import rules</button>
+				    <button class="btn btn-default btn-sm rule_export" style="margin-left:10px" data-name="country_rule">Export rules</button>
+				    <div class="pull-right">
+    					<div class="search-input">
+    						<input type="text" class="search_country_val" placeholder="Please fill in a country name"/>
+    						<button type="submit" class="search_country_btn">
+    							<span class="glyphicon glyphicon-search" aria-hidden="true"></span>
+    						</button>
+    					</div>
+    				</div>
+				</div>
+				<div class="divtable mt10" id="config_country_table">
+					 <table width="100%" border="0" cellpadding="0" cellspacing="0" class="table table-hover">
+						  <thead>
+						      <tr>
+						          <th style="width: 150px">Country</th>
+						          <th style="width: 90px">Strategy</th>
+						          <th style="width: 150px">Abbreviation</th>
+								  <th style="width: 80px">Port</th>
+						          <th>Time</th>
+						          <th style="text-align: right;">Operation</th>
+						      </tr>
+						  </thead>
+						  <tbody id="country_table"></tbody>
+					 </table>
+				</div>
+				<div id="country_page" class="page"></div>
+				<!--<ul class="help-info-text c7">-->
+				<!--	 <li>这里显示的是对国家ip的放行与屏蔽！</li>-->
+				<!--</ul>-->
+		  </div>
+		  <div class="bt-w-con">
+				<div class="soft-man-con" style="padding:10px">
+					 <p class="status">Current status: <span id="firewall_status"></span></p>
+					 <div class="sfm-opt">
+						  <button class="btn btn-default btn-sm set_firewall_server start" data-status="start" style="display: none">Start</button>
+						  <button class="btn btn-default btn-sm set_firewall_server stop" data-status="stop" style="display: none">Stop</button>
+						  <button class="btn btn-default btn-sm set_firewall_server" data-status="restart">Restart</button>
+						  <button class="btn btn-default btn-sm set_firewall_server" data-status="reload">Reload</button>
+					 </div>
+				</div>
+		  </div>
+	</div>
+</div>
+<script type="text/javascript">
+    $('.layui-layer-page').css('width', '925px');
+    var firewall = {
+        plugin_name:'firewall',
+        set_time : '',
+        rule_list:[],
+        ip_list:[],
+        forward_list:[],
+        country_list:[],
+        init:function(){
+            this.event();
+            $('.bt-w-menu p:eq(0)').click();
+        },
+        // 事件绑定
+        event:function(){
+            var _this = this;
+            $('.bt-w-menu p').click(function(){
+                var _index = $(this).index();
+                $(this).addClass('bgw').siblings().removeClass('bgw');
+                $('#webEdit-con .bt-w-con:eq('+ _index +')').show().siblings().hide();
+                switch (_index) {
+                    case 0:
+                        _this.create_rule_table();
+                        break;
+                    case 1:
+                        _this.create_ip_rule_table();
+                        break;
+                    case 2:
+                        _this.create_forward_table();
+                        break;
+                    case 3:
+                        _this.create_country_table();
+                        break;
+                    case 4:
+                        _this.get_service_status(function(res){
+                            $('#firewall_status').html(res?'<span style="color: #20a53a;"><span>Running</span><span style="margin-left: 3px;" class="glyphicon glyphicon-play"></span></span>':'<span style="color: red;"><span>Stopped</span><span style=" margin-left: 3px;" class="glyphicon glyphicon-pause"></span></span>');
+                            $('[data-status='+ (res?'stop':'start')+']').show();
+                        });
+                        break;
+                }
+            });
+            $('.set_firewall_server').click(function(){
+                var _type = $(this).attr('data-status');
+                _this.service_admin({status:_type},function (res) {
+                    if(_type == 'stop'){
+                        $('#firewall_status').html('<span style="color: red;"><span>Stopped</span><span style=" margin-left: 3px;" class="glyphicon glyphicon-pause"></span></span>');
+                        $('[data-status=start]').show().next().hide();
+                    }else if(_type == 'start'){
+                        $('#firewall_status').html('<span style="color: #20a53a;"><span>Running</span><span style="margin-left: 3px;" class="glyphicon glyphicon-play"></span></span>');
+                        $('[data-status=stop]').show().prev().hide();
+                    }
+                    layer.msg(res.msg,{icon:res.status?1:2});
+                })
+            });
+            $('.rule_import').click(function () {
+                var name = $(this).attr("data-name");
+                layer.open({
+                    type: 1,
+                    area:"400px",
+                    title: 'Import rules',
+                    closeBtn: 2,
+                    shift: 5,
+                    shadeClose: false,
+                    btn:['Confirm','Cancel'],
+                    content:'<div class="bt-form bt-form" style="padding:15px 0px">\
+								<div class="line" style="text-align: center;">\
+                                    <div class="info-r c4" style="margin-left:0;padding: 10px 0;">\
+                                        <div class="detect_input">\
+                                            <input type="text" class="input_file mlr20" placeholder="Please select a file" style="width:250px;">\
+                                            <input type="file" class="file_input" name="Upload" id="fileInput" style="display:none;"/>\
+                                            <button type="button" class="select_file btn btn-default" onclick="$(\'#fileInput\').click()">Select file</button>\
+                                        </div>\
+                                    </div>\
+                                </div>\
+							</div>',
+                    yes:function(index,layers){
+                        if (!$("#fileInput")[0].files[0])return layer.msg('请选择要导入的文件!',{icon:2}); 
+                        _this.upload({name:name, _fd:$("#fileInput")[0].files[0]}, 0, index);
+                    },
+                    success:function(){
+                        $("#fileInput").on('change',function(){
+                            if(!$("#fileInput")[0].files[0]){
+                                $(".input_file").val("");
+                            }
+                            var filename = $("#fileInput")[0].files[0].name;
+                            $(".input_file").val(filename)
+                        });
+                    },
+                });
+            });
+            $('.rule_export').click(function () {
+                var name = $(this).attr("data-name");
+                _this.export_rules({name:name},function(res){
+                    if(res.status){
+                        window.open('/firewall/get_file?filename='+res.msg);
+                        // layer.msg(res.msg,{icon:1});
+                        // _this.create_rule_table(function(){ layer.msg(res.msg,{icon:1}); })
+                    }else{
+                        layer.msg(res.msg,{icon:2});
+                    }
+                });
+            });
+            $('.add_firewall_rule').click(function(){
+                layer.open({
+                    type: 1,
+                    area:"400px",
+                    title: 'Add Rule',
+                    closeBtn: 2,
+                    shift: 5,
+                    shadeClose: false,
+                    btn:['Confirm','Cancel'],
+                    content:'<div class="bt-form bt-form" style="padding:15px 25px">\
+								 <div class="line">\
+									 <span class="tname">Protocol</span>\
+									 <div class="info-r">\
+								         <select class="bt-input-text mr5 firewall_version" name="protocol" style="width:200px">\
+								             <option value="tcp/udp">TCP/UDP</option>\
+								             <option value="tcp">TCP</option>\
+								             <option value="udp">UDP</option>\
+								         </select>\
+									 </div>\
+								 </div>\
+								 <div class="line">\
+									 <span class="tname">Port</span>\
+									 <div class="info-r">\
+										 <input name="ports" class="bt-input-text mr5" type="text" style="width: 200px" value="" placeholder="Please enter the port">\
+									 </div>\
+								 </div>\
+								 <div class="line">\
+									 <span class="tname">Source IP</span>\
+									 <div class="info-r">\
+									     <select class="bt-input-text mr5 firewall_version" name="choose" style="width:200px">\
+								             <option value="all">All</option>\
+								             <option value="point">Specify IP</option>\
+								         </select>\
+									 </div>\
+								 </div>\
+								 <div class="line" style="display:none">\
+									 <div class="info-r">\
+										 <input name="source" class="bt-input-text mr5" type="text" style="width: 200px" value="" placeholder="Please enter the specified IP here">\
+									 </div>\
+								 </div>\
+								 <div class="line">\
+									 <span class="tname">Strategy</span>\
+									 <div class="info-r">\
+										 <select class="bt-input-text mr5" name="types" style="width:200px">\
+								             <option value="accept">Allow</option>\
+								             <option value="drop">Deny</option>\
+								         </select>\
+									 </div>\
+								 </div>\
+								 <div class="line">\
+								     <span class="tname">Remark</span>\
+									 <div class="info-r">\
+										 <input name="brief" class="bt-input-text mr5" type="text" style="width: 200px" value="" placeholder="">\
+									 </div>\
+								 </div>\
+								 <ul class="help-info-text c7" style="padding-left: 29px;margin-top:5px;">\
+                                     <li>Support adding multiple ports, such as: 80,88</li>\
+                                     <li>Support adding range ports, such as: 90-99</li>\
+                                 </ul>\
+							</div>',
+                    yes:function(index,layers){
+                        var protocol = $('[name=protocol]').val();
+                        var ports = $('[name=ports]').val();
+                        var types = $('[name=types]').val();
+                        var brief = $('[name=brief]').val();
+                        var source = $('[name=source]').val();
+                        if(ports == '') return layer.msg('Port cannot be empty',{icon:2});
+                        if($('[name=choose]').val()=="point"){
+                            if(source == '') return layer.msg('Please enter the specified IP',{icon:2});
+                        }
+                        _this.create_rules({protocol:protocol,ports:ports,types:types,brief:brief,source:source},function(res){
+                            if(res.status){
+                                layer.close(index);
+                                _this.create_rule_table()
+                            }
+                            layer.msg(res.msg,{icon:res.status?1:2});
+                        });
+                    },
+                    success:function(){
+                        $('[name=choose]').on('change',function(){
+                            var content = $(this).val();
+                            if(content=="point"){
+                                $("[name=source]").parent().parent().removeAttr("style","");
+                            }else{  
+                                $("[name=source]").parent().parent().css("display","none");
+                            }
+                        });
+                        // $('[name=choose]').on('keyup',function(){
+                        //     var content = $(this).val();
+                        //     if(content=="point"){
+                        //         $("[name=types]").removeAttr("disabled");
+                        //     }else{  
+                        //         $("[name=types]").attr("disabled","disabled");
+                        //     }
+                        // });
+                    }
+                });
+            });
+            $('#config_table').on('click','.edit_rule',function () {
+                var _id = $(this).attr('data-id');
+                var index = $(this).attr('data-index');res = _this.rule_list[index];
+                layer.open({
+                    type: 1,
+                    area:"400px",
+                    title: 'Edit the rules',
+                    closeBtn: 2,
+                    shift: 5,
+                    shadeClose: false,
+                    btn:['Confirm','Cancel'],
+                    content:'<div class="bt-form bt-form" style="padding:15px 25px">\
+                                     <div class="line">\
+    									 <span class="tname" style="width:100px">protocol</span>\
+    									 <div class="info-r">\
+    								         <select class="bt-input-text mr5 project_version" name="protocol" style="width:200px">\
+    								             <option value="tcp" '+ (res.protocol=="tcp"?'checked':'') +'>TCP</option>\
+    								             <option value="udp" '+ (res.protocol=="udp"?'checked':'') +'>UDP</option>\
+    								             <option value="tcp/udp">TCP/UDP</option>\
+    								         </select>\
+    									 </div>\
+    								 </div>\
+    								 <div class="line">\
+    									 <span class="tname" style="width:100px">Port</span>\
+    									 <div class="info-r">\
+    										 <input name="ports" class="bt-input-text mr5" type="text" style="width: 200px" value="'+ res.ports +'" placeholder="Please enter the port" disabled="disabled">\
+    									 </div>\
+    								 </div>\
+    								 <div class="line">\
+    									 <span class="tname" style="width:100px">Source</span>\
+    									 <div class="info-r">\
+    									     <select class="bt-input-text mr5 firewall_version" name="choose" style="width:200px">\
+    								             <option value="all">All</option>\
+    								             <option value="point">Specify IP</option>\
+    								         </select>\
+    									 </div>\
+    								 </div>\
+    								 <div class="line" style="display:none">\
+    									 <div class="info-r">\
+    										 <input name="source" class="bt-input-text mr5" type="text" style="width: 200px" value="'+ res.address +'" placeholder="Please enter the specified IP here">\
+    									 </div>\
+    								 </div>\
+    								 <div class="line">\
+    									 <span class="tname" style="width:100px">Strategy</span>\
+    									 <div class="info-r">\
+    										 <select class="bt-input-text mr5" name="types" style="width:200px">\
+    								             <option value="accept">Allow</option>\
+    								             <option value="drop">Deny</option>\
+    								         </select>\
+    									 </div>\
+    								 </div>\
+    								 <div class="line">\
+    									 <span class="tname" style="width:100px">Remask</span>\
+    									 <div class="info-r">\
+    										 <input name="brief" class="bt-input-text mr5" type="text" style="width: 200px" value="'+ res.brief +'" placeholder="">\
+    									 </div>\
+    								 </div>\
+								 </div>',
+                    yes:function(index,layers){
+                        var protocol = $('[name=protocol]').val();
+                        var ports = $('[name=ports]').val();
+                        var types = $('[name=types]').val();
+                        var brief = $('[name=brief]').val();
+                        var source = $('[name=source]').val();
+                        if(ports == '') return layer.msg('Port cannot be empty',{icon:2});
+                        if($('[name=choose]').val()=="all"){
+                            source = '';
+                        }else{
+                            if(source == '') return layer.msg('Please enter the specified IP',{icon:2});
+                        }
+                        _this.modify_rules({id:_id,protocol:protocol,ports:ports,types:types,brief:brief,source:source},function(res){
+                            if(res.status){
+                                layer.close(index);
+                                _this.create_rule_table()
+                            }
+                            layer.msg(res.msg,{icon:res.status?1:2});
+                        });
+                    },
+                    success:function(){
+                        $('[name=protocol]').val(res.protocol);
+                        $('[name=types]').val(res.types);
+                        if($('[name=source]').val()!=""){
+                            $("[name=source]").parent().parent().removeAttr("style","");
+                            $("[name=choose]").val("point");
+                        }
+                        $('[name=choose]').on('change',function(){
+                            var content = $(this).val();
+                            if(content=="point"){
+                                $("[name=source]").parent().parent().removeAttr("style","");
+                            }else{  
+                                $("[name=source]").parent().parent().css("display","none");
+                            }
+                        });
+                        // $('[name=source]').on('keyup',function(){
+                        //     var content = $(this).val();
+                        //     if(content){
+                        //         $("[name=types]").removeAttr("disabled");
+                        //     }else{
+                        //         $("[name=types]").attr("disabled","disabled");
+                        //     }
+                        // });
+                    },
+                });
+            });
+            $('#config_table').on('click','.del_rule',function () {
+                var _id = $(this).attr('data-id');
+                var index = $(this).attr('data-index');res = _this.rule_list[index];
+                layer.confirm('Do you want to delete the current rule and continue?',{btn:['Confirm','Cancel'],icon:3,closeBtn: 2,title:'Delete rule'},function(){
+                    _this.remove_rules({id:_id, protocol:res.protocol, ports:res.ports, types:res.types, address:res.address},function(res){
+                        if(res.status){
+                            _this.create_rule_table()
+                        }
+                        layer.msg(res.msg,{icon:res.status?1:2});
+                    });
+                });
+            });
+            $('#webEdit-con').on('click','.remove_all_ip_rules',function () {
+                bt.show_confirm('Delete rule', "<span style='font-size: 14px;'>All rules will be deleted. Do you want to continue?</span>", function () {
+                   _this.remove_all_ip_rules(function(res){
+                        _this.create_ip_rule_table();
+                        layer.msg(res.msg,{icon:res.status ? 1 : 2});
+                    });
+                });
+            });
+            $('.add_ip_rule').click(function(){
+                layer.open({
+                    type: 1,
+                    area:"400px",
+                    title: 'Add IP rules',
+                    closeBtn: 2,
+                    shift: 5,
+                    shadeClose: false,
+                    btn:['Confirm','Cancel'],
+                    content:'<div class="bt-form bt-form" style="padding:15px 25px">\
+								 <div class="line">\
+									 <span class="tname">Source IP</span>\
+									 <div class="info-r">\
+										 <input name="address" class="bt-input-text mr5" type="text" style="width: 200px" value="" placeholder="Please enter IP e.g. 192.168.1.102">\
+									 </div>\
+								 </div>\
+								 <div class="line">\
+									 <span class="tname">Strategy</span>\
+									 <div class="info-r">\
+										 <select class="bt-input-text mr5" name="types" style="width:200px">\
+								             <option value="drop">Block</option>\
+								             <option value="accept">Release</option>\
+								         </select>\
+									 </div>\
+								 </div>\
+								 <div class="line">\
+									 <span class="tname">Remask</span>\
+									 <div class="info-r">\
+										 <input name="brief" class="bt-input-text mr5" type="text" style="width: 200px" value="" placeholder="">\
+									 </div>\
+								 </div>\
+								 <ul class="help-info-text c7" style="padding-left: 29px;margin-top:5px;">\
+                                     <li>If adding multiple IPs, please use "," to separate</li>\
+                                     <li>If you add an IP segment, such as: 192.168.0.0/24</li>\
+                                     <li>If adding a range of IPs, please enter 192.168.1.xx-192.168.1.xx</li>\
+                                 </ul>\
+							</div>',
+                    yes:function(index,layers){
+                        var address = $('[name=address]').val();
+                        var types = $('[name=types]').val();
+                        var brief = $('[name=brief]').val();
+                        if(address == ''){
+                            layer.msg('IP cannot be empty',{icon:2});
+                            return false;
+                        }
+                        _this.create_ip_rules({types:types,brief:brief,address:address},function(res){
+                            if(res.status){
+                                layer.close(index);
+                                _this.create_ip_rule_table()
+                            }
+                            layer.msg(res.msg,{icon:res.status?1:2});
+                        });
+                    },
+                });
+            });
+            $('#config_ip_table').on('click','.edit_ip_rule',function () {
+                var _id = $(this).attr('data-id');
+                var index = $(this).attr('data-index');res = _this.ip_list[index];
+                layer.open({
+                    type: 1,
+                    area:"400px",
+                    title: 'Edit IP rules',
+                    closeBtn: 2,
+                    shift: 5,
+                    shadeClose: false,
+                    btn:['Confirm','cancel'],
+                    content:'<div class="bt-form bt-form" style="padding:15px 25px">\
+    								 <div class="line">\
+    									 <span class="tname" style="width:100px">Source IP</span>\
+    									 <div class="info-r">\
+    										 <input name="address" class="bt-input-text mr5" type="text" style="width: 200px" value="'+ res.address +'" placeholder="Please enter IP source">\
+    									 </div>\
+    								 </div>\
+    								 <div class="line">\
+    									 <span class="tname" style="width:100px">Strategy</span>\
+    									 <div class="info-r">\
+    										 <select class="bt-input-text mr5" name="types" style="width:200px">\
+    								             <option value="drop">Block</option>\
+								                 <option value="accept">Release</option>\
+    								         </select>\
+    									 </div>\
+    								 </div>\
+    								 <div class="line">\
+    									 <span class="tname" style="width:100px">Remask</span>\
+    									 <div class="info-r">\
+    										 <input name="brief" class="bt-input-text mr5" type="text" style="width: 200px" value="'+ res.brief +'" placeholder="">\
+    									 </div>\
+    								 </div>\
+								 </div>',
+                    yes:function(index,layers){
+                        var address = $('[name=address]').val();
+                        var types = $('[name=types]').val();
+                        var brief = $('[name=brief]').val();
+                        if(address == ''){
+                            layer.msg('IP cannot be empty',{icon:2});
+                            return false;
+                        }
+                        _this.modify_ip_rules({id:_id,types:types,brief:brief,address:address},function(res){
+                            if(res.status){
+                                layer.close(index);
+                                _this.create_ip_rule_table()
+                            }
+                            layer.msg(res.msg,{icon:res.status?1:2});
+                        });
+                    },
+                    success:function(){
+                        $('[name=types]').val(res.types);
+                        $('[name=protocol]').val(res.protocol);
+                    },
+                });
+            });
+            $('#config_ip_table').on('click','.del_ip_rule',function () {
+                var _id = $(this).attr('data-id');
+                var index = $(this).attr('data-index');res = _this.ip_list[index];
+                layer.confirm('The current rule is being deleted. Do you want to continue?',{btn:['Control','Cancel'],icon:3,closeBtn: 2,title:'Delete rule'},function(){
+                    _this.remove_ip_rules({id:_id, types:res.types, address:res.address},function(res){
+                        if(res.status){
+                            _this.create_ip_rule_table()
+                        }
+                        layer.msg(res.msg,{icon:res.status?1:2});
+                    });
+                });
+            });
+            $('.add_forward_rule').click(function(){
+                layer.open({
+                    type: 1,
+                    area:"400px",
+                    title: 'Add port forwarding rules',
+                    closeBtn: 2,
+                    shift: 5,
+                    shadeClose: false,
+                    btn:['Confirm','Cancel'],
+                    content:'<div class="bt-form bt-form" style="padding:15px 25px">\
+								 <div class="line">\
+									 <span class="tname">Protocol</span>\
+									 <div class="info-r">\
+								         <select class="bt-input-text mr5 project_version" name="protocol" style="width:200px">\
+											 <option value="tcp/udp">TCP/UDP</option>\
+								             <option value="tcp">TCP</option>\
+								             <option value="udp">UDP</option>\
+								         </select>\
+									 </div>\
+								 </div>\
+								 <div class="line">\
+									 <span class="tname">Source port</span>\
+									 <div class="info-r">\
+										 <input name="s_ports" class="bt-input-text mr5" type="text" style="width: 200px" value="" placeholder="Please enter the source port">\
+									 </div>\
+								 </div>\
+								 <div class="line">\
+									 <span class="tname">Target IP</span>\
+									 <div class="info-r">\
+										 <input name="d_address" class="bt-input-text mr5" type="text" style="width: 200px" value="" placeholder="Please enter the IP address">\
+									 </div>\
+								 </div>\
+								 <div class="line">\
+									 <span class="tname">Target port</span>\
+									 <div class="info-r">\
+										 <input name="d_ports" class="bt-input-text mr5" type="text" style="width: 200px" value="" placeholder="Please enter the port">\
+									 </div>\
+								 </div>\
+                                <div class="line">\
+                                    <span class="tname" style="width:100px">Remask</span>\
+                                    <div class="info-r">\
+                                        <input name="brief" class="bt-input-text mr5" type="text" style="width: 200px" value="" placeholder="">\
+                                    </div>\
+                                </div>\
+								 <ul class="help-info-text c7" style="padding-left: 29px;margin-top:5px;">\
+                                     <li>If it is local port forwarding, the target IP is: 127.0.0.1</li>\
+                                     <li>If the target IP is not filled in, it will be forwarded to the local port by default!</li>\
+                                 </ul>\
+							</div>',
+                    yes:function(index,layers){
+                        var protocol = $('[name=protocol]').val();
+                        var s_ports = $('[name=s_ports]').val();
+                        var d_address = $('[name=d_address]').val();
+                        var d_ports = $('[name=d_ports]').val();
+                        var brief = $('[name=brief]').val();
+                        if(s_ports == ''){
+                            layer.msg('Source port cannot be empty',{icon:2});
+                            return false;
+                        }
+                        if(d_ports == ''){
+                            layer.msg('Target port cannot be empty',{icon:2});
+                            return false;
+                        }
+                        _this.create_forward({protocol:protocol,brief:brief,s_ports:s_ports,d_address:d_address,d_ports:d_ports},function(res){
+                            if(res.status){
+                                layer.close(index);
+                                _this.create_forward_table()
+                            }
+                            layer.msg(res.msg,{icon:res.status?1:2});
+                        });
+                    },
+                });
+            });
+            $('#config_forward_table').on('click','.edit_forward_rule',function () {
+                var _id = $(this).attr('data-id');
+                var index = $(this).attr('data-index');res = _this.forward_list[index];
+                layer.open({
+                    type: 1,
+                    area:"400px",
+                    title: 'Edit port forwarding rules',
+                    closeBtn: 2,
+                    shift: 5,
+                    shadeClose: false,
+                    btn:['Confirm','Cancel'],
+                    content:'<div class="bt-form bt-form" style="padding:15px 25px">\
+    								 <div class="line">\
+    									 <span class="tname" style="width:100px">Protocol</span>\
+    									 <div class="info-r">\
+    								         <select class="bt-input-text mr5 project_version" name="protocol" style="width:200px">\
+    								             <option value="tcp">TCP</option>\
+    								             <option value="udp">UDP</option>\
+    								             <option value="tcp/udp">TCP/UDP</option>\
+    								         </select>\
+    									 </div>\
+    								 </div>\
+    								 <div class="line">\
+    									 <span class="tname" style="width:100px">Source port</span>\
+    									 <div class="info-r">\
+    										 <input name="s_ports" class="bt-input-text mr5" type="text" style="width: 200px" value="'+ res.start_port +'" placeholder="Please enter the port" disabled="disabled">\
+    									 </div>\
+    								 </div>\
+    								 <div class="line">\
+    									 <span class="tname" style="width:100px">Target IP</span>\
+    									 <div class="info-r">\
+    										 <input name="d_address" class="bt-input-text mr5" type="text" style="width: 200px" value="'+ res.ended_ip +'" placeholder="Please enter the IP address">\
+    									 </div>\
+    								 </div>\
+    								 <div class="line">\
+    									 <span class="tname" style="width:100px">Target port</span>\
+    									 <div class="info-r">\
+    										 <input name="d_ports" class="bt-input-text mr5" type="text" style="width: 200px" value="'+ res.ended_port +'" placeholder="Please enter the port">\
+    									 </div>\
+    								 </div>\
+                                    <div class="line">\
+                                        <span class="tname" style="width:100px">Remask</span>\
+                                        <div class="info-r">\
+                                            <input name="brief" class="bt-input-text mr5" type="text" style="width: 200px" value="'+ res.brief +'" placeholder="">\
+                                        </div>\
+                                    </div>\
+    								 <ul class="help-info-text c7" style="padding-left: 29px;margin-top:5px;">\
+										 <li>If it is local port forwarding, the target IP is: 127.0.0.1</li>\
+										 <li>If the target IP is not filled in, it will be forwarded to the local port by default!</li>\
+                                     </ul>\
+								 </div>',
+                    yes:function(index,layers){
+                        var protocol = $('[name=protocol]').val();
+                        var s_ports = $('[name=s_ports]').val();
+                        var d_address = $('[name=d_address]').val();
+                        var d_ports = $('[name=d_ports]').val();
+                        var brief = $('[name=brief]').val();
+                        if(s_ports == ''){
+                            layer.msg('Source port cannot be empty',{icon:2});
+                            return false;
+                        }
+                        if(d_ports == ''){
+                            layer.msg('Target port cannot be empty',{icon:2});
+                            return false;
+                        }
+                        console.log(brief,'brief');
+                        _this.modify_forward({id:_id,protocol:protocol,brief:brief,s_ports:s_ports,d_address:d_address,d_ports:d_ports},function(res){
+                            if(res.status){
+                                layer.close(index);
+                                _this.create_forward_table()
+                            }
+                            layer.msg(res.msg,{icon:res.status?1:2});
+                        });
+                    },
+                    success:function(){
+                        $('[name=protocol]').val(res.protocol);
+                        var address = $('[name=d_address]').val();
+                        if(address == ""){
+                            $('[name=d_address]').val("127.0.0.1");
+                        }
+                    },
+                });
+            });
+            $('#config_forward_table').on('click','.del_forward_rule',function () {
+                var _id = $(this).attr('data-id');
+                var index = $(this).attr('data-index');res = _this.forward_list[index];
+                layer.confirm('The current rule is being deleted. Do you want to continue?',{btn:['Confirm','Cancel'],icon:3,closeBtn: 2,title:'Delete rule'},function(){
+                    _this.remove_forward({id:_id,protocol:res.protocol,start_port:res.start_port,ended_ip:res.ended_ip,ended_port:res.ended_port},function(res){
+                        if(res.status){
+                            _this.create_forward_table()
+                        }
+                        layer.msg(res.msg,{icon:res.status?1:2});
+                    });
+                });
+            });
+            $('.add_country_rule').click(function(){
+                _this.get_countrys(function(res){
+                    var _option = '';
+                    for(var i = 0; i< res.length;i++){ _option += '<li brief="'+ res[i].brief +'">'+ res[i].CH +'</li>' }
+                    layer.open({
+                        type: 1,
+                        area:"420px",
+                        title: 'Add area rule',
+                        closeBtn: 2,
+                        shift: 5,
+                        shadeClose: false,
+                        btn:['Confirm','Cancel'],
+                        content:'<div class="bt-form bt-form count_rule" style="padding:20px 25px 25px">\
+    								 <div class="line">\
+                                    	 <span class="tname" style="width:125px">Contry</span>\
+                                    	 <div class="select_conter">\
+                        					<span style="display: none;" class="domain_hide_value">'+res[0].CH+'</span>\
+                        					<input type="text" brief="'+ res[0].brief +'" autocomplete="off"class="inbox_input domain_input" name="inbox_input" style="height: 30px;border: none;">\
+                        					<ul class="domain_list" id="domain_select_list" style="overflow-y: auto;max-height: 297px;z-index:2;">'+_option+'</ul>\
+                        					<select class="bt-input-text" style="float: right;padding: 0;margin: 0;border: none;"></select>\
+                        				</div>\
+                                     </div>\
+    								 <div class="line">\
+    									 <span class="tname" style="width:125px">Strategy</span>\
+    									 <div class="info-r">\
+    										 <select class="bt-input-text mr5" name="types" style="width:200px">\
+    								             <option value="drop">Block</option>\
+    								         </select>\
+    									 </div>\
+    								 </div>\
+    								 <div class="line">\
+    									 <span class="tname">Port</span>\
+    									 <div class="info-r">\
+    									     <select class="bt-input-text mr5 firewall_version" name="choose" style="width:200px">\
+    								             <option value="all">All</option>\
+    								             <option value="point">Specify Port</option>\
+    								         </select>\
+    									 </div>\
+    								 </div>\
+    								 <div class="line" style="display:none">\
+    									 <div class="info-r">\
+    										 <input name="ports" class="bt-input-text mr5" type="text" style="width: 200px" value="" placeholder="Fill in the port here">\
+    									 </div>\
+    								 </div>\
+    								 <div class="line">\
+    									 <span class="tname">Remarks</span>\
+    									 <div class="info-r">\
+    										 <input name="brief" class="bt-input-text mr5" type="text" style="width: 200px" value="" placeholder="">\
+    									 </div>\
+    								 </div>\
+    								 <ul class="help-info-text c7" style="padding-left: 57px;margin-top:5px;">\
+                                         <li>Only a single country name is currently supported!</li>\
+                                         <li>Please note: If this area is blocked, this area cannot be access your server!</li>\
+                                     </ul>\
+    							</div>',
+                        yes:function(index,layers){
+                            var brief = $('[name=inbox_input]').attr('brief');
+                            var country = $('[name=inbox_input]').val().toLowerCase();
+                            var types = $('[name=types]').val();
+                            var ports = $('[name=ports]').val();
+                            if(country == ''){
+                                layer.msg('Country name cannot be empty',{icon:2});
+                                return false;
+                            }
+                            if($('[name=choose]').val()=="point"){
+                                if(ports == ''){
+                                    layer.msg('Please enter the port',{icon:2});
+                                    return false;
+                                }
+                            }
+                            var _input = $('#domain_select_list li').filter(function() {
+                                return $(this).text().toLowerCase() == country.toLowerCase();
+                            });
+                            if(_input.length == 1){
+                                brief = _input.attr('brief');
+                                country = _input.text();
+                            }else {
+                                layer.msg('Please enter the correct country name',{icon:2});
+                                return false;
+                            }
+                            _this.create_country({types:types,brief:brief,country:country,ports:ports},function(res){
+                                if(res.status){
+                                    layer.close(index);
+                                    _this.create_country_table()
+                                }
+                                layer.msg(res.msg,{icon:res.status?1:2});
+                            });
+                        },
+                        success:function(){
+                            $('[name=choose]').on('change',function(){
+                                var content = $(this).val();
+                                if(content=="point"){
+                                    $("[name=ports]").parent().parent().removeAttr("style","");
+                                }else{
+                                    $("[name=ports]").parent().parent().css("display","none");
+                                }
+                            });
+                        }
+                    });
+                    $('.inbox_input').val(res[0].CH);
+                    $('.count_rule').parents('.layui-layer-content').css('overflow','inherit');
+                });
+            });
+            $('body').on('click','.select_conter',function(e){
+				var domain_list = $(this).find('.domain_list');
+				if(domain_list.hasClass('active')){
+					domain_list.removeClass('active');
+				}else{
+					domain_list.addClass('active');
+				}
+				var width = $(this).innerWidth();
+				var _that = $(this),
+				set_time = '';
+				$('#domain_select_list,#domain_select_lists').width(width);
+				$('.inbox_input').keyup(function (e) {
+				    var text = $('.inbox_input').val();
+				    clearTimeout(firewall.set_time);
+				    firewall.set_time = setTimeout(function(){
+				        var new_inbox = $('.inbox_input').val();
+                        var _country = $('#domain_select_list li').filter(function() {
+                            return $(this).text().toLowerCase().indexOf(new_inbox.toLowerCase()) > -1;
+                        });
+                        $('#domain_select_list li').hide();
+                        _country.show();
+				    }, 1700);
+				    if(!$('#domain_select_list').hasClass('active')) $('#domain_select_list').addClass('active');
+                    if (text == '') {
+                        $('#domain_select_list li').show();
+                    }else {
+                        $('#domain_select_list li').hide();
+                        var _country = $('#domain_select_list li').filter(function() {
+                            return $(this).text().toLowerCase().indexOf(text.toLowerCase()) > -1;
+                        });
+                        _country.show();
+                        //$("#domain_select_list li:contains('"+text+"')").show();
+                    }
+                });
+				$('body').click(function(){
+				    clearTimeout(firewall.set_time);
+					var domainVal = _that.find(".domain_hide_value").html(),
+					text = $('.inbox_input').val(),
+					//_input = $("#domain_select_list li:contains('"+ text +"')").filter(function(){a
+    //                     return $(this).text().toLowerCase() == text.toLowerCase();
+    //                 });
+                    _input = $('#domain_select_list li').filter(function() {
+                        return $(this).text().toLowerCase() == text.toLowerCase();
+                    });
+                    if(_input.length == 1){
+                        _input.click();
+                    }else if(_that.find('input').val() != domainVal || _that.find('input').val() == ''){
+						_that.find("input").val(domainVal);
+						$('#domain_select_list li').hide();
+					}
+					$('#domain_select_list,#domain_select_lists').removeClass('active');
+				});
+				e.preventDefault();
+				e.stopPropagation();
+			});
+
+			$('body').on('click','#domain_select_list li',function(e){
+			    clearTimeout(firewall.set_time);
+				var val = $(this).text(),brief = $(this).attr('brief');
+				$(this).addClass('active').siblings().removeClass('active').parent().removeClass('active');
+				$('#domain_select_list li').show();
+				$(this).parent().siblings(".domain_hide_value").html(val)
+				$('.inbox_input').attr('brief',brief).val(val);
+				e.preventDefault();
+				e.stopPropagation();
+			});
+
+            $('#config_country_table').on('click','.edit_country',function () {
+                var _id = $(this).attr('data-id');
+                var index = $(this).attr('data-index');
+                res = _this.country_list[index];
+                layer.open({
+                    type: 1,
+                    area:"400px",
+                    title: 'Edit area rule',
+                    closeBtn: 2,
+                    shift: 5,
+                    shadeClose: false,
+                    btn:['Confirm','Cancel'],
+                    content:'<div class="bt-form bt-form" style="padding:15px 25px">\
+    								 <div class="line">\
+    									 <span class="tname" style="width:100px">Country</span>\
+    									 <div class="info-r">\
+    										 <input name="country" class="bt-input-text mr5" type="text" style="width: 200px" value="'+ res.country +'" disabled=true>\
+    									 </div>\
+    								 </div>\
+    								 <div class="line">\
+    									 <span class="tname" style="width:100px">Strategy</span>\
+    									 <div class="info-r">\
+    										 <select class="bt-input-text mr5" name="types" style="width:200px">\
+    								             <option value="drop">Block</option>\
+								                 <option value="accept">Allow</option>\
+    								         </select>\
+    									 </div>\
+    								 </div>\
+    								 <div class="line" style="display:none">\
+    									 <span class="tname" style="width:100px">Abbreviation</span>\
+    									 <div class="info-r">\
+    										 <input name="brief" class="bt-input-text mr5" type="text" style="width: 200px" value="'+ res.brief +'" disabled=true>\
+    									 </div>\
+    								 </div>\
+								 </div>',
+                    yes:function(index,layers){
+                        var types = $('[name=types]').val();
+                        var brief = $('[name=brief]').val();
+                        var country = $('[name=country]').val();
+                        _this.modify_country({id:_id,types:types,brief:brief,country:country},function(res){
+                            if(res.status){
+                                layer.close(index);
+                                _this.create_country_table()
+                            }
+                            layer.msg(res.msg,{icon:res.status?1:2});
+                        });
+                    },
+                    success:function(){
+                        $('[name=types]').val(res.types);
+                    },
+                });
+            });
+
+            $('#config_country_table').on('click','.del_country',function () {
+                var _id = $(this).attr('data-id');
+                var index = $(this).attr('data-index');
+                res = _this.country_list[index];
+                layer.confirm('The current rule is being deleted. Do you want to continue?',{btn:['Confirm','Cancel'],icon:3,closeBtn: 2,title:'Delete Rule'},function(){
+                    _this.remove_country({id:_id, types:res.types, country:res.country, brief:res.brief, ports:res.ports},function(res){
+                        if(res.status){
+                            _this.create_country_table()
+                        }
+                        layer.msg(res.msg,{icon:res.status?1:2});
+                    });
+                });
+            });
+            $('#rule_page').on('click', 'a', function (e) {
+                var _p = $(this).attr('href').match(/p=([0-9]*)/)[1], _query = $('.search_port_val').val();
+                _this.create_rule_table({p: _p, query: _query});
+                return false;
+            });
+            $('#ip_page').on('click', 'a', function (e) {
+                var _p = $(this).attr('href').match(/p=([0-9]*)/)[1];
+                _this.create_ip_rule_table({p: _p});
+                return false;
+            });
+            $('#forward_page').on('click','a',function(){
+                var _href = $(this).attr('href');_page = 1;
+                _page =  _href.replace(/p\=/,'');
+                _this.create_forward_table({p:_page});
+                return false;
+            });
+            $('#country_page').on('click','a',function(){
+                var _href = $(this).attr('href');_page = 1;
+                _page =  _href.replace(/p\=/,'');
+                _this.create_country_table({p:_page});
+                return false;
+            });
+            $('.search_port_btn').click(function () {
+                var _val = $('.search_port_val').val();
+                _this.create_rule_table({query: _val});
+            });
+            $('.search_port_val').keyup(function (e) {
+                if (e.keyCode == 13) {
+                    var _val = $('.search_port_val').val();
+                    _this.create_rule_table({query: _val});
+                }
+            });
+            $('.search_ip_btn').click(function () {
+                var _val = $('.search_ip_val').val();
+                _this.create_ip_rule_table({query: _val});
+            });
+            $('.search_ip_val').keyup(function (e) {
+                if (e.keyCode == 13) {
+                    var _val = $('.search_ip_val').val();
+                    _this.create_ip_rule_table({query: _val});
+                }
+            });   
+            $('.search_trans_btn').click(function () {
+                var _val = $('.search_trans_val').val();
+                _this.create_forward_table({query: _val});
+            });
+            $('.search_trans_val').keyup(function (e) {
+                if (e.keyCode == 13) {
+                    var _val = $('.search_trans_val').val();
+                    _this.create_forward_table({query: _val});
+                }
+            });
+            $('.search_country_btn').click(function () {
+                var _val = $('.search_country_val').val();
+                _this.create_country_table({query: _val});
+            });
+            $('.search_country_val').keyup(function (e) {
+                if (e.keyCode == 13) {
+                    var _val = $('.search_country_val').val();
+                    _this.create_country_table({query: _val});
+                }
+            });
+        },
+        get_countrys: function(callback){
+            this.send({
+                method:'get_countrys',
+                tips:'Getting list of countries, please wait...',
+                success:function(res){
+                    if(callback) callback(res);
+                }
+            });
+        },
+        upload: function (s_data, start, index) {
+            var _this = this;
+            var fd = s_data._fd;
+            var end = Math.min(fd.size, start + 1024*1024*2);
+            var form = new FormData();
+            form.append("f_path", "/www/server/panel/plugin/firewall");
+            form.append("f_name", fd.name);
+            form.append("f_size", fd.size);
+            form.append("f_start", start);
+            form.append("blob", fd.slice(start, end));
+            $.ajax({
+                url: '/files?action=upload',
+                type: "POST",
+                data: form,
+                async: true,
+                processData: false,
+                contentType: false,
+                success: function (data) {
+                    if (typeof (data) === "number") {
+                        _this.upload(s_data, data, index)
+                    } else {
+                        if (data.status) {
+                            _this.import_rules({rule_name:s_data.name, file_name:fd.name},function(res){
+                                if(res.status){
+                                    layer.close(index);
+                                    if(s_data.name == 'port_rule'){ _this.create_rule_table() }
+                                    else if(s_data.name == 'ip_rule'){ _this.create_ip_rule_table() }
+                                    else if(s_data.name == 'country_rule'){ _this.create_country_table() }
+                                    else{ _this.create_forward_table() }
+                                }
+                                layer.msg(res.msg,{icon:res.status?1:2});
+                            });
+                        }
+                    }
+                },
+                error: function (e) {
+                    console.log("Upload error!")
+                }
+            })
+        },
+
+        import_rules:function(data,callback){
+            if(typeof data === "function") callback = data;
+            this.send({
+                tips:'Importing rules, please wait ...',
+                method:'import_rules',
+                check:true,
+                data:{
+                    rule_name:data.rule_name,
+                    file_name:data.file_name,
+                },
+                success:function(res){
+                    if(callback) callback(res);
+                }
+            })
+        },
+        export_rules:function(data,callback){
+            if(typeof data === "function") callback = data;
+            this.send({
+                tips:'Exporting rules, please wait ...',
+                method:'export_rules',
+                check:true,
+                data:{
+                    rule_name:data.name,
+                    rule_path:data.rule_path
+                },
+                success:function(res){
+                    if(callback) callback(res);
+                }
+            })
+        },
+        create_rule_table:function(obj,callback){
+            var _this = this;
+            if (!obj) obj = {}
+            this.get_rule_list(obj, function(rdata){
+                var _html = '', res = rdata.data;
+                for(var i = res.length - 1; i >= 0; i--){
+                    var ip_title = '';
+                    if (res[i].address!="") ip_title = 'title="'+ res[i].address  +'"';
+                    _html+='<tr>\
+                        <td><span class="table_self_conter" style="width:50px" title="'+ res[i].protocol +'">'+ res[i].protocol +'</span></td>\
+                        <td><span class="table_self_conter" style="width:auto" title="'+ res[i].ports +'">'+ res[i].ports +'</span></td>\
+                        <td><span class="table_self_conter" style="width:auto">'+ (res[i].types=='accept'?'<span style="color:#5CB85C;">Allow</span>':'<span style="color:red">Block</span>') +'</span></td>\
+                        <td><span class="table_self_conter table_self_ip" '+ ip_title  +'>'+ (res[i].address==""?"All":res[i].address) +'</span></td>\
+                        <td style="padding: 0;"><span class="table_self_conter" style="max-width: 130px;display: inline-block;overflow: hidden;text-overflow: ellipsis;" title="'+ res[i].brief +'">'+ res[i].brief +'</span></td>\
+                        <td><span>'+ res[i].addtime +'</span></td>\
+                        <td style="text-align:right;">'+'<a href="javascript:;" class="btlink edit_rule" data-id="'+ res[i].id +'" data-index="'+ i +'">Edit</a>&nbsp;|&nbsp;<a href="javascript:;" class="btlink del_rule" data-id="'+ res[i].id +'" data-index="'+ i +'">Del</a></td>\
+                    </tr>'
+                }
+                if(res.length == 0) {
+                    _html  += '<tr><td colspan="8" align="center">No data</td></tr>'
+				}
+                $('#rule-table').html(_html);
+                $('#rule_page').html(rdata.page);
+                // if(jQuery.prototype.fixedThead){
+                // 	$('#config_table').fixedThead({resize:false});
+                // }else{
+                // 	$('#config_table').css({'overflow':'auto'});
+                // }
+                _this.rule_list = res;
+                if(callback) callback();
+            });
+        },
+        // 获取规则列表（请求）
+        get_rule_list:function(mdata, data,callback){
+            if(!mdata.p) mdata.p = 1
+            if(!mdata.query) mdata.query = ''
+            if(typeof data === "function") callback = data;
+            this.send({
+                tips:'Getting list of rules, please wait ...',
+                method: 'get_rules_list',
+                check:true,
+                data: {p: mdata.p, query: mdata.query},
+                success:function(res){
+                    if(callback) callback(res)
+                }
+            });
+        },
+        // 创建规则
+        create_rules:function(data,callback){
+            if(typeof data === "function") callback = data;
+            this.send({
+                tips:'Adding rules, please wait ...',
+                method: 'create_rules',
+                data:{
+                    protocol:data.protocol, 
+                    ports:data.ports, 
+                    types:data.types, 
+                    brief:data.brief, 
+                    source:data.source
+                },
+                success:function(res){
+                    if(callback) callback(res)
+                }
+            });
+        },
+        // 删除规则
+        remove_rules:function(data,callback){
+            if(typeof data === "function") callback = data;
+            this.send({
+                tips:'Deleting rules, please wait ...',
+                method: 'remove_rules',
+                data:{id:data.id, protocol:data.protocol, ports:data.ports, types:data.types, address:data.address},
+                success:function(res){
+                    if(callback) callback(res)
+                }
+            });
+        },
+        remove_all_ip_rules:function(callback){
+            this.send({
+                tips:'All deleting rules, please wait...',
+                method: 'remove_all_ip_rules',
+                success:function(res){
+                    if(callback) callback(res)
+                }
+            });
+        },
+        // 编辑规则
+        modify_rules:function(data,callback){
+            if(typeof data === "function") callback = data;
+            this.send({
+                tips:'Modifying rules, please wait... ',
+                method: 'modify_rules',
+                data:{
+                    id:data.id,
+                    protocol:data.protocol, 
+                    ports:data.ports, 
+                    types:data.types, 
+                    brief:data.brief, 
+                    source:data.source
+                },
+                success:function(res){
+                    if(callback) callback(res)
+                }
+            });
+        },
+        create_ip_rule_table:function(obj,callback){
+            var _this = this;
+            if (!obj) obj = {}
+            this.get_ip_rule_list(obj, function(rdata){
+                var _html = '', res = rdata.data;
+                for(var i = res.length - 1; i >= 0; i--){
+                    var brief_title = '';
+                    if (res[i].brief!="") brief_title = 'title="'+ res[i].brief  +'"';
+                    _html+='<tr>\
+                        <td><span class="table_self_conter table_self_ip" style="max-width:130px;" title="'+ res[i].address  +'">'+ res[i].address +'</span></td>\
+                        <td><span class="table_self_conter" style="width:45px;">'+ (res[i].types=='accept'?'<span style="color:#5CB85C;">Release</span>':'<span style="color:red">Block</span>') +'</span></td>\
+                        <td><span class="table_self_conter table_self_ip" style="max-width:185px;" '+ brief_title +'>'+ res[i].brief +'</span></td>\
+                        <td><span>'+ res[i].addtime +'</span></td>\
+                        <td style="text-align:right;">'+'<a href="javascript:;" class="btlink edit_ip_rule" data-id="'+ res[i].id +'" data-index="'+ i +'">Edit</a>&nbsp;|&nbsp;<a href="javascript:;" class="btlink del_ip_rule" data-id="'+ res[i].id +'" data-index="'+ i +'">Del</a></td>\
+                    </tr>'
+                }
+    //             if(res.length == 0) {
+    //                 _html  += '<tr><td colspan="8">当前没有数据</td></tr>'
+				// }
+                $('#ip_rule-table').html(_html);
+                $('#ip_page').html(rdata.page);
+                // if(jQuery.prototype.fixedThead){
+                // 	$('#config_ip_table').fixedThead({resize:false});
+                // }else{
+                // 	$('#config_ip_table').css({'overflow':'auto'});
+                // }
+                _this.ip_list = res;
+                if(callback) callback();
+            });
+        },
+        // 获取IP规则列表
+        get_ip_rule_list:function(mdata, data,callback){
+            if(!mdata.p) mdata.p = 1
+            if(!mdata.query) mdata.query = ''
+            if(typeof data === "function") callback = data;
+            this.send({
+                tips:'Getting list of rules, please wait ...',
+                method: 'get_ip_rules_list',
+                check:true,
+                data: {p: mdata.p, query: mdata.query},
+                success:function(res){
+                    if(callback) callback(res)
+                }
+            });
+        },
+        // 创建IP规则(屏蔽或放行)
+        create_ip_rules:function(data,callback){
+            if(typeof data === "function") callback = data;
+            this.send({
+                tips:'Adding rules, please wait ...',
+                method: 'create_ip_rules',
+                data:{
+                    address:data.address,
+                    types:data.types, 
+                    brief:data.brief
+                },
+                success:function(res){
+                    if(callback) callback(res)
+                }
+            });
+        },
+        // 删除IP规则
+        remove_ip_rules:function(data,callback){
+            if(typeof data === "function") callback = data;
+            this.send({
+                tips:'Deleting rules, please wait ...',
+                method: 'remove_ip_rules',
+                data:{id:data.id, types:data.types, address:data.address},
+                success:function(res){
+                    if(callback) callback(res)
+                }
+            });
+        },
+        // 编辑IP规则
+        modify_ip_rules:function(data,callback){
+            if(typeof data === "function") callback = data;
+            this.send({
+                tips:'Editing rules, please wait ...',
+                method: 'modify_ip_rules',
+                data:{
+                    id:data.id,
+                    types:data.types, 
+                    brief:data.brief, 
+                    address:data.address
+                },
+                success:function(res){
+                    if(callback) callback(res)
+                }
+            });
+        },
+        create_forward_table:function(obj,callback){
+            var _this = this;
+            if (!obj) obj = {}
+            this.get_forward_list(obj, function(rdata){
+                var _html = '', res = rdata.data;
+                for(var i = res.length - 1; i >= 0; i--){
+                    _html+='<tr>\
+                        <td><span class="table_self_conter" style="width:50px" title="'+ res[i].protocol +'">'+ res[i].protocol +'</span></td>\
+                        <td><span class="table_self_conter" style="width:auto" title="'+ res[i].start_port +'">'+ res[i].start_port +'</span></td>\
+                        <td><span class="table_self_conter table_self_ip" title="'+ res[i].brief +'">'+ res[i].brief +'</span></td>\
+                        <td><span class="table_self_conter table_self_ip" style="max-width:185px;" title="'+ res[i].ended_ip +'">'+ (res[i].ended_ip==""?"127.0.0.1":res[i].ended_ip) +'</span></td>\
+                        <td><span class="table_self_conter" style="width:auto" title="'+ res[i].ended_port +'">'+ res[i].ended_port +'</span></td>\
+                        <td><span>'+ res[i].addtime +'</span></td>\
+                        <td style="text-align:right;">'+'<a href="javascript:;" class="btlink edit_forward_rule" data-id="'+ res[i].id +'" data-index="'+ i +'">Edit</a>&nbsp;|&nbsp;<a href="javascript:;" class="btlink del_forward_rule" data-id="'+ res[i].id +'" data-index="'+ i +'">Del</a></td>\
+                    </tr>'
+                }
+                if(res.length == 0) {
+                    _html  += '<tr><td colspan="8" align="center">No data</td></tr>'
+				}
+                $('#forward_table').html(_html);
+                $('#forward_page').html(rdata.page);
+                // if(jQuery.prototype.fixedThead){
+                // 	$('#config_forward_table').fixedThead({resize:false});
+                // }else{
+                // 	$('#config_forward_table').css({'overflow':'auto'});
+                // }
+                _this.forward_list = res;
+                if(callback) callback();
+            });
+        },
+        // 获取端口转发列表
+        get_forward_list:function(mdata, data,callback){
+            if(!mdata.p) mdata.p = 1
+            if(!mdata.query) mdata.query = ''
+            if(typeof data === "function") callback = data;
+            this.send({
+                tips:'Getting port forwarding list, please wait ... ',
+                method: 'get_forward_list',
+                check:true,
+                data: {p: mdata.p, query: mdata.query},
+                success:function(res){
+                    if(callback) callback(res)
+                }
+            });
+        },
+        // 创建端口转发
+        create_forward:function(data,callback){
+            if(typeof data === "function") callback = data;
+            this.send({
+                tips:'Adding port forwarding, please wait ...',
+                method: 'create_forward',
+                data:data,
+                success:function(res){
+                    if(callback) callback(res)
+                }
+            });
+        },
+        // 删除端口转发
+        remove_forward:function(data,callback){
+            if(typeof data === "function") callback = data;
+            this.send({
+                tips:'Deleting rules, please wait ...',
+                method: 'remove_forward',
+                data:{
+                    id:data.id, 
+                    protocol:data.protocol, 
+                    s_port:data.start_port, 
+                    d_ip:data.ended_ip, 
+                    d_port:data.ended_port
+                },
+                success:function(res){
+                    if(callback) callback(res)
+                }
+            });
+        },
+        // 编辑端口转发
+        modify_forward:function(data,callback){
+            if(typeof data === "function") callback = data;
+            this.send({
+                tips:'Editing rules, please wait ...',
+                method: 'modify_forward',
+                data:data,
+                success:function(res){
+                    if(callback) callback(res)
+                }
+            });
+        },
+        // 端口转发开关请求
+		open_port_trans:function(callback){
+		    var status = $('#close_anti').prop('checked');
+			this.send({
+				tips:(Status =='true '?' Turn on port forwarding ':' Turn off port forwarding ') +', please wait ...',
+				data:{status:!status},
+				method:'open_close_forward',
+				success:function(res){
+					if(callback) callback(res);
+				}
+			});
+		},
+        // 端口转发开关
+		trans_switch:function(){
+			this.open_port_trans(function(res){
+				layer.msg(res.msg,{icon:res.status?1:2})
+			})
+		},
+		create_country_table:function(obj,callback){
+            var _this = this;
+            if (!obj) obj = {}
+            this.get_country_list(obj, function(rdata){
+                var _html = '', res = rdata.data;
+                for(var i = res.length - 1; i >= 0; i--){
+                    _html+='<tr>\
+                        <td><span class="table_self_conter" style="width:auto">'+ res[i].country +'</span></td>\
+                        <td><span class="table_self_conter" style="width:auto">'+ (res[i].types=='accept'?'<span style="color:#5CB85C;">Allow</span>':'<span style="color:red">Block</span>') +'</span></td>\
+                        <td style="width:110px"><span class="table_self_conter">'+ res[i].brief +'</span></td>\
+                        <td><span class="table_self_conter" style="width:auto">'+ (res[i].ports==""||res[i].ports==null?"All":res[i].ports) +'</span></td>\
+                        <td><span class="table_self_conter" style="width:auto">'+ res[i].addtime +'</span></td>\
+                        <td style="text-align:right;">'+'<a href="javascript:;" class="btlink del_country" data-id="'+ res[i].id +'" data-index="'+ i +'">Del</a></td>\
+                    </tr>'
+                }
+                if(res.length == 0) {
+                    _html  += '<tr><td colspan="8" align="center">No data currently</td></tr>'
+				}
+                $('#country_table').html(_html);
+                $('#country_page').html(rdata.page);
+                _this.country_list = res;
+                if(callback) callback();
+            });
+        },
+        // 获取IP规则列表
+        get_country_list:function(mdata, data,callback){
+            if(!mdata.p) mdata.p = 1
+            if(!mdata.query) mdata.query = ''
+            if(typeof data === "function") callback = data;
+            this.send({
+                tips:'Getting list of rules, please wait...',
+                method: 'get_country_list',
+                check:true,
+                data: {p: mdata.p, query: mdata.query},
+                success:function(res){
+                    if(callback) callback(res)
+                }
+            });
+        },
+        // 创建区域规则
+        create_country: function(data,callback){
+            if(typeof data === "function") callback = data;
+            this.send({
+                tips:'Adding rules, please wait...',
+                method: 'create_country',
+                data:{
+                    country:data.country,
+                    types:data.types,
+                    brief:data.brief,
+                    ports:data.ports
+                },
+                success:function(res){
+                    if(callback) callback(res)
+                }
+            });
+        },
+        // 删除区域规则
+        remove_country: function(data,callback){
+            if(typeof data === "function") callback = data;
+            this.send({
+                tips:'Deleting rules, please wait...',
+                method: 'remove_country',
+                data:{id:data.id, types:data.types, country:data.country, brief:data.brief, ports:data.ports},
+                success:function(res){
+                    if(callback) callback(res)
+                }
+            });
+        },
+		// 编辑区域规则
+        modify_country:function(data,callback){
+            if(typeof data === "function") callback = data;
+            this.send({
+                tips:'Editing rules, please wait...',
+                method: 'modify_country',
+                data:{
+                    id:data.id,
+                    types:data.types,
+                    brief:data.brief,
+                    country:data.country
+                },
+                success:function(res){
+                    if(callback) callback(res)
+                }
+            });
+        },
+        // 获取服务状态（请求）
+        get_service_status:function(data,callback){
+            if(typeof data === "function") callback = data;
+            this.send({
+                tips:'Getting service status, please wait ...',
+                method: 'get_firewall_status',
+                check:true,
+                success:function(res){
+                    if(callback) callback(res)
+                }
+            });
+        },
+        // 设置服务状态（请求）
+        service_admin:function(data,callback){
+            if(typeof data === "function") callback = data;
+            var _tips = '';
+            switch (data.status) {
+                case 'reload':  //重载服务
+                    _tips = 'Reloading service';
+                    break;
+                case 'restart': //重启服务
+                    _tips = 'Restarting service';
+                    break;
+                case 'stop': //停止服务
+                    _tips = 'Stopping service';
+                    break;
+                case 'start': //启动服务
+                    _tips = 'Starting service';
+                    break;
+            }
+            this.send({
+                tips:_tips +', please wait ...',
+                method: 'firewall_admin',
+                data:{status:data.status},
+                check:true,
+                success:function(res){
+                    if(callback) callback(res)
+                }
+            });
+        },
+        // 获取操作日志（请求）
+        get_logs:function(data,callback){
+            if(typeof data === "function"){
+                callback = data;
+                data = {p:1};
+            }
+            this.send({
+                tips:'Getting operation logs, please wait ...',
+                method: 'get_logs',
+                data:{p:data.p,tojs:data.tojs || ''},
+                check:true,
+                success:function(res){
+                    if(callback) callback(res)
+                }
+            });
+        },
+        // 选择目录
+        change_path:function(el,type) {
+            var _this = this;
+            layer.open({
+                type: 1,
+                area: "750px",
+                title: type == 'files'?'Select project startup file':'Select project directory',
+                closeBtn: 2,
+                shift: 5,
+                shadeClose: false,
+                content: "<div class='changepath'>\
+                            <div class='path-top'>\
+                                <button type='button' class='btn btn-default btn-sm btn-back-file'><span class='glyphicon glyphicon-share-alt'></span>"+lan.public.return+"</button>\
+                                <div class='place' id='PathPlace'>"+ lan.bt.path +"：<span></span></div>\
+                            </div>\
+                            <div class='path-con'>\
+                                <div class='path-con-left'>\
+                                    <dl><dt id='changecomlist' onclick='BackMyComputer()'><span class='glyphicon glyphicon-hdd'></span>"+ lan.bt.comp  +"</dt></dl>\
+                                </div>\
+                                <div class='path-con-right'>\
+                                    <ul class='default' id='computerDefautl'></ul>\
+                                    <div class='divtable'>\
+                                        <table class='table table-hover' id='table_thead' style='border:0 none'>\
+                                            <thead><tr class='file-list-head'><th width='6%'></th><th width='30%'>"+lan.bt.filename+"</th><th width='25%'>"+lan.bt.etime+"</th><th width='10%'>"+lan.bt.access+"</th><th width='10%'>"+lan.bt.own+"</th><th width='10%'></th></tr></thead>\
+                                        </table>\
+                                    </div>\
+                                    <div class='file-list divtable'>\
+                                        <table class='table table-hover' style='border:0 none;margin-top: -32px;'>\
+                                            <thead><tr class='file-list-head'><th width='6%'></th><th width='30%'>"+lan.bt.filename+"</th><th width='25%'>"+lan.bt.etime+"</th><th width='10%'>"+lan.bt.access+"</th><th width='10%'>"+lan.bt.own+"</th><th width='10%'></th></tr></thead>\
+                                            <tbody id='dir_tbody' class='list-list'></tbody>\
+                                        </table>\
+                                    </div>\
+                                </div>\
+                            </div>\
+                        </div>\
+                        <div class='getfile-btn' style='margin-top:0'>\
+                            <button type='button' class='btn btn-default btn-sm pull-left btn_create_folder'>"+ lan.bt.adddir +"</button>\
+                            <button type='button' class='btn btn-danger btn-sm mr5 btn_close'>"+ lan.public.close +"</button>\
+                            <button type='button' class='btn btn-success btn-sm btn_path_ok'>"+ lan.bt.path_ok +"</button>\
+                        </div>",
+                success:function(layero,index){
+                    //设置文件目录
+                    switch(type){
+                        case 'dir':
+                            setCookie('file_paths',$(el).val());
+                        break;
+                        case 'files':
+                            setCookie('file_paths',_this.back_file());
+                        case 'other':
+                        break;
+                    }
+                    // 返回目录
+                    $('.btn-back-file').click(function(){
+                        setCookie('file_paths',_this.back_file());
+                        _this.get_dir_dom(type);
+                    });
+                    // 关闭layer
+                    $('.btn_close').click(function(){
+                        layer.close(index);
+                    });
+                    // 选择目录或文件
+                    $('.btn_path_ok').click(function(){
+                        var file_name = $('#dir_tbody .ui-selected').find('.open_files_event').attr('data-name');
+                        var types = $('#dir_tbody .ui-selected').find('.open_files_event').attr('data-type');
+                        switch(type){
+                            case 'dir':
+                                if(file_name == undefined) file_name = '';
+                            break;
+                            case 'files':
+                                if($('#dir_tbody .ui-selected').length == 0) layer.msg('Please select a file',{icon:2}); return false;
+                            break;
+                            case 'other':
+                                if(file_name == undefined) file_name = '';
+                            break;
+                        }
+                       var paths = getCookie('file_paths');
+                       var paths_arry = paths.split('/');
+                       if(paths_arry[paths_arry.length -1] != ''){
+                            paths += '/'
+                       }
+                        $(el).val( paths + ( file_name == ''?'':file_name));
+                        layer.close(index)
+                    });
+                    // 新建文件夹
+                    $('.btn_create_folder').click(function(){
+                        var isCreate = $('#dir_tbody tr:eq(0)').hasClass('table_add_dir');
+                        if(isCreate) return false;
+                        $('#dir_tbody').prepend('<tr class="table_add_dir">\
+                                <td></td><td colspan="2"><span class="glyphicon glyphicon-folder-open"></span><input class="newFolderName" type="text" value="" style="width: 250px;height: 30px;vertical-align: bottom;">\
+                                <td colspan="3"><button type="button" class="btn btn-success btn-sm newFolderEvent">Confirm</button>&nbsp;&nbsp;<button type="button" class="btn btn-default btn-sm newFolderClaer">Cancel</button></td>\
+                            </td></tr>');
+                        document.getElementsByClassName('file-list')[0].scrollTop = 0;
+                        setTimeout(function(){
+                            $('.table_add_dir').on('click','.newFolderEvent',function(e){
+                                var fileName = $('.newFolderName').val();
+                                if(fileName == ''){
+                                    layer.msg('Please enter a new file name',{icon:0});
+                                    return false;
+                                }
+                                _this.new_folder_event(getCookie('file_paths') + '/' + fileName,function(res){
+                                    $(this).parent().parent().remove();
+                                    _this.get_dir_dom(type);
+                                });
+                                e.stopPropagation();
+                            });
+                            $('.table_add_dir').on('click','.newFolderClaer',function(e){
+                                $(this).parent().parent().remove();
+                                e.stopPropagation();
+                            });
+                        },500);
+                    });
+                    // 磁盘目录跳转
+                    $('.path-con-left').on('click','.open_disk',function(){
+                       var dir =  $(this).attr('data-dir');
+                       setCookie('file_paths',dir)
+                        _this.get_dir_dom(type);
+                    });
+                    // 选择文目录或文件
+                    $('#dir_tbody').on('click','tr',function(e){
+                        $(this).find('input[type="checkbox"]').click();
+                        e.stopPropagation();
+                    });
+                    // 选择文件或目录
+                    $('#dir_tbody').on('click','tr input[type="checkbox"]',function(e){
+                        var checked = $(this).prop('checked');
+                        if(!checked){
+                            _this.select = '';
+                            $(this).parent().parent().removeClass('ui-selected');
+                        }else{
+                            _this.select = $(this).attr('data-name');
+                            $(this).parent().parent().addClass('ui-selected').siblings().removeClass('ui-selected').find('input').prop('checked',false);
+                        }
+                        e.stopPropagation();
+                    });
+                    // 跳转指定目录，获取选择文件
+                    $('#dir_tbody').on('click','.open_files_event',function(e){
+                        var type = $(this).attr('data-type');
+                        var name = $(this).attr('data-name');
+                        var path = getCookie('file_paths');
+                        if(type == 'dir'){
+                            setCookie('file_paths',path + '/' + name);
+                            _this.get_dir_dom(type);
+                        }else{
+                            $(this).parent().prev().find('input[type="checkbox"]').click();
+                        }
+                        e.stopPropagation();
+                    })
+                    // 跳转指定目录
+                    $('#dir_tbody').on('click','.open_files_event .path-con-left dl',function(e){
+                        var path = $(this).attr('data-name');
+                        e.stopPropagation();
+                    });
+                    // 跳转指定下一层目录
+                    $('#dir_tbody').on('dblclick','tr',function(e){
+                        $(this).find('.open_files_event').click();
+                        e.stopPropagation();
+                    });
+                    //获取目录DOM
+                    _this.get_dir_dom(type);
+                }
+            });
+        },
+        // 过滤一级目录
+        back_file:function(){
+            c = getCookie('file_paths');
+            if(c == '/') return '/'
+            if(c.substr(c.length - 1, 1) == "/") {
+                c = c.substr(0, c.length - 1)
+            }
+            var d = c.split("/");
+            var a = "";
+            if(d.length > 1) {
+                var e = d.length - 1;
+                for(var b = 0; b < e; b++) {
+                    a += d[b] + "/"
+                }
+                return a.replace("//", "/")
+            } else {
+                a = d[0]
+            }
+            if(d.length == 1) {}
+        },
+        // 获取后缀
+        obtain_suffix:function(fileName){
+            var extArr = fileName.split(".");	
+            var exts = ['folder','folder-unempty','sql','c','cpp','cs','flv','css','js','htm','html','java','log','mht','php','url','xml','ai','bmp','cdr','gif','ico','jpeg','jpg','JPG','png','psd','webp','ape','avi','flv','mkv','mov','mp3','mp4','mpeg','mpg','rm','rmvb','swf','wav','webm','wma','wmv','rtf','docx','fdf','potm','pptx','txt','xlsb','xlsx','7z','cab','iso','rar','zip','gz','bt','file','apk','bookfolder','folder','folder-empty','folder-unempty','fromchromefolder','documentfolder','fromphonefolder','mix','musicfolder','picturefolder','videofolder','sefolder','access','mdb','accdb','sql','c','cpp','cs','js','fla','flv','htm','html','java','log','mht','php','url','xml','ai','bmp','cdr','gif','ico','jpeg','jpg','JPG','png','psd','webp','ape','avi','flv','mkv','mov','mp3','mp4','mpeg','mpg','rm','rmvb','swf','wav','webm','wma','wmv','doc','docm','dotx','dotm','dot','rtf','docx','pdf','fdf','ppt','pptm','pot','potm','pptx','txt','xls','csv','xlsm','xlsb','xlsx','7z','gz','cab','iso','rar','zip','bt','file','apk','css'];
+            var extLastName = extArr[extArr.length - 1];
+            for(var i=0; i<exts.length; i++){
+                if(exts[i]==extLastName){
+                    return exts[i];
+                }
+            }
+            return 'file';
+        },
+        // 生成列表DOM
+        get_dir_dom:function(type){
+            var _this = this;
+            this.get_dirk_list(function(res) {
+                $('.path-con-right .file-list').show();
+                var dir = res.DIR,files = res.FILES,disk = res.DISK,path = res.PATH,page = res.PAGE,dir_html ='',files_html = '',disk_html = '';
+                for(var i=0; i<dir.length; i++){
+                    var dir_arry = dir[i].split(';');
+                    dir_html += '<tr class="table_dir"><td class="label_checkbox"><input type="checkbox" name="dir_input" data-name="'+ dir_arry[0] +'"/></td><td><a href="javascript:;" data-name="'+ dir_arry[0] +'" data-type="dir" class="open_files_event"><span class="glyphicon glyphicon-folder-open"></span><span class="dir_block" style="width:130px;">'+ dir_arry[0] +'</span></td><td>'+ getLocalTime(dir_arry[2]) +'</td><td>'+ dir_arry[3] +'</td><td>'+ dir_arry[4] +'</td><td style="text-align: center;"><span class="glyphicon glyphicon-option-horizontal" aria-hidden="true"></span></td></tr>'
+                }
+                for(var j=0;j<files.length;j++){
+                    var files_arry = files[j].split(';');
+                    files_html += '<tr class="table_files"><td class="label_checkbox"><input type="checkbox" name="dir_input" data-name="'+ files_arry[0] +'"/></td><td><a href="javascript:;"  data-name="'+ files_arry[0] +'" data-type="file" class="open_files_event"><span class="ico-default ico-'+ _this.obtain_suffix(files_arry[0]) +'"></span><span class="dir_block" style="width:130px;">'+ files_arry[0] +'</span></a></td><td>'+ getLocalTime(files_arry[2]) +'</td><td>'+ files_arry[3] +'</td><td>'+ files_arry[4] +'</td><td style="text-align: center;position: relative;"><span class="glyphicon glyphicon-option-horizontal" aria-hidden="true"></span></td></tr>'
+                }
+                for(var z=0;z<disk.length;z++){
+                    var disk_info = disk[z];
+                    var dir_list = disk_info.path.split('/');
+                    dir_list = dir_list[dir_list.length -1];
+                    disk_html += '<dt class="open_disk" data-dir="'+ disk_info.path +'"><span class="glyphicon glyphicon-hdd"></span>'+ (disk_info.path == '/'?'根目录 ('+ disk_info.size[2] +')':'<span class="table_self_conter" style="width:100px" title="'+ disk_info.path +' ('+ disk_info.size[2] +')">'+ dir_list +' ('+ disk_info.size[2] +')</span>') +'</dt>'
+                }
+                setCookie('file_paths',path);
+                $('.changepath .path-con-left dl').html(disk_html);
+                $('#dir_tbody').html(dir_html+files_html);
+                $('#PathPlace span').html(path);
+            });
+        },
+        // 新建文件事件
+        new_folder_event:function(path,callback){
+            this.send({
+                url:'/files?action=CreateDir',
+                tips:'Creating new file, please wait ...',
+                data:{path:path},
+                success:function(res){
+                    if(callback)callback(res);
+                }
+            })
+        },
+        // 获取文件列表
+        get_dirk_list:function(callback){
+            var dir = getCookie('file_paths');
+            dir = dir.replace(/\/\//g, "/");
+            this.send({
+                url:'/files?action=GetDir',
+                tips:'Getting file list, please wait ...',
+                data:{path:dir,disk:'True'},
+                success:function(res){
+                    if(callback)callback(res);
+                }
+            })
+        },
+        // 请求
+        send: function (obj) {
+            var loadT = '';
+            if (obj.load == undefined) obj.load = 0;
+            if (obj.url == undefined) {
+                if (obj.plugin_name === undefined && this.plugin_name !== undefined) obj.plugin_name = this
+                    .plugin_name
+                if (!obj.plugin_name || !obj.method) {
+                    layer.msg('The plug-in class name, or plug-in method name is missing!', {
+                        icon: 2
+                    });
+                    return false;
+                }
+            }
+            if (obj.load === 0 || obj.tips != '') {
+                loadT = layer.msg(obj.tips, {
+                    icon: 16,
+                    time: 0,
+                    shade: 0.3
+                });
+            } else if (obj.load === 1 || (obj.tips == undefined && obj.load == undefined)) {
+                loadT = layer.load();
+            }
+            $.ajax({
+                type: 'POST',
+                url: obj.url != undefined ? obj.url : ('/plugin?action=a&name=' + obj.plugin_name + '&s=' + obj.method),
+                data: obj.data || {},
+                timeout: obj.timeout || 99999999,
+                complete: function (res) {
+                    if (obj.load === 0 || obj.load === 1) layer.close(loadT);
+                },
+                success: function (rdata) {
+                    if (obj.check) {
+                        obj.success(rdata);
+                        return false
+                    }
+                    if (rdata.status === false) {
+                        layer.msg(rdata.msg, { icon: 2 });
+                        return false;
+                    }
+                    obj.success(rdata);
+                },
+                error: function (ex) {
+                    if (!obj.error) {
+                        obj.msg || obj.msg == undefined ? layer.msg('Error found during request!', {
+                            icon: 2
+                        }) : '';
+                        return;
+                    }
+                    return obj.error(ex);
+                }
+            });
+        }
+    }
+    firewall.init();
+</script>

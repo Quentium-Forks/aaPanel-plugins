@@ -1,0 +1,9 @@
+{
+  "title": "SYS Firewall",
+  "name": "firewall",
+  "ps": "Provide GUI management function of system firewall (iptables/firewall/ufw)",
+  "versions": "2.5",
+  "checks": "/www/server/panel/plugin/firewall",
+  "author": "official",
+  "home": "https://www.aapanel.com"
+}

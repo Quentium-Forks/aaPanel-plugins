@@ -1,0 +1,16 @@
+{
+	"id":3,
+	"title":"Anti-Spam Gateway",
+	"tip":"lib",
+	"name":"anti_spam",
+	"type":"plugin",
+	"ps":"Allow mail server to access and filter spam/virus mail",
+	"versions":"1.2",
+	"shell":"anti_spam.sh",
+	"checks":"/www/server/panel/plugin/anti_spam",
+	"author":"official",
+	"home":"http://www.aapanel.com",
+	"date":"2020-06-18",
+	"default":false,
+	"display":0
+}

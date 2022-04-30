@@ -1,0 +1,15 @@
+{
+	"title":"Fail2ban Manager",
+	"tip":"lib",
+	"name":"fail2ban",
+	"type":"plugin",
+	"ps":"ban hosts that cause multiple authentication errors",
+	"versions":"1.9",
+	"shell":"",
+	"checks":"/www/server/panel/plugin/fail2ban",
+	"author":"official",
+	"home":"http://www.aapanel.com",
+	"date":"2019-10-22",
+	"default":false,
+	"display":0
+}

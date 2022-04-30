@@ -1,0 +1,714 @@
+<style>
+    /*样式写这里*/
+    .demo-table table tbody tr td span{
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        width:580px;
+        display:block;
+    }
+    .mt5{
+        margin-top:5px; 
+    }
+    .box_conter{
+        display: none;
+    }
+    .box_conter.active{
+        display: block;
+    }
+    .redis_edit_conf .conf_p{
+        padding-top: 25px;
+    }
+    .redis_edit_conf .conf_p p{
+        margin-bottom: 10px;
+    }
+    .soft-man-con .conf_p input{
+        width: 120px !important;
+    }
+    .redis_edit_conf .conf_p .btn_conf_save{
+        margin-top: 10px;
+        margin-left: 110px;
+    }
+    .CodeMirror {
+        border: 1px solid #eee;
+        height: 400px;
+        overflow-y: auto;
+    }
+    .redis_persistence  .conf_p p{
+        margin-bottom: 10px;
+    }
+    .redis_persistence  .conf_p .btn_aof_save{
+        margin-left: 110px;
+    }
+    .redis_persistence_dir{
+        padding-bottom:10px; 
+    }
+
+    .redis_persistence_dir .name{
+        display: inline-block;
+        margin:0 10px; 
+    }
+    .redis_persistence  .soft-man-con{
+        margin-top: 15px;
+    }
+    .rdb_conter .rdb_name,
+    .aof_conter .aof_name{
+        margin-bottom:15px;
+        padding-bottom:10px; 
+        border-bottom:1px dashed #ececec;
+    }
+    .rdb_conter input.bt-input-text{
+        margin:0 5px;
+        width: 55px !important;
+    }
+    .rdb_conter .help-info-text{
+        margin-bottom: 10px;
+    }
+    .redis_persistence_dir_icon{
+        margin-right: 15px;
+    }
+</style>
+<div class="bt-form" id="plugin">
+</div>
+<script id="template" type="text/template">
+    <div class="bt-form">
+        <div class="bt-w-main" style="height:580px">
+            <!--菜单部分-->
+            <div class="bt-w-menu">
+                <p class="bgw">{{= it.service }}</p>
+                <p>{{= it.switch_ver }}</p>
+                <p>{{= it.conf_set }}</p>
+                <p>{{= it.conf_file }}</p>
+                <p>{{= it.load_status }}</p>
+                <p>{{= it.set_save }}</p>
+            </div>
+            <!--内容部分-->
+            <div class="bt-w-con pd15">
+                <div class="plugin_body">
+                    <div class="box_conter redis_status_page active">
+                        <div class="soft-man-con bt-form" style="display: none">
+                            <p class="status">{{= it.curr_status }}<span>{{= it.open }}</span><span style="color: #20a53a; margin-left: 3px;" class="glyphicon glyphicon glyphicon-play"></span></p>
+                            <div class="sfm-opt">
+                                <button class="btn btn-default btn-sm redis_start" style="display:none;" onclick="redis.set_redis_status({name:\'redis\',type:\'start\',title:\'{{= it.startup }}\'})">{{= it.startup }}</button>
+                                <button class="btn btn-default btn-sm redis_stop" style="display:none;" onclick="redis.set_redis_status({name:\'redis\',type:\'stop\',title:\'{{= it.stop }}\'})">{{= it.stop }}</button>
+                                <button class="btn btn-default btn-sm" onclick="redis.set_redis_status({name:\'redis\',type:\'restart\',title:\'{{= it.restart }}\'})">{{= it.restart }}</button>
+                                <button class="btn btn-default btn-sm" onclick="redis.set_redis_status({name:\'redis\',type:\'reload\',title:\'{{= it.reload }}\'})">{{= it.reload }}</button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="box_conter redis_version_select">
+                        <div class="soft-man-con bt-form">
+                            <div class="line ">
+                                <span class="tname">{{= it.choose_ver }}</span>
+                                <div class="info-r ">
+                                <select class="bt-input-text mr5 redisVersion" name="redisVersion" style="width:160px"></select><button name="btn_change_version" class="btn btn-success btn-sm mr5 ml5 btn_change_version">{{= it.switch }}</button></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="box_conter redis_edit_conf">
+                        <div class="soft-man-con bt-form">
+                            <div class="conf_p"></div>
+                            <ul class="help-info-text c7"><li>{{= it.edit_conf_tips }}</li></ul>
+                        </div>
+                    </div>
+                    <div class="box_conter redis_config_page">
+                        <div class="soft-man-con bt-form">
+                            <p style="color: #666; margin-bottom: 7px">{{= it.edit_file_tips }}</p>
+                            <textarea class="bt-input-text" style="height: 320px; line-height: 18px; display: none;" id="textBody"></textarea>
+                            <button id="save_config" class="btn btn-success btn-sm" style="margin-top:10px;">{{= it.save }}</button>
+                            <ul class="help-info-text c7"><li>{{= it.edit_file_tips1 }}</li></ul>
+                        </div>
+                    </div>
+                    <div class="box_conter">
+                        <div class="divtable">
+                            <table id="tab_get_redis_status" style="width: 630px;" class="table table-hover table-bordered ">
+                                <thead><th width=10%>{{= it.field }}</th><th width=15%>{{= it.curr_val }}</th><th>{{= it.description }}</th></thead>
+                                <tbody></tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <div class="box_conter redis_persistence">
+                        <div class="redis_persistence_dir">{{= it.save_path }}<div class="name" id="redis_dir"></div><span class="glyphicon cursor mr5 glyphicon-folder-open redis_persistence_dir_icon"></span><button class="btn btn-success btn-sm btn_save_dir" style="margin-top:10px;">{{= it.save }}</button><ul class="help-info-text c7"><li>After setting, the new redis_cache directory will be created in the selected directory and given redis permissions.</li></ul></div>
+                        <div class="soft-man-con bt-form aof_conter">
+                            <div class="aof_name">{{= it.save_aof }}</div>
+                            <div class="conf_p"></div>
+                        </div>
+                        <div class="soft-man-con bt-form rdb_conter">
+                            <div class="rdb_name">{{= it.save_rdb }}</div>
+                            <div class="conf_p">
+                                <p><input type="text" class="bt-input-text" value="">{{= it.tips1 }}<input type="text" class="bt-input-text" />{{= it.tips2 }}</p>
+                                <p><input type="text" class="bt-input-text" value="">{{= it.tips1 }}<input type="text" class="bt-input-text" />{{= it.tips2 }}</p>
+                                <p><input type="text" class="bt-input-text" value="">{{= it.tips1 }}<input type="text" class="bt-input-text" />{{= it.tips2 }}</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</script>
+<!--JS脚本部分，不要将JS脚本写在其它地方-->
+<script>
+    //定义窗口尺寸
+    
+
+
+    /**
+     * 插件交互对象
+     * 您的所有JS代码可以写在里面
+     * 若不习惯JS的面向对象编程，可删除此对象，使用传统函数化的方式编写
+     * */
+    var render = (function () {
+      var fn = null
+      return function (id, it) {
+        console.log(id,it);
+        if (!fn) {
+          var html = $('#'+ id).html();
+          console.log(html);
+          html = html.replace(/\n/g, '').replace(/{{(?!=)/g, '\';').replace(/{{=/g, '\'+').replace(/}}/g, ';str+=\'')
+          fn = new Function('it', "var str='';str+='"+ html +"';return str;");
+        }
+        return fn(it)
+      }
+    })()
+    var redis = {
+        plugin_name: 'redis',
+        plugin_config:{},
+        edit_codeMirror:'',
+        init: function () {
+            var _this = this;
+			$('.layui-layer').width('830');
+            $(".bt-w-menu p").click(function(){
+                var index = $(this).index();
+                switch (index) {
+                    case 2:
+                        // _this.create_redis_file(_this.plugin_config);
+                        _this.create_redis_conf();
+                    break;
+                    case 1:
+                        // this.get_redis_
+                    break;
+                    case 0:
+                        // this.get_redis_
+                    break;
+                    case 3:
+                        _this.create_redis_file_req();
+                    break;
+                    case 4:
+                        _this.create_redis_load_status();
+                    break;
+                    case 5:
+                        _this.create_redis_persistence();
+                    break;
+                }
+                $(this).addClass('bgw').siblings().removeClass('bgw');
+                $('.plugin_body .box_conter').eq(index).addClass('active').siblings().removeClass('active');
+            });
+            $('.redis_persistence_dir_icon').click(function(){
+                ChangePath('redis_dir input')
+            })
+            this.get_redis_service_req(function(res){
+                _this.plugin_config = res;
+                $('.redis_status_page .status').html(lan.redis.curr_status+' <span>'+ (!res.status?lan.soft.stop:lan.soft.running)+'</span><span style="color: '+(!res.status?'red':'#20a53a') +'; margin-left: 3px;" class="glyphicon '+(!res.status?'glyphicon-pause':'glyphicon-play')+'"></span>').next().find(!res.status?'.redis_start':'.redis_stop').show();
+                $('.btn_change_version').click(function(){
+                    bt.soft.install_soft(data, ldata.phpVersion.split(" ")[1], 0);
+                });
+                var plugin_versions = _this.plugin_config.versions,_html = '';
+                for(var i = 0; i < plugin_versions.length;i++){
+                    _html += '<option value="redis '+ plugin_versions[i].m_version +'">redis '+ plugin_versions[i].m_version +'</option>'
+                }
+                $('.redis_version_select select').html(_html);
+                $('.redis_status_page .soft-man-con').show();
+            });
+        },
+        // 创建redis配置页面
+        create_redis_conf:function(){
+            var _this = this;
+            this.get_redis_conf(function(res){
+                if (res.status == false) {
+                    bt.msg(res)
+                    return;
+                }
+                var _html = '';
+                for(var i = 0; i < res.length;i++){
+                    _html += '<p><span style="width:100px">'+ res[i].name +'</span><input style="width: 70px;" class="bt-input-text mr5" name="'+ res[i].name +'" value="'+ res[i].value +'" type="text" /><i style="font-style:normal;">'+ res[i].ps +'</i></p>'
+                }
+                _html += '<button name="btn_save" class="btn btn-success btn-sm mr5 ml5 btn_conf_save">'+lan.redis.save+'</button>'
+                $('.redis_edit_conf .conf_p').html(_html);
+                $('.btn_conf_save').click(function(){
+                    var input_ary = $('.redis_edit_conf .conf_p p input'),obj = {};
+                    for(var i = 0;i < input_ary.length;i++){
+                        obj[$('.redis_edit_conf .conf_p p input:eq('+ i +')').attr('name')] = $('.redis_edit_conf .conf_p p input:eq('+ i +')').val();
+                    }
+                    _this.set_redis_conf(obj,function(res){
+                        console.log(obj);
+                    })
+                });
+            });
+        },
+        // 创建redis文件配置页面
+        create_redis_file_req:function(){
+            var _this = this;
+            this.get_redis_file_req({path:'/www/server/redis/redis.conf'},function(res){
+                $('#textBody').val(res.data);
+                $('.CodeMirror').remove();
+                _this.edit_codeMirror = CodeMirror.fromTextArea(document.getElementById("textBody"), {
+                    extraKeys: { "Ctrl-Space": "autocomplete" },
+                    lineNumbers: true,
+                    matchBrackets: true,
+                });
+                $('#save_config').click(function(){
+                    var data = _this.edit_codeMirror.getValue();
+                    _this.save_redis_file_req({data:data,path:'/www/server/redis/redis.conf'});
+                });
+            });
+        },
+        // 设置redis状态
+        set_redis_status:function(obj,callback){
+            this.send({
+                url:'/system?action=ServiceAdmin',
+                data:{ name:obj.name, type:obj.type },
+                tips:lan.redis.redis_tips1.replace('{1}',obj.title),
+                success:function(res){
+                    layer.msg(res.msg,{icon:res.status?1:2});
+                    setTimeout(function(){ window.location.reload()},2000);
+                    if(callback) callback(res);
+                }
+            });
+        },
+        // 获取Redis配置文件（设置）
+        get_redis_conf:function(callback){
+            this.send({
+                method:'GetRedisConf',
+                tips:lan.redis.redis_tips2,
+                success:function(res){
+                    if(callback) callback(res);
+                }
+            })
+        },
+        // 保存Redis配置文件
+        set_redis_conf:function(obj,callback){
+            this.send({
+                method:'SetRedisConf',
+                data:obj,
+                tips:lan.redis.redis_tips2,
+                success:function(res){
+                    layer.msg(res.msg,{icon:res.status?1:2});
+                    if(!res.status) return false;
+                    if(callback) callback();
+                }
+            });
+        },
+        // 获取Redis服务状态
+        get_redis_service_req: function (callback) {
+            var _this = this;
+            this.send({
+                url:'/plugin?action=get_soft_find&sName=' + _this.plugin_name,
+                tips: lan.redis.redis_tips3,
+                success: function (res) {
+                    if(callback) callback(res);
+                }
+            })
+        },
+        // 获取Redis负载状态（请求）
+        get_redis_status_req: function (callback) {
+            this.send({
+                method: '',
+                tips: lan.redis.redis_tips3,
+                success: function (res) {
+                    if (res.status === false) {
+                        layer.msg(res.msg, {
+                            icon: 2
+                        });
+                        return false;
+                    }
+                    if (callback) callback();
+                }
+            })
+        },
+        // 获取Redis配置文件（请求）
+        get_redis_file_req: function (obj, callback) {
+            this.send({
+                method: 'GetRedisFile',
+                data:{path:obj.path},
+                tips: lan.redis.redis_tips4,
+                success: function (res) {
+                    if (!res.status) {
+                        layer.msg(res.msg, {
+                            icon: 2
+                        });
+                        return false;
+                    }
+                    if (callback) callback(res);
+                }
+            })
+        },
+        // 保存Redis配置文件（请求）
+        save_redis_file_req: function (obj, callback) {
+            this.send({
+                method: 'SaveRedisFile',
+                data: {data:obj.data,path:obj.path,encoding:'utf-8'},
+                tips: lan.redis.redis_tips5,
+                success: function (res) {
+                    layer.msg(res.msg,{icon:res.status?1:2});
+                    if (!res.status) {
+                        return false;
+                    }
+                    if (callback) callback(res);
+                }
+            })
+        },
+        get_redis_load_status:function(callback){
+            this.send({
+                method:'GetRedisStatus',
+                tips:lan.redis.redis_tips6,
+                success:function(res){
+                    if(res.status === false){
+                        layer.msg(res.msg,{icon:2});
+                        return false;
+                    }
+                    if(callback) callback(res);
+                }
+            })
+        },
+        create_redis_load_status:function(){
+            this.get_redis_load_status(function(rdata){
+                //console.log(rdata);
+                var hit = (parseInt(rdata.keyspace_hits) / (parseInt(rdata.keyspace_hits) + parseInt(rdata.keyspace_misses)) * 100).toFixed(2);
+                var arrs = [],_html = '';
+                    arrs['uptime_in_days'] = [rdata.uptime_in_days, lan.redis.redis_status_tips1];
+                    arrs['tcp_port'] = [rdata.tcp_port, lan.redis.redis_status_tips2];
+                    arrs['connected_clients'] = [rdata.connected_clients, lan.redis.redis_status_tips3];
+                    arrs['used_memory_rss'] = [bt.format_size(rdata.used_memory_rss), lan.redis.redis_status_tips4];
+                    arrs['used_memory'] = [bt.format_size(rdata.used_memory), lan.redis.redis_status_tips5];
+                    arrs['mem_fragmentation_ratio'] = [rdata.mem_fragmentation_ratio, lan.redis.redis_status_tips6];
+                    arrs['total_connections_received'] = [rdata.total_connections_received, lan.redis.redis_status_tips7];
+                    arrs['total_commands_processed'] = [rdata.total_commands_processed, lan.redis.redis_status_tips8];
+                    arrs['instantaneous_ops_per_sec'] = [rdata.instantaneous_ops_per_sec, lan.redis.redis_status_tips9];
+                    arrs['keyspace_hits'] = [rdata.keyspace_hits, lan.redis.redis_status_tips10];
+                    arrs['keyspace_misses'] = [rdata.keyspace_misses, lan.redis.redis_status_tips11];
+                    arrs['hit'] = [(JSON.stringify(hit) == "NaN"?'0':hit), lan.redis.redis_status_tips12];
+                    arrs['latest_fork_usec'] = [rdata.latest_fork_usec, lan.redis.redis_status_tips13];
+                for(var j in arrs){
+                    _html += '<tr><td style="width: 100px;">'+ j +'</td><td style="width: 80px;">'+ arrs[j][0] +'</td><td style="width: 180px;">'+ arrs[j][1] +'</td></tr>'
+                }
+                console.log(_html);
+                $('#tab_get_redis_status tbody').html(_html)
+            });
+        },
+        // 获取持久化
+        get_redis_persistence:function(callback){
+            this.send({
+                method:'GetRedisPersistence',
+                tips: lan.redis.redis_tips7,
+                success:function(res){
+                    if (res.status === false) {
+                        layer.msg(res.msg, {icon: 2});
+                        return false;
+                    }
+                    if (callback) callback(res);
+                }
+            })
+        },
+        // 创建持久化
+        create_redis_persistence:function(){
+            var _this = this;
+            this.get_redis_persistence(function(res){
+                var _aof = '',_rdb = '',aofs = res.aof,rdbs = res.rdb;
+                for(var i in aofs){
+                    if(i == 'appendfsync'){
+                        _aof += '<p><span style="width:100px">'+ i +'</span><select class="bt-input-text mr5 redis_persistence" name="'+ i +'" style="width:120px"><option value="always" '+ (aofs[i] == 'always'?'selected="selected"':'') +'>always</option><option value="everysec" '+ (aofs[i] == 'everysec'?'selected="selected"':'') +'>everysec</option><option value="no" '+ (aofs[i] == 'no'?'selected="selected"':'') +'>no</option></select></p>'
+                    }else{
+                        _aof += '<p><span style="width:100px">'+ i +'</span><select class="bt-input-text mr5 redis_persistence" name="'+ i +'" style="width:120px"><option value="yes" '+ (aofs[i] == 'yes'?'selected="selected"':'') +'>'+lan.public.on+'</option><option value="no" '+ (aofs[i] == 'no'?'selected="selected"':'') +'>'+lan.public.close+'</option></select></p>'
+                    }
+                }
+                _aof += '<button name="btn_save" class="btn btn-success btn-sm mr5 ml5 btn_aof_save">'+lan.redis.save+'</button>';
+                for(var j in rdbs){
+                    _rdb += '<p><input type="text" class="bt-input-text" value="'+ rdbs[j].time +'">'+lan.redis.tips1+'<input type="text" class="bt-input-text" value="'+ rdbs[j].keys +'"/>'+lan.redis.tips2+'</p>'
+                }
+                _rdb += '<button name="btn_save" class="btn btn-success btn-sm mr5 ml5 btn_rdb_save mt5">'+lan.redis.save+'</button><ul class="help-info-text c7"><li>'+lan.redis.redis_save_tips1+'</li></ul>';
+                $('.redis_persistence_dir .name').html('<input type="text" class="bt-input-text" style="width: 150px;" value="'+ res.dir +'">');
+                $('.aof_conter .conf_p').html(_aof);
+                $('.rdb_conter .conf_p').html(_rdb);
+                $('.btn_aof_save').unbind().click(function(){
+                    var appendfsync = $('[name="appendfsync"]').val();
+                    var appendonly = $('[name="appendonly"]').val();
+                    _this.save_redis_persistence({appendfsync:appendfsync,appendonly:appendonly});
+                });
+                $('.btn_rdb_save').unbind().click(function(){
+                    var arry = [];
+                    $('.rdb_conter p').each(function (index,el) {
+                        var keys = $(this).find('.bt-input-text').eq(0).val();
+                        var time = $(this).find('.bt-input-text').eq(1).val();
+                        arry.push({ keys:keys,time:time})
+                    });
+                    _this.save_redis_persistence({rdb:JSON.stringify(arry)});
+                });
+                $('.btn_save_dir').unbind().click(function () {
+                    var dir = $('.redis_persistence_dir input').val();
+                    _this.save_redis_persistence({dir:dir});
+                });
+            })
+        },
+        save_redis_persistence:function(data){
+            this.send({
+                method:'SetRedisPersistence',
+                data:data,
+                tips:lan.redis.redis_tips8,
+                success:function(res){
+                    layer.msg(res.msg, {icon: res.status?1:2});
+                }
+            })
+        },
+        // 请求方法
+        send: function (obj) {
+            var loadT = '';
+            if (obj.load == undefined) obj.load = 0
+            if(!obj.url){
+                if (obj.plugin_name === undefined && this.plugin_name !== undefined) obj.plugin_name = this.plugin_name
+                if (!obj.plugin_name || !obj.method) {
+                    layer.msg(lan.public.plug_err, {
+                        icon: 2
+                    });
+                    return false;
+                }
+            }
+            if (obj.load === 0) {
+                loadT = layer.msg(obj.tips, {
+                    icon: 16,
+                    time: 0,
+                    shade: 0.3
+                });
+            } else if (obj.load === 1 || !obj.tips) {
+                loadT = layer.load();
+            }
+            $.ajax({
+                type: 'POST',
+                url:obj.url || ('/plugin?action=a&name=' + obj.plugin_name + '&s=' + obj.method),
+                data: obj.data || {},
+                timeout: obj.timeout || 8000,
+                complete: function (res) {
+                    console.log(obj.load, loadT);
+                    if (obj.load === 0 || obj.load === 1) layer.close(loadT);
+                },
+                success: function (rdata) {
+                    if (!obj.success) {
+                        layer.msg(rdata.msg, {
+                            icon: rdata.status ? 1 : 2
+                        });
+                        return;
+                    }
+                    obj.success(rdata);
+                },
+                error: function (ex) {
+                    if (!obj.error) {
+                        layer.msg(lan.public.request_err, {
+                            icon: 2
+                        });
+                        return;
+                    }
+                    return obj.error(ex);
+                }
+            });
+        }
+        //     get_file:function(path){
+        //         var log_body = '';
+        //         request_plugin('redis', 'GetRedisFile',{path: path, callback: 'redis.GetRedisFile'},function (res) {
+        //          // if(!res.status){
+        //          //    layer.msg(res.msg,{icon:2});
+        //          //    return false;
+
+        //             var rdata = res.data;
+        //             console.log(rdata);
+        //         $('.plugin_body').html(rdata);
+
+        //         });
+        // },
+        //     get_redis_conf: function () {
+        //         var loadT = bt.load();
+        //         $.post("/plugin?action=a&name=redis&s=GetRedisConf", "", function(rdata) {
+        //             console.log(rdata)
+        //                 loadT.close();
+        //                 var form_datas = []
+        //                 for(var i = 0; i < rdata.length; i++){
+        //                     form_datas.push({title: rdata[i].name,type: 'str', name: rdata[i].name,width: '60px',value: rdata[i].value,ps: rdata[i].ps,text:''})
+        //                 }
+        //                 // form_datas.push({
+        //                 //     items: [{
+        //                 //         text: lan.public.save, type: 'button', name: 'bt_nginx_save', callback: function (item) {
+        //                 //                 delete item['bt_nginx_save']
+        //                 //                 bt.send('SetNginxValue','config/SetNginxValue',item, function (rdata) {
+        //                 //                     layer.msg(rdata.msg, { icon: rdata.status ? 1 : 2 });
+        //                 //                 });
+        //                 //             }
+        //                 //         }
+        //                 //     ]
+        //                 // })
+        //                 $(".bt-w-main").empty().append('<div class="get_redis_conf"></div>');
+        //                 for (var i = 0; i < form_datas.length; i++) {
+        //                     bt.render_form_line(form_datas[i], '', $(".bt-w-main .get_redis_conf"));
+        //                 }
+        //             });
+        //     },
+
+        //     get_redis_persistence: function () {
+        //         var loadT = bt.load();
+        //         $.post("/plugin?action=a&name=redis&s=GetRedisPersistence", "", function(rdata) {
+        //             console.log(rdata)
+        //                 loadT.close();
+        //                 var form_datas = []
+        //                 var aof = rdata.aof
+        //                 var rdb = rdata.rdb
+        //                 for(var i = 0; i < rdb.length; i++) {
+        //                     form_datas.push({
+        //                         title: 'save',
+        //                         type: 'str',
+        //                         name: rdata[i].time,
+        //                         width: '60px',
+        //                         value: rdata[i].keys,
+        //                     })
+
+        //                 }
+        //                 // form_datas.push({
+        //                 //     items: [{
+        //                 //         text: lan.public.save, type: 'button', name: 'bt_nginx_save', callback: function (item) {
+        //                 //                 delete item['bt_nginx_save']
+        //                 //                 bt.send('SetNginxValue','config/SetNginxValue',item, function (rdata) {
+        //                 //                     layer.msg(rdata.msg, { icon: rdata.status ? 1 : 2 });
+        //                 //                 });
+        //                 //             }
+        //                 //         }
+        //                 //     ]
+        //                 // })
+        //                 $(".bt-w-main").empty().append('<div class="get_redis_persistence"></div>');
+        //                 for (var i = 0; i < form_datas.length; i++) {
+        //                     bt.render_form_line(form_datas[i], '', $(".bt-w-main .get_redis_persistence"));
+        //                 }
+        //             });
+        //     },
+
+
+
+
+        //     //构造概览内容
+        //     get_index: function () {
+        //         $('.plugin_body').html("<button type=\"button\" class=\"btn\" onclick=\"bt.pub.set_server_status('redis','stop')\">停止</button>" +
+        //         "<button type=\"button\" class=\"btn \" onclick=\"bt.pub.set_server_status('redis','start')\">开启</button>"+
+        //         "<button type=\"button\" class=\"btn\" onclick=\"bt.pub.set_server_status('redis','restart')\">重启</button>");
+        //     },
+        //     get_redis_status: function () {
+        //         var loadT = bt.load();
+        //         $.post("/plugin?action=a&name=redis&s=GetRedisStatus", "", function(rdata) {
+        //             loadT.close()
+        //             var hit = (parseInt(rdata.keyspace_hits) / (parseInt(rdata.keyspace_hits) + parseInt(rdata.keyspace_misses)) * 100).toFixed(2);
+        //                 var arrs = [];
+        //                 arrs['uptime_in_days'] = [rdata.uptime_in_days, '已运行天数'];
+        //                 arrs['tcp_port'] = [rdata.tcp_port, '当前监听端口'];
+        //                 arrs['connected_clients'] = [rdata.connected_clients, '连接的客户端数量'];
+        //                 arrs['used_memory_rss'] = [bt.format_size(rdata.used_memory_rss), 'Redis当前占用的系统内存总量'];
+        //                 arrs['used_memory'] = [bt.format_size(rdata.used_memory), 'Redis历史分配内存的峰值'];
+        //                 arrs['mem_fragmentation_ratio'] = [rdata.mem_fragmentation_ratio, '内存碎片比率'];
+        //                 arrs['total_connections_received'] = [rdata.total_connections_received, '运行以来连接过的客户端的总数量'];
+        //                 arrs['total_commands_processed'] = [rdata.total_commands_processed, '运行以来执行过的命令的总数量'];
+        //                 arrs['instantaneous_ops_per_sec'] = [rdata.instantaneous_ops_per_sec, '服务器每秒钟执行的命令数量'];
+        //                 arrs['keyspace_hits'] = [rdata.keyspace_hits, '查找数据库键成功的次数'];
+        //                 arrs['keyspace_misses'] = [rdata.keyspace_misses, '查找数据库键失败的次数'];
+        //                 arrs['hit'] = [hit, '查找数据库键命中率'];
+        //                 arrs['latest_fork_usec'] = [rdata.latest_fork_usec, '最近一次 fork() 操作耗费的微秒数'];
+
+        //                 var con = "<div class=\"divtable\"><table id='tab_get_redis_status' style=\"width: 490px;\" class='table table-hover table-bordered '><thead><th>字段</th><th>当前值</th><th>说明</th></thead></table></div>";
+        //                 $(".bt-w-main").html(con);
+        //                 bt.render_table('tab_get_redis_status', arrs, true);
+        //             })
+        //     },
+        //     /**
+        //      * 获取面板日志
+        //      * @param p 被获取的分页
+        //      */
+        //     get_logs: function (p) {
+        //         if (p == undefined) p = 1;
+        //         request_plugin('redis', 'get_logs', {p: p, callback: 'redis.get_logs'}, function (rdata) {
+        //             var log_body = '';
+        //             for (var i = 0; i < rdata.data.length; i++) {
+        //                 log_body += '<tr><td>' + rdata.data[i].addtime + '</td><td><span title="' + rdata.data[i].log + '">' + rdata.data[i].log + '</span></td></tr>'
+        //             }
+
+        //             var my_body = '<div class="demo-table"><div class="divtable">'
+        //                 + '<table class="table table-hover">'
+        //                 + '<thead>'
+        //                 + '<tr><th width="150">时间</th><th>详情</th></tr>'
+        //                 + '</thead>'
+        //                 + '<tbody>' + log_body + '</tbody>'
+        //                 + '</table>'
+        //                 + '</div><div class="page" style="margin-top:15px">' + rdata.page + '</div</div>';
+
+        //             $('.plugin_body').html(my_body);
+        //         });
+        //     },
+        //     set_server_status: function (serverName, type) {
+
+        //         if (bt.contains(serverName, 'php-')) {
+        //             serverName = "php-fpm-" + serverName.replace('php-', '').replace('.', '');
+        //         }
+        //         if (serverName == 'pureftpd') serverName = 'pure-ftpd';
+        //         if (serverName == 'mysql') serverName = 'mysqld';
+        //         serverName = serverName.replace('_soft', '');
+        //         var data = "name=" + serverName + "&type=" + type;
+        //         var msg = lan.bt[type];
+        //         bt.confirm({msg: lan.get('service_confirm', [msg, serverName])}, function () {
+
+        //             var load = bt.load(lan.get('service_the', [msg, serverName]))
+        //             bt.send('system', 'system/ServiceAdmin', data, function (rdata) {
+        //                 load.close();
+        //                 var f = rdata.status ? lan.get('service_ok', [serverName, msg]) : lan.get('service_err', [serverName, msg]);
+        //                 bt.msg({msg: f, icon: rdata.status})
+
+        //                 if (type != "reload" && rdata.status) {
+        //                     setTimeout(function () {
+        //                         window.location.reload()
+        //                     }, 1000)
+        //                 }
+        //                 if (!rdata.status) {
+        //                     bt.msg(rdata);
+        //                 }
+        //             })
+        //         })
+        //     }
+    }
+
+    /**
+     * 发送请求到插件
+     * 注意：除非你知道如何自己构造正确访问插件的ajax，否则建议您使用此方法与后端进行通信
+     * @param plugin_name    插件名称 如：demo
+     * @param function_name  要访问的方法名，如：get_logs
+     * @param args           传到插件方法中的参数 请传入数组，示例：{p:1,rows:10,callback:"demo.get_logs"}
+     * @param callback       请传入处理函数，响应内容将传入到第一个参数中
+     */
+    // function request_plugin(plugin_name, function_name, args, callback, timeout) {
+    //     if (!timeout) timeout = 3600;
+    //     $.ajax({
+    //         type:'POST',
+    //         url: '/plugin?action=a&s=' + function_name + '&name=' + plugin_name,
+    //         data: args,
+    //         timeout:timeout,
+    //         success: function(rdata) {
+    //             if (!callback) {
+    //                 layer.msg(rdata.msg, { icon: rdata.status ? 1 : 2 });
+    //                 return;
+    //             }
+    //             return callback(rdata);
+    //         },
+    //         error: function(ex) {
+    //             if (!callback) {
+    //                 layer.msg('请求过程发现错误!', { icon: 2 });
+    //                 return;
+    //             }
+    //             return callback(ex);
+    //         }
+    //     });
+    // }
+    $('#plugin').append(render('template', lan.redis));
+  	setTimeout(function(){redis.init();},200);
+    //第一次打开窗口时调用
+    // redis.get_index();
+</script>

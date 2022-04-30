@@ -1,0 +1,578 @@
+<style>
+    /*样式写这里*/
+    .demo-table table tbody tr td span{
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        width:580px;
+        display:block;
+    }
+    .demo-table {
+        max-height: inherit;
+        height: 450px;
+        overflow: auto;
+        border:1px solid #ddd;
+    }
+    .demo-table table{
+        border: none !important;
+    }
+
+    .bt-right {
+        position: fixed;
+        margin-left: 358px;
+    }
+</style>
+<div class="bt-form">
+    <div>
+        <div style="margin: 15px;">
+            <select class="bt-input-text" name="version_select">
+                <option value="2">Common ver</option>
+                <option value="1">LTS ver</option>
+                <option value="0">All ver</option>
+            </select>
+            <span style="margin-left: 15px;">Command line ver</span>
+            <select class="bt-input-text" name="cli_version"></select>
+
+            <span style="margin-left: 15px;">Registry</span>
+            <select class="bt-input-text" name="registry">
+                <option value="https://registry.npmjs.org/">Official</option>
+                <option value="https://registry.npm.taobao.org/">Taobao</option>
+            </select>
+
+            <span class="pull-right">
+                <button class="btn btn-default btn-sm" onclick="nodejs.get_version_list(-1)">Update version list</button>
+            </span>
+        </div>
+        <div class="plugin_body" style="margin: 15px;"></div>
+        <ul class="help-info-text c7" style="margin-left:15px;margin-bottom: 10px;font-size: 13px;">
+            <li>This list is synchronized with the official website of Node.js every 24 hours, You can manually update via the [ Update version list ] button</li>
+            <li>The command line version determines which version is used for commands such as nodenpmnpxpm 2 yarn in the command line, and may need to be reconnected to the terminal to fully take effect</li>
+            <li>If PM2 Manager is installed, its NVM related settings will be cleared when setting the command line version. To restore the related settings, please set the command line version to: Not set</li>
+            <li>The Node.js installation directory (prefix) is in: /www/server/nodejs/{version}/</li>
+            <li>You can edit the npmrc configuration file through the [Environment] button, here is{prefix}/etc/npmrc，<a class="btlink" href="https://www.npmjs.cn/files/npmrc/" target="_blank" rel="noreferrer noopener" >⋙Document<a></a></li>
+        </ul>
+    </div>
+</div>
+
+<!--JS脚本部分，不要将JS脚本写在其它地方-->
+<script type="text/javascript">
+
+    //定义窗口尺寸
+    $('.layui-layer-page').css({ 'width': '900px' });
+
+    //左测菜单切换效果
+    $(".bt-w-menu p").click(function () {
+        $(this).addClass('bgw').siblings().removeClass('bgw')
+    });
+
+    $("select[name='version_select']").change(function(){
+        var show_type = $(this).val();
+        nodejs.get_version_list(show_type);
+    });
+
+
+    $("select[name='cli_version']").change(function(){
+        var cli_version = $(this).val();
+        nodejs.set_default_env(cli_version);
+    });
+
+    $("select[name='registry']").change(function(){
+        var registry_url = $(this).val();
+        nodejs.set_registry_url(registry_url);
+    });
+
+    /**
+     * 插件交互对象
+     * 您的所有JS代码可以写在里面
+     * 若不习惯JS的面向对象编程，可删除此对象，使用传统函数化的方式编写
+     * */
+    var nodejs = {
+        plugin_name: 'nodejs',
+        loadT:null,
+        install_speed:false,
+
+        /**
+         * @name 设置命令行版本
+         * @author hwliang<2021-07-30>
+         * @param {String} cli_version 传入的版本号
+         * @return {void}
+         */
+        set_default_env:function(cli_version){
+            var loadT = layer.msg('Setting default environment variables...', {icon: 16,time:false,shade:0.8})
+            request_plugin(nodejs.plugin_name,'set_default_env',{version:cli_version},function(rdata){
+                layer.close(loadT);
+                layer.msg(rdata.status?rdata.data:rdata.error_msg, {icon: rdata.status?1:2});
+            });
+        },
+
+        /**
+         * @name 设置registry源
+         * @author hwliang<2021-08-03>
+         * @param {String} registry_url 传入的registry地址
+         * @return {void}
+         */
+        set_registry_url:function(registry_url){
+            var loadT = layer.msg('Setting the default registry...', {icon: 16,time:false,shade:0.8})
+            request_plugin(nodejs.plugin_name,'set_registry_url',{registry:registry_url},function(rdata){
+                layer.close(loadT);
+                layer.msg(rdata.status?rdata.data:rdata.error_msg, {icon: rdata.status?1:2});
+            });
+        },
+
+        /**
+         * @name 打开npmrc配置文件
+         * @author hwliang<2021-08-03>
+         * @param {String} version node版本号
+         * @return {void}
+         */
+        open_npmrc_editor:function(version){
+            var npmrc_file = '/www/server/nodejs/' + version + '/etc/npmrc';
+            on_edit_file(0, npmrc_file);
+        },
+
+        /**
+         * @name 获取版本列表
+         * @author hwliang<2021-07-30>
+         * @param args {mixed} 参数
+         * @return {void}
+         */
+        get_version_list : function (args) {
+            var pdata = {}
+            var bool_arr = {false:'否',true:'是'},that = this;
+            if (args == -1) {
+                pdata['force'] = '1';
+            }else{
+                if(args) pdata['show_type'] = args;
+            }
+            var loadT = layer.msg('Fetching version list, please wait...', {icon: 16,time:0,shade: 0.3});
+            request_plugin(nodejs.plugin_name, 'get_online_version_list', pdata, function (rdata) {
+                layer.close(loadT);
+                if(rdata.status === false){
+                    layer.msg(rdata.error_msg,{icon:0});
+                    return;
+                }
+
+                $("select[name='version_select']").val(rdata[0].show_type);
+                $("select[name='registry']").val(rdata[0].registry);
+                var log_body = '';
+                var cli_body = '<option value="0">Not set</option>';
+                for (var i = 0; i < rdata.length; i++) {
+                    var act = '';
+                    if (rdata[i].setup) {
+                        act =   '<a class="btlink" onclick="nodejs.open_npmrc_editor(\''+rdata[i].version+'\')">Environment</a> | '
+                                +'<a class="btlink" onclick="nodejs.show_object_modules(\''+rdata[i].version+'\')">Module</a> | '
+                                +'<a class="btlink" style="color:red;" onclick="nodejs.uninstall_nodejs(\''+rdata[i].version+'\')">Uninstall</a>';
+                        cli_body += '<option value="'+rdata[i].version+'" '+(rdata[i].is_default === 1?'selected':'')+'>'+rdata[i].version+'</option>';
+                    }else{
+                        act = '<a class="btlink" onclick="nodejs.install_nodejs(\''+rdata[i].version+'\')">Install</a>';
+                    }
+                    log_body += '<tr>'
+                                    +'<td>' + rdata[i].version + '</td>'
+                                    +'<td>' + (rdata[i].lts? '<a style="color:green;">stable</a>' : '<a style="color:red;">Beta</a>') + '</td>'
+                                    +'<td>' + rdata[i].npm + '</td>'
+                                    +'<td>' + rdata[i].v8 + '</td>'
+                                    +'<td>' + rdata[i].date + '</td>'
+                                    +'<td style="text-align: right;">'+act+'</td>'
+                                +'</tr>'
+                }
+                $("select[name='cli_version']").html(cli_body);
+                
+                var my_body = '<div class="demo-table"><div class="divtable">'
+                            +'<table class="table table-hover">'
+                                +'<thead>'
+                                    +'<tr>'
+                                        +'<th>Node</th>'
+                                        +'<th>LTS</th>'
+                                        +'<th>NPM</th>'
+                                        +'<th>V8</th>'
+                                        +'<th>Release date</th>'
+                                        +'<th style="text-align: right;">OPT</th>'
+                                    +'</tr>'
+                                +'</thead>'
+                                +'<tbody>'+ log_body + '</tbody>'
+                            +'</table>'
+                    + '</div></div>';
+
+                $('.plugin_body').html(my_body);
+                that.fixed_table_thead('.demo-table')
+            });
+        },
+        /**
+         * @name 固定表头
+         * @param {string} el element选择器
+        */
+        fixed_table_thead:function(a){
+            $(a).scroll(function(){var b=this.scrollTop;this.querySelector("thead").style.transform="translateY("+b+"px)"})
+        },
+
+
+        /**
+         * @name 卸载指定版本的指定模块
+         * @author hwliang<2021-07-31>
+         * @param {string} version node版本号
+         * @param {string} mod_name 模块名
+         * @return {void}
+         */
+        uninstall_module: function(version,mod_name){
+            SafeMessage('Uninstall ['+mod_name+'] Module','After uninstalling the ['+mod_name+'] module, it may affect the normal operation of the project. Continue?',function(){
+                var loadT = layer.msg('Uninstalling module ['+mod_name+']...',{icon:16,time:0,shade: [0.3, '#000']});
+                request_plugin(nodejs.plugin_name, 'uninstall_module', {version:version,module:mod_name}, function (rdata) {
+                    layer.close(loadT);
+                    if(rdata.status) nodejs.get_modules(version);
+                    setTimeout(function(){
+                        layer.msg(rdata.status?rdata.data:rdata.error_msg,{icon:rdata.status?1:2,time:5000});
+                    },500);
+                });
+            });
+        },
+
+
+        /**
+         * @name 升级指定版本的指定模块
+         * @author hwliang<2021-07-31>
+         * @param {string} version node版本号
+         * @param {string} mod_name 模块名
+         * @return {void}
+         */
+        upgrade_module: function(version,mod_name){
+            SafeMessage('Upgrade ['+mod_name+'] module','After upgrading the ['+mod_name+'] module, it may affect the normal operation of the project, continue?',function(){
+                var loadT = layer.msg('Upgrading ['+mod_name+'] module...',{icon:16,time:0,shade: [0.3, '#000']});
+                request_plugin(nodejs.plugin_name, 'upgrade_module', {version:version,module:mod_name}, function (rdata) {
+                    layer.close(loadT);
+                    if(rdata.status) {
+                        nodejs.get_version_list();
+                        nodejs.get_modules(version);
+                    }
+                    setTimeout(function(){
+                        layer.msg(rdata.status?rdata.data:rdata.error_msg,{icon:rdata.status?1:2,time:5000});
+                    },500);
+                });
+            });
+        },
+
+        /**
+         * @name 安装指定版本的指定模块
+         * @author hwliang<2021-07-31>
+         * @param {string} version 版本号
+         * @return {void}
+         */
+        install_module: function(version){
+            var mod_name = $("input[name='mod_name']").val();
+            if(!mod_name){
+                layer.msg('Module name cannot be empty!',{icon:2});
+                return;
+            }
+            var loadT = layer.msg('Installing module ['+mod_name+']...',{icon:16,time:0,shade: [0.3, '#000']});
+            request_plugin(nodejs.plugin_name, 'install_module', {version:version,module:mod_name}, function (rdata) {
+                layer.close(loadT);
+                if(rdata.status) nodejs.get_modules(version);
+                setTimeout(function(){
+                    layer.msg(rdata.status?rdata.data:rdata.error_msg,{icon:rdata.status?1:2,time:5000});
+                    $("input[name='mod_name']").val('');
+                },500);
+            });
+        },
+
+        /**
+         * @name 获取模块列表
+         * @author hwliang<2021-07-30>
+         * @param {string} version 传入的版本号
+         * @return {void}
+         */
+        get_modules:function(version){
+            if(!$("#modules-list").length) return;
+            var loadT = layer.msg('Retrieving module list, please wait...', {icon: 16,time:0,shade: 0.3});
+            request_plugin(nodejs.plugin_name, 'get_modules', {version:version}, function (rdata) {
+                layer.close(loadT);
+                var tbody = '';
+                for(var i=0;i<rdata.length;i++){
+                    tbody += '<tr>'
+                        + '<td>'+rdata[i].name+'</td>'
+                        + '<td>'+rdata[i].version+'</td>'
+                        + '<td>'+rdata[i].license+'</td>'
+                        + '<td>'+rdata[i].description+'<a class="btlink" target="_blank" rel="noreferrer noopener" href="'+rdata[i].homepage+'"> >>Help</a></td>'
+                        + '<td style="text-align: right;">'
+                            +'<a class="btlink" onclick="nodejs.upgrade_module(\''+version+'\',\''+rdata[i].name+'\')">Upgrade</a> | '
+                            +'<a class="btlink" onclick="nodejs.uninstall_module(\''+version+'\',\''+rdata[i].name+'\')">Uninstall</a>'
+                        +'</td>'
+                        + '</tr>'
+                }
+                $("#modules-list").html(tbody);
+            });
+        },
+
+        /**
+         * @name 显示模块窗口
+         * @author hwliang<2021-07-31>
+         * @param {string} version node版本号
+         * @return {void}
+         */
+        show_object_modules:function(version){
+            body = '<div class="divtable modules-table" style="margin: 15px;">\
+                        <input class="bt-input-text mr5" name="mod_name" type="text" value="" style="width:240px" placeholder="Module name">\
+                        <button class="btn btn-default btn-sm va0" onclick="nodejs.install_module(\''+version+'\');">Install</button>\
+                        <div class="demo-table" style="margin-top: 15px;">\
+                            <div class="divtable">\
+                                <table class="table table-hover">\
+                                    <thead>\
+                                        <tr>\
+                                            <th>Name</th>\
+                                            <th>Ver</th>\
+                                            <th>License</th>\
+                                            <th style="max-width:400px;">Summary</th>\
+                                            <th style="width:80px;text-align: right;">OPT</th>\
+                                        </tr>\
+                                    </thead>\
+                                    <tbody id="modules-list"></tbody>\
+                                </table>\
+                            </div>\
+                        </div>\
+                        <ul class="help-info-text c7 mtb15">\
+                            <li>[Location] /www/server/nodejs/'+version+'/lib/node_modules/</li>\
+                            <li>[Specified version] e.g sax@0.2.0 or sax@latest</li>\
+                            <li>[Install from github] e.g git://github.com/package/path.git</li>\
+                        </ul>\
+                    </div>'
+            layer.open({
+                type: 1,
+                area: ['850px','660px'],
+                title: 'Module management FOR Node-'+version,
+                closeBtn: 2,
+                shift: 0,
+                shadeClose: false,
+                content: body,
+                success:function(lay,index){
+                    nodejs.get_modules(version);
+                    nodejs.fixed_table_thead('.demo-table')
+                }
+            });
+        },
+
+        /**
+         * @name 安装指定nodejs版本
+         * @author hwliang<2021-07-30>
+         * @param {string} version
+         * @return {void}
+         */
+        install_nodejs:function(version){
+            var that = this;
+            this.loadT = layer.msg('Installing Node-'+ version +', please wait...', {icon: 16,time:false,shade:0.4});
+            that.install_speed = true
+            request_plugin(nodejs.plugin_name, 'install_nodejs', {version:version}, function (rdata) {
+                layer.close(that.loadT)
+                that.install_speed = false
+                layer.msg(rdata.status? 'Successful installation' : rdata.error_msg, {icon: rdata.status?1:2});
+                if(rdata.status){
+                    var loadT = layer.msg('[Npm] module is being upgraded, please wait...',{icon:16,time:0,shade: [0.3, '#000']});
+                    request_plugin(nodejs.plugin_name, 'upgrade_module', {version:version,module:'npm'}, function (rdata) {
+                        layer.close(loadT);
+                        var loadT = layer.msg('[PM2] module is being installed, please wait...',{icon:16,time:0,shade: [0.3, '#000']});
+                        request_plugin(nodejs.plugin_name, 'install_module', {version:version,module:'pm2'}, function (rdata) {
+                            layer.close(loadT);
+                            var loadT = layer.msg('[YARN] module is being installed, please wait...',{icon:16,time:0,shade: [0.3, '#000']});
+                            request_plugin(nodejs.plugin_name, 'install_module', {version:version,module:'yarn'}, function (rdata) {
+                                layer.close(loadT);
+                                layer.msg('Successful installation', {icon: 1});
+                                setTimeout(function(){
+                                    that.get_version_list();
+                                },1000)
+                            });
+                        });
+                    })
+                }
+            });
+            this.show_install_speed(version)
+            setTimeout(function(){
+                that.get_install_speed(version)
+            },1000)
+        },
+        
+        /**
+         * @name 显示和刷新安装进度
+         * @author hwliang<2021-07-30>
+         * @param {string|object} data 用于传达安装更新的数据
+         * @return {void}
+        */
+        show_install_speed:function(data){
+            if(typeof data !== 'object'){
+                layer.close(this.loadT)
+                this.loadT = layer.open({
+                    type:1,
+                    title:false,
+                    closeBtn:false,
+                    area:['450px','100px'],
+                    content:'<div class="message-list nodejs-install-load" style="padding: 12px 15px;">'
+                        +'<div class="mw-con">'
+                            +'<ul class="waiting-down-list">'
+                                +'<li>'
+                                    +'<div class="down-filse-name">'
+                                        +'<span class="fname" style="width:80%;" title="">Downloading Node.js - <span class="nodeVersion">'+ data +'</span>,please wait...</span>'
+                                        +'<span style="width: 20%;display: inline-block;vertical-align: top;text-align: right;" data-name="down_pre">0%</span>'
+                                    +'</div>'
+                                    +'<div class="down-progress">'
+                                        +'<div class="done-progress" data-name="progress" style="width:0%"></div>'
+                                    +'</div>'
+                                    +'<div class="down-info">'
+                                        +'<span class="total-size" data-name="size">--/--</span>'
+                                        +'<span class="speed-size" data-name="speed">0kb/s</span>'
+                                        +'<span style="margin-left: 20px;" data-name="time">Expected to be: -- sec, <span style="color:red;">Note: Do not refresh the page!</span></span>'
+                                    +'</div>'
+                                +'</li>'
+                            +'</ul>'
+                        +'</div>'
+                    +'</div>'
+                })
+            }else{
+                var el = $('.waiting-down-list');
+                el.find('.nodeVersion').text(data.version);
+                el.find('[data-name="down_pre"]').text(data.down_pre + '%');
+                el.find('[data-name="progress"]').width(data.down_pre + '%');
+                el.find('[data-name="size"]').text(bt.format_size(data.down_size)+'/'+bt.format_size(data.total_size));
+                el.find('[data-name="speed"]').text(bt.format_size(data.sec_speed)+'/s');
+                el.find('[data-name="time"]').text('Expected: '+ data.need_time +' s');
+            }
+        },
+
+
+        /**
+         *@name 获取安装进度
+         * @author hwliang<2021-07-30>
+         *@param {string} version 
+         *@return {void}
+         */
+        get_install_speed:function(version,callback){
+            var that = this;
+            request_plugin(nodejs.plugin_name, 'get_install_speed', {version:version}, function (rdata) {
+                if(rdata.status) {
+                    that.show_install_speed($.extend({version:version},rdata))
+                    if(that.install_speed){
+                        setTimeout(function(){
+                            that.get_install_speed(version)
+                        },1000)
+                    }
+                }
+            });
+        },
+
+        /**
+         * @name 卸载指定nodejs版本
+         * @author hwliang<2021-07-30>
+         * @param {string} version
+         * @return {void}
+         */
+        uninstall_nodejs:function(version){
+            bt.show_confirm('Uninstall Node-' + version, 'After uninstalling this version of node.js, the application using this version will be abnormal. Are you sure you want to uninstall Node-' + version +'?', function () {
+                loadT = layer.msg('<a class="nodejs-uninstall-load">Uninstalling Node-'+version+', please wait...</a>', {icon: 16,time:false,shade:0.4});
+                request_plugin(nodejs.plugin_name, 'uninstall_nodejs', {version:version}, function (rdata) {
+                    layer.close(loadT);
+                    layer.msg(rdata.status? 'Successfully uninstalled' : 'Uninstallation failed', {icon: 1});
+                    nodejs.get_version_list();
+                });
+            })
+        }
+
+    }
+
+    /**
+     * 发送请求到插件
+     * 注意：除非你知道如何自己构造正确访问插件的ajax，否则建议您使用此方法与后端进行通信
+     * @param plugin_name    插件名称 如：demo
+     * @param function_name  要访问的方法名，如：get_logs
+     * @param args           传到插件方法中的参数 请传入数组，示例：{p:1,rows:10,callback:"demo.get_logs"}
+     * @param callback       请传入处理函数，响应内容将传入到第一个参数中
+     */
+    function request_plugin(plugin_name, function_name, args, callback, timeout) {
+        if (!timeout) timeout = 3600 * 1000;
+        $.ajax({
+            type:'POST',
+            url: '/plugin?action=a&s=' + function_name + '&name=' + plugin_name,
+            data: args,
+            timeout:timeout,
+            success: function(rdata) {
+                if (!callback) {
+                    layer.msg(rdata.status?rdata.data:rdata.error_msg, { icon: rdata.status ? 1 : 2 });
+                    return;
+                }
+                return callback(rdata);
+            }
+        });
+    }
+    
+    // 文件编辑器
+    function on_edit_file (type, fileName) {
+    if (type != 0) {
+      var l = $("#PathPlace input").val();
+      var body = encodeURIComponent($("#textBody").val());
+      var encoding = $("select[name=encoding]").val();
+      var loadT = bt.load(lan.bt.save_file);
+      bt.send('SaveFileBody', 'files/SaveFileBody', "data=" + body + "&path=" + fileName + "&encoding=" + encoding, function (rdata) {
+        if (type == 1) loadT.close();
+        bt.msg(rdata);
+      })
+      return;
+    }
+    var loading = bt.load(lan.bt.read_file);
+    ext = bt.get_file_ext(fileName);
+
+    bt.send('GetFileBody', 'files/GetFileBody', 'path=' + fileName, function (rdata) {
+      if (!rdata.status) {
+        bt.msg({
+          msg: rdata.msg,
+          icon: 5
+        });
+        return;
+      }
+      loading.close();
+      var u = ["utf-8", "GBK", "GB2312", "BIG5"];
+      var n = "";
+      var m = "";
+      var o = "";
+      for (var p = 0; p < u.length; p++) {
+        m = rdata.encoding == u[p] ? "selected" : "";
+        n += '<option value="' + u[p] + '" ' + m + ">" + u[p] + "</option>"
+      }
+      var aceEditor = {},
+        r = bt.open({
+          type: 1,
+          shift: 5,
+          closeBtn: 1,
+          area: ["750px", "600px"],
+          shade: .3,
+          title: lan.bt.edit_title + "[" + fileName + "]",
+          btn: [lan.public.save, lan.public.close],
+          content: '<form class="bt-form pd20"><div class="line"><p style="color:red;margin-bottom:10px">' + lan.bt.edit_ps +
+            '		<select class="bt-input-text" name="encoding" style="width: 74px;position: absolute;top: 31px;right: 19px;height: 22px;z-index: 9999;border-radius: 0;">' +
+            n + '</select></p><div class="mCustomScrollbar bt-input-text ace_config_editor_scroll" id="textBody1" style="width:100%;margin:0 auto;line-height: 1.8;position: relative;top: 10px;height:300px;"></div></div></form>',
+          yes: function (layer, index) {
+            bt.saveEditor(aceEditor);
+          },
+          btn2: function (layer, index) {
+            r.close();
+          },
+          success: function () {
+            $("#textBody1").height(420);
+            aceEditor = bt.aceEditor({
+              el: 'textBody1',
+              content: rdata.data,
+              mode: 'sh',
+              saveCallback: function (val) {
+                bt.send('SaveFileBody', 'files/SaveFileBody', {
+                  path: fileName,
+                  encoding: $('[name="encoding"] option:selected').val(),
+                  data: val
+                }, function (rdata) {
+                  bt.msg(rdata);
+                });
+              }
+            });
+          }
+        })
+
+    })
+  }
+    
+
+    //第一次打开窗口时调用
+    nodejs.get_version_list();
+
+</script>

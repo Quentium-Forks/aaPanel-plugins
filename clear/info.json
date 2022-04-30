@@ -1,0 +1,15 @@
+{
+	"title":"Log cleanup",
+	"tip":"lib",
+	"name":"clear",
+	"ps":"One click to clear logs and system trash",
+	"versions":"1.3",
+	"shell":"install.sh",
+	"checks":"/www/server/panel/plugin/clear/clear_main.py",
+	"author":"official",
+	"home":"https://forum.aapanel.com/",
+	"date":"2020-7-01",
+	"default":false,
+	"display":0,
+	"api":true
+}

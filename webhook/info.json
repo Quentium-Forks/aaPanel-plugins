@@ -1,0 +1,15 @@
+{
+	"title":"WebHook",
+	"tip":"lib",
+	"name":"webhook",
+	"type":"扩展",
+	"ps":"WebHook, which can set callback scripts, is usually used for third-party callback notifications!",
+	"versions":"1.3",
+	"shell":"webhook.sh",
+	"checks":"/www/server/panel/plugin/webhook",
+	"author":"aaPanel",
+	"home":"http://www.bt.cn/bbs",
+	"date":"2017-07-05",
+	"default":false,
+	"display":0
+}

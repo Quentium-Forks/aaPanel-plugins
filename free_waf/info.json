@@ -1,0 +1,15 @@
+{
+	"title":"Nginx free firewall",
+	"tip":"lib",
+	"name":"free_waf",
+	"type":"System Tools",
+	"ps":"Nginx free firewall",
+	"versions":"5.0",
+	"shell":"free_waf.sh",
+	"checks":"/www/server/panel/plugin/free_waf",
+	"author":"民国三年一场雨",
+	"home":"民国三年一场雨",
+	"date":"2019-10-22",
+	"default":false,
+	"display":0
+}

@@ -1,0 +1,200 @@
+<style>
+	.help{
+		background-color: #f6f6f6;
+		border: 1px solid #dedede;
+		border-radius: 3px;
+		line-height: 24px;
+		margin-top: 20px;
+		padding: 10px;
+	}
+	.table>tbody {
+		border-bottom: none;
+	}
+</style>
+<div class="bt-form" id="plugin">
+</div>
+<script id="template" type="text/template">
+<div class="pd20">
+	<button class="btn btn-success btn-sm" style="margin-bottom: 5px;" onclick="AddHook()">{{= it.add }}</button>
+	<div class="divtable">
+		<table id="webhook-table" class="table table-hover">
+			<thead>
+				<tr>
+					<th>{{= it.name }}</th>
+					<th width="160">{{= it.add_time }}</th>
+					<th width="160">{{= it.recently_used }}</th>
+					<th width="120">{{= it.use_count }}</th>
+					<th width="80">{{= it.key }}</th>
+					<th class="text-right" width="150">{{= it.operate }}</th>
+				</tr>
+			</thead>
+			<tbody id="zipBody"></tbody>
+		</table>
+	</div>
+</div>
+</script>
+<script>
+	$('#plugin').parents('.layui-layer').width(800);
+
+	var render = (function () {
+		var fn = null
+		return function (id, it) {
+			// console.log(id,it);
+			if (!fn) {
+				var html = $('#'+ id).html();
+				// console.log(html);
+				html = html.replace(/\n/g, '').replace(/{{(?!=)/g, '\';').replace(/{{=/g, '\'+').replace(/}}/g, ';str+=\'')
+				fn = new Function('it', "let str='';str+='"+ html +"';return str;");
+			}
+			return fn(it)
+		}
+	})();
+	//添加
+	function AddHook(act){
+		if(act == 1){
+			var loadT = layer.msg(lan.webhook.submitting,{icon:16,time:0});
+			var data = {
+                title: $("#hook_title").val(),
+                shell: $("#hook_shell").val()
+                }
+
+			$.post("/plugin?action=a&s=AddHook&name=webhook",data,function(rdata){
+				$(".closeWebHook").click();
+				layer.close(loadT);
+				layer.msg(rdata.msg,{icon:rdata.status?1:2});
+				if(rdata.status) GetHookList();
+			})
+			return;
+		}
+		var index = layer.open({
+			type: 1,
+			area: '600px',
+			title: lan.webhook.add_hook,
+			closeBtn: 2,
+			shift: 5,
+			shadeClose: false,
+			content: "<div class='bt-form pd20 pb70'>\
+						<div class='line'>\
+						<span class='tname'>"+lan.public.name+"</span>\
+						<div class='info-r'><input class='bt-input-text' type='text' id='hook_title' name='title' style='width:340px' /></div>\
+						</div>\
+						<div class='line'>\
+						<span class='tname'>"+lan.webhook.exec_file+"</span>\
+						<div class='info-r'><textarea name='shell' id='hook_shell' class='bt-input-text' style='width:340px; height:120px' value=''></textarea></div>\
+						</div>\
+						<div class='bt-form-submit-btn'>\
+							<button type='button' class='btn btn-danger btn-sm closeWebHook' >"+lan.public.close+"</button>\
+					        <button type='button' class='btn btn-success btn-sm' onclick=\"AddHook(1)\" >"+lan.public.submit+"</button>\
+				        </div>\
+				      </div>"
+		});
+		$(".closeWebHook").click(function(){
+			layer.close(index);
+		})
+	}
+	//获取列表
+	function GetHookList(){
+		var loadT = layer.msg(lan.webhook.get_list,{icon:16,time:0,shade: [0.3, '#000']});
+		$.get('/plugin?action=a&name=webhook&s=GetList',function(mlist){
+			layer.close(loadT);
+			var zbody = '';
+			if (mlist.length > 0) {
+				for (var i = 0; i < mlist.length; i++) {
+					var updateTime = getLocalTime(mlist[i].uptime);
+					updateTime = updateTime.indexOf('1970/') != -1 ? '-' : updateTime;
+					zbody += '<tr>'
+						+ '<td>' + mlist[i].title + '</td>'
+						+ '<td>' + getLocalTime(mlist[i].addtime) + '</td>'
+						+ '<td>' + updateTime + '</td>'
+						+ '<td>' + mlist[i].count + '</td>'
+						+ '<td><a href="javascript:showWebHookCode(\'' + mlist[i].url + '\',\'' + mlist[i].access_key + '\')" class="btlink">' + lan.webhook.read_key + '</a></td>'
+						+ '<td class="text-right"><a href="javascript:RunHook(\'' + mlist[i].access_key + '\');" class="btlink">' + lan.webhook.test + '</a> | '
+						+ '<a href="javascript:OnlineEditFile(0,\'/www/server/panel/plugin/webhook/script/' + mlist[i].access_key + '\');" class="btlink">' + lan.public.edit + '</a> | '
+						+ '<a href="javascript:GetLogs(\'/www/server/panel/plugin/webhook/script/' + mlist[i].access_key + '.log\');" class="btlink">' + lan.public.log + '</a> | '
+						+ '<a href="javascript:DeleteHook(\'' + mlist[i].access_key + '\');" class="btlink">' + lan.public.del + '</a></td>'
+						+ '</tr>'
+				}
+			} else {
+				zbody = '<tr><td colspan="6" class="text-center">No Data</td></tr>';
+			}
+			$("#zipBody").html(zbody);
+		});
+	}
+	//查看密钥
+	function showWebHookCode(url,code){
+		layer.open({
+			type:1,
+			title: lan.webhook.read_key,
+			area: '510px', 
+			shadeClose:false,
+			closeBtn:2,
+			content:'<div class="bt-form pd20">\
+					<div class="line"><span class="tname" style="width:50px">'+lan.webhook.key+'</span><input class="bt-input-text" value="'+code+'" style="width:420px"></div>\
+					<div class="line help">\
+						<b>'+lan.webhook.use_method+'</b><br>\
+						GET/POST:<br>\
+						'+lan.webhook.use_tips1+'<br>\
+						'+lan.webhook.use_tips2+'<br>\
+						'+lan.webhook.use_tips3+'<br>\
+					</div>\
+					</div>'	
+		})
+	}
+	
+	//查看日志
+	function GetLogs(path){
+		loadT = layer.msg(lan.webhook.get,{icon:16,time:0,shade: [0.3, '#000']});
+		var data='&path='+path
+		$.post('/files?action=GetFileBody',data,function(rdata){
+			layer.close(loadT);
+			if(!rdata.status) {
+				layer.msg(rdata.msg,{icon:2});
+				return;
+			};
+			layer.open({
+				type:1,
+				title:lan.webhook.task_log,
+				area: ['60%','500px'], 
+				shadeClose:false,
+				closeBtn:2,
+				content:'<div class="setchmod bt-form pd20 pb70">'
+						+'<pre style="overflow: auto; border: 0px none; padding: 15px; margin: 0px; height: 410px; background-color: rgb(255, 255, 255);">'+rdata.data+'</pre>'
+						+'<div class="bt-form-submit-btn" style="margin-top: 0px;">'
+					    +'</div>'
+						+'</div>'
+			});
+		});
+	}
+	//运行
+	function RunHook(key){
+		$.post("/plugin?action=a&s=RunShell&name=webhook","access_key="+key,function(rdata){
+			layer.msg(rdata.msg,{icon:rdata.status?1:2});
+			GetHookList();
+		})
+	}
+	//删除
+	function DeleteHook(key){
+		$.post("/plugin?action=a&s=DelHook&name=webhook","access_key="+key,function(rdata){
+			layer.msg(rdata.msg,{icon:rdata.status?1:2});
+			GetHookList();
+		})
+	}
+	// 表格
+	function fixedTableHead(el, height) {
+		$(el).parent().css({
+			'overflow': 'auto',
+			'max-height': height,
+			'border': '1px solid #ddd'
+		});
+		$(el).css('border', 'none');
+		$(el).parent().bind('scroll', function() {
+			var scrollTop = this.scrollTop;
+			$(this).find("thead").css({ "transform": "translateY(" + scrollTop + "px)", "position": "relative", "z-index": "1" });
+		});
+	}
+	$('#plugin').append(render('template', lan.webhook));
+	setTimeout(function () {
+		fixedTableHead('#webhook-table', '435px');
+		GetHookList();
+	}, 200)
+</script>
