@@ -207,6 +207,7 @@ class firewall_main:
         addtime = time.strftime('%Y-%m-%d %X',time.localtime())
         for port in port_list:
             result = public.M('firewall_new').add('ports,brief,protocol,address,types,addtime',(port,brief,protocol,address,types,addtime))
+        self.add_to_panel_firewall(ports,brief)
         self.FirewallReload()
         return public.returnMsg(True, 'ADD_SUCCESS')
         
@@ -277,6 +278,7 @@ class firewall_main:
                 self.delete_service()
         except:
             pass
+        self.update_panel_filewall(ports, brief)
         self.FirewallReload()
         return public.returnMsg(True, 'ADD_SUCCESS')
 
@@ -527,7 +529,23 @@ class firewall_main:
     def update_panel_data(self, ports):
         res = public.M('firewall').where("port=?",(ports,)).delete()
 
-    # 查询IP规则
+    def add_to_panel_firewall(self,port,brief):
+        import time
+        now = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
+        pdata = {
+            "port": port,
+            "ps": "Add by SYS Firewall" if not brief else brief,
+            "addtime": now,
+        }
+        public.M('firewall').insert(pdata)
+
+    def update_panel_filewall(self,port,brief):
+        pdata = {
+            "ps": "Add by SYS Firewall" if not brief else brief,
+        }
+        public.M('firewall').where('port=?',(port,)).update(pdata)
+
+        # 查询IP规则
     def get_ip_rules_list(self, args):
         if 'p' not in args:
             args.p = 1
