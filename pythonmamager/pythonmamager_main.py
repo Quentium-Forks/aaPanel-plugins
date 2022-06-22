@@ -247,8 +247,7 @@ max-requests = 1000""" .format(path=path, port=port, rfile=rfile, user=user)
         worker = values['worker']
         port = values['port']
         run = values['run']
-        a = public.ExecShell(
-            "{} install -i {} gunicorn gevent-websocket >> %s".format(
+        a = public.ExecShell("{} install -i {} gunicorn gevent-websocket >> {}".format(
                 self.get_vpath_pip(vpath), self.pipsource,self.logs_file_tmp))
         self.WriteLog(a[0])
         # 添加gunicorn配置
