@@ -1,0 +1,1903 @@
+<style type="text/css">
+    /** 选择框 */
+    .bt_select_updown {
+        line-height: 1;
+    }
+    .bt_select_updown .bt_select_value {
+        display: flex;
+        align-items: center;
+        height: 100%;
+        padding-right: 24px;
+        line-height: 1.4;
+    }
+    .bt_select_updown .bt_select_list {
+        width: 100%;
+    }
+    .bt_select_updown .bt-select-tips {
+        flex: 1;
+        width: 0;
+        color: #999;
+    }
+    .bt_select_updown .bt_select_value .bt_select_content {
+        flex: 1;
+        width: 0;
+        margin-right: 0;
+        overflow: hidden;
+        white-space: nowrap;
+        text-overflow: ellipsis;
+    }
+    .bt-form .select_box .bt_select_updown {
+        width: 100%;
+        height: 100%;
+    }
+    /** 开关 */
+    .bt_switch .btswitch-btn {
+        margin-bottom: 0;
+    }
+    .btswitch+.btswitch-btn.disabled {
+        background: #68b778 !important;
+    }
+    /** 表格 */
+    .layui-layer .divtable {
+        border: 1px solid #ddd;
+    }
+    .layui-layer .divtable table {
+        border: none;
+    }
+    .layui-layer .divtable table tbody {
+        border: none;
+    }
+    .divtable .table_flex {
+        display: flex;
+        height: auto;
+    }
+    .divtable .table_flex .size_ellipsis {
+        flex: 1;
+        width: 0;
+    }
+    .switch-item {
+        margin-top: 4px;
+    }
+    .switch-item .btswitch+.btswitch-btn {
+        width: 2.4em;
+        height: 1.4em;
+        margin-bottom: 0;
+    }
+    /** 菜单 */
+    .dns_container .bt-w-menu {
+        width: 125px;
+    }
+    /** 主体 */
+    .dns_container .bt-w-con {
+        float: left;
+        margin-left: 0;
+        width: 575px;
+        height: 100%;
+        padding: 0;
+    }
+    .dns_container .bt-w-con .bt-box {
+        display: none;
+        height: 100%;
+        padding: 15px;
+        overflow-y: auto;
+    }
+    .dns_container .bt-w-con .bt-box.show {
+        display: block;
+    }
+    /** 工具栏 */
+    .toolbar {
+        display: flex;
+    }
+    .toolbar .toolbar_left {
+        display: flex;
+        flex: 1;
+    }
+    .toolbar .toolbar_right {
+        display: flex;
+        margin-left: 10px;
+    }
+    .toolbar .toolbar_item + .toolbar_item {
+        margin-left: 10px;
+    }
+    .toolbar_item .bt_select_updown {
+        width: 120px;
+    }
+    /** 表单 */
+    .bt-form .line .tname {
+        line-height: 34px;
+    }
+    .bt-form .line .tname,
+    .bt-form .line input {
+        height: 35px;
+    }
+    .bt-form .line .bt_switch {
+        display: flex;
+        align-items: center;
+        height: 35px;
+    }
+    /** 域名表单 */
+    .domain_form .line .tname {
+        width: 100px;
+    }
+    .domain_form .line .info-r {
+        margin-left: 100px;
+    }
+    .domain_form .line input {
+        width: 270px;
+    }
+    /** 供应商表单 */
+    .parsing_form_dialog .layui-layer-content {
+        overflow: initial;
+    }
+    .domain_parsing_form .line input {
+        width: 400px;
+        padding: 1px 10px;
+    }
+    .domain_parsing_form .select_box {
+        width: 400px;
+        height: 35px;
+    }
+    .domain_parsing_form .select_box .bt_select_list {
+        top: 35px;
+    }
+    .domain_parsing_form .select_box .bt_select_list li {
+        display: flex;
+        height: auto;
+        padding: 8px 10px;
+        line-height: 22px;
+        white-space: initial;
+        text-overflow: initial;
+    }
+    .domain_parsing_form .select_box .bt_select_list li.active {
+        background: #efefef;
+        color: initial;
+    }
+    /** 设置表单 */
+    .setting_form {
+        height: auto;
+        padding-top: 10px;
+    }
+    .setting_form .line .info-r {
+        margin-left: 125px;
+    }
+    .setting_form .line input {
+        width: 300px;
+    }
+    .setting_form .select_box {
+        width: 150px;
+        height: 35px;
+    }
+    .setting_form .select_box .bt_select_list {
+        top: 35px;
+    }
+    /** 域名详情 */
+    .domain_details.divtable {
+        border: none;
+    }
+    .domain_details table th {
+        width: 100px;
+        vertical-align: middle !important;
+    }
+</style>
+<div class="dns_container">
+    <div class="bt-w-main clearfix">
+        <div class="bt-w-menu">
+            <p class="bgw">Domain list</p>
+            <p>Setting</p>
+        </div>
+        <div class="bt-w-con">
+            <div class="bt-box domain_box show">
+                <div class="toolbar">
+                    <div class="toolbar_left">
+                        <div class="toolbar_item">
+                            <button class="btn btn-sm btn-success add_domain_btn">Add Domain</button>
+                        </div>
+                        <div class="toolbar_item">
+                            <button class="btn btn-sm btn-default clear_cache_btn">Clear Cache</button>
+                        </div>
+                    </div>
+                    <div class="toolbar_right">
+                        <div class="toolbar_item"></div>
+                    </div>
+                </div>
+                <div id="domain_table"></div>
+            </div>
+            <div class="bt-box setting_box">
+                <div class="bt-form setting_form">
+                    <div class="line hosting_line">
+                        <span class="tname">Dns Hosting</span>
+                        <div class="info-r c4">
+                            <div class="select_box"></div>
+                        </div>
+                    </div>
+                    <div class="line value1_line">
+                        <span class="tname">Token</span>
+                        <div class="info-r c4">
+                            <input class="bt-input-text" type="text" name="value1" autocomplete="off" />
+                        </div>
+                    </div>
+                    <div class="line value2_line">
+                        <span class="tname">Email</span>
+                        <div class="info-r c4">
+                            <input class="bt-input-text" type="text" name="value2" autocomplete="off" />
+                        </div>
+                    </div>
+                    <div class="line value2_line">
+                        <div class="info-r">
+                            <button class="btn btn-sm btn-success" id="setting_save_btn">Save</button>
+                            <button class="btn btn-sm btn-default ml5" id="setting_test_btn">Test</button>
+                        </div>
+                    </div>
+                </div>
+                <ul class="help-info-text c7">
+                    <li>Note that to use this plugin, you must set the global Token!</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- 选择框 -->
+<script type="text/html" id="bt_select">
+    <div class="bt_select_updown">
+        <div class="bt_select_value">
+            <span class="bt_select_content"></span>
+            <span class="glyphicon glyphicon-triangle-bottom"></span>
+        </div>
+        <ul class="bt_select_list"></ul>
+    </div>
+</script>
+<!-- 添加域名表单 -->
+<script type="text/html" id="domain_form_dialog">
+    <div class="bt-form domain_form pd15">
+        <div class="line">
+            <span class="tname">Domain</span>
+            <div class="info-r c4">
+                <input class="bt-input-text" type="text" name="zone" placeholder="Please enter your domain name" autocomplete="off" />
+            </div>
+        </div>
+    </div>
+</script>
+<!-- 域名详情表单 -->
+<script type="text/html" id="domain_details_dialog">
+    <div class="pd15">
+        <div class="divtable domain_details">
+            <table class="table table-hover table-bordered">
+                <tbody>
+                <tr>
+                    <th>Domain</th>
+                    <td class="domain">--</td>
+                </tr>
+                <tr>
+                    <th>Zone Id</th>
+                    <td class="zone_id">--</td>
+                </tr>
+                <tr>
+                    <th>Ns1</th>
+                    <td class="ns1">--</td>
+                </tr>
+                <tr>
+                    <th>Ns2</th>
+                    <td class="ns2">--</td>
+                </tr>
+                <tr>
+                    <th>Status</th>
+                    <td class="status">--</td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</script>
+<!-- 域名解析弹框 -->
+<script type="text/html" id="domain_parsing_dialog">
+    <div class="pd15">
+        <div id="domain_parsing_table"></div>
+    </div>
+</script>
+<!-- 添加域名解析弹框 -->
+<script type="text/html" id="domain_parsing_form_dialog">
+    <div class="bt-form domain_parsing_form pd15">
+        <div class="line type_line">
+            <span class="tname">Type</span>
+            <div class="info-r c4">
+                <div class="select_box"></div>
+            </div>
+        </div>
+        <div class="line line_item">
+            <span class="tname">Line</span>
+            <div class="info-r c4">
+                <div class="select_box"></div>
+            </div>
+        </div>
+        <div class="line record_name_line">
+            <span class="tname">Record Name</span>
+            <div class="info-r c4">
+                <input class="bt-input-text" type="text" name="record_name" placeholder="To parse www.sss.com, please fill in WWW" autocomplete="off" />
+            </div>
+        </div>
+        <div class="line content_line">
+            <span class="tname">Content</span>
+            <div class="info-r c4">
+                <input class="bt-input-text" type="text" name="content" placeholder="Parsed records, such as 1.1.1.1" autocomplete="off" />
+            </div>
+        </div>
+        <div class="line ttl_line">
+            <span class="tname">TTL</span>
+            <div class="info-r c4">
+                <input class="bt-input-text" type="number" name="ttl" placeholder="600" autocomplete="off" value="600" />
+            </div>
+        </div>
+        <div class="line proxied_line">
+            <span class="tname">Proxy status</span>
+            <div class="info-r c4">
+                <div class="bt_switch">
+                    <input class="btswitch btswitch-ios" name="proxied" id="proxied" type="checkbox">
+                    <label class="btswitch-btn" for="proxied"></label>
+                </div>
+            </div>
+        </div>
+    </div>
+</script>
+<script>
+    // 云DNS管理器
+    var cloud_dns = {
+        // 初始化
+        init: function () {
+            this.event();
+            domain.event();
+            setting.event();
+            domain.init();
+        },
+        // 事件
+        event: function () {
+            // tabs切换
+            $('.bt-w-menu p').click(function () {
+                var index = $(this).index();
+                $(this).addClass('bgw').siblings('.bgw').removeClass('bgw');
+                $('.bt-w-con .bt-box').eq(index).addClass('show').siblings('.show').removeClass('show');
+                switch (index) {
+                    case 0:
+                        domain.init();
+                        break;
+                    case 1:
+                        setting.init();
+                        break;
+                }
+            });
+        }
+    }
+    // 域名列表
+    var domain = {
+        // 供应商选择框对象
+        hosting_select: {},
+        // 域名表格对象
+        domain_table: {},
+        // info数据
+        account_info: {},
+        // 域名列表初始化
+        init: function () {
+            var select = this.hosting_select;
+            if (select && request.isEmptyObject(select)) {
+                var el = '.domain_box .toolbar_right .toolbar_item';
+                select = this.init_hosting_select(el);
+                this.hosting_select = select;
+            }
+            this.init_hosting_table();
+            this.render_hosting_select(false, select, function (res) {
+                domain.render_domain_table();
+            });
+        },
+        // 域名列表事件
+        event: function () {
+            var _this = this;
+            // 供应商选择
+            $('.domain_box').on('click', '.hosting_select li', function () {
+                var value = $(this).data('value');
+                _this.set_hosting_cookie(value);
+                _this.render_domain_table();
+            });
+            // 添加域名
+            $('.add_domain_btn').click(function () {
+                _this.add_domain();
+            });
+            // 清空缓存
+            $('.clear_cache_btn').click(function () {
+                _this.open_clear_cache();
+            });
+        },
+        // 初始化供应商选择框
+        init_hosting_select: function (el) {
+            return new Select({
+                el: el,
+                class: 'hosting_select'
+            });
+        },
+        // 渲染供应商选择框
+        render_hosting_select: function (isNotMsg, select, callback) {
+            this.get_hosting_name(isNotMsg, function (res) {
+                var data = res.msg;
+                var list = [];
+                $.each(data, function (index, item) {
+                    list.push({
+                        label: item,
+                        value: item
+                    });
+                });
+                select.refresh(list);
+                select.set_default_value(domain.get_hosting_cookie());
+                callback && callback(res);
+            }, function (err) {
+                var index = $('.bt-w-menu p.bgw').index();
+                if (index == 0) {
+                    setTimeout(function () {
+                        $('.bt-w-menu p').eq(1).click();
+                    }, 1500);
+                } else if (index == 1) {
+                    console.log(err);
+                }
+            });
+        },
+        // 初始化域名表格
+        init_hosting_table: function () {
+            var table = this.domain_table;
+            if (table && !request.isEmptyObject(table)) return;
+            var _this = this;
+            var select = this.hosting_select;
+            $('#domain_table').empty();
+            this.domain_table = bt_tools.table({
+                el: '#domain_table',
+                default: "No Data",
+                data: [],
+                column: [
+                    {
+                        fid: 'domain',
+                        title: 'Domain'
+                    },
+                    {
+                        type: 'group',
+                        title: 'Operation',
+                        align: 'right',
+                        width: 180,
+                        group: [
+                            {
+                                title: 'Record list',
+                                event: function (row, index, ev, key, that) {
+                                    domain_parsing.init(row);
+                                }
+                            },
+                            {
+                                title: 'Details',
+                                event: function (row, index, ev, key, that) {
+                                    _this.show_details(row);
+                                }
+                            },
+                            {
+                                title: 'Delete',
+                                template: function (row) {
+                                    return '<a class="btlink red">Delete</a>'
+                                },
+                                event: function (row, index, ev, key, that) {
+                                    _this.del_domain(row);
+                                }
+                            }
+                        ]
+                    }
+                ]
+            });
+            $('#domain_table').find('.divtable').removeClass('mtb10').css({
+                'margin-top': '10px',
+                'max-height': '476px'
+            });
+        },
+        // 生成域名表格
+        render_domain_table: function () {
+            var table = this.domain_table;
+            var hosting = this.get_hosting();
+            if (!hosting) return;
+            var data = {
+                dns_hosting: hosting
+            }
+            this.get_domain_list(data, function (res) {
+                var list = [];
+                if (request.isArray(res.msg)) {
+                    list = res.msg;
+                    domain.account_info = {};
+                } else {
+                    domain.account_info = res.msg.account_info[0];
+                    list = res.msg.resp;
+                }
+                table.$reader_content(list);
+            });
+        },
+        // 添加域名
+        add_domain: function () {
+            dialog.form({
+                title: 'Add Domain',
+                content: domain_form_dialog.innerHTML,
+                success: function (layero, index) {
+                    var _this = this;
+                    $('input[name="zone"]').keyup(function (e) {
+                        if (e.keyCode == 13) {
+                            _this.add_domain(index);
+                        }
+                    });
+                },
+                yes: function (index, layero) {
+                    this.add_domain(index);
+                },
+                add_domain: function (index) {
+                    var zone = $('input[name="zone"]').val().trim();
+                    if (zone == '') return dialog.error_msg('域名不能为空');
+
+                    var hosting = domain.get_hosting();
+                    var id = domain.account_info.id;
+                    var data = {};
+                    data.zone = zone;
+                    data.dns_hosting = hosting;
+                    if (id) data.account_id = id;
+
+                    domain.create_zone(data, function (res) {
+                        dialog.success_msg({
+                            content: res.msg,
+                            callback: function () {
+                                layer.close(index);
+                                domain.render_domain_table();
+                            }
+                        });
+                    });
+                }
+            });
+        },
+        // 显示详情
+        show_details: function (row) {
+            dialog.form({
+                title: '[' + row.domain + '] Detail',
+                content: domain_details_dialog.innerHTML,
+                btn: ['Cancel'],
+                success: function () {
+                    row.ns = row.ns ? row.ns : ['--', '--'];
+                    $('.domain_details .domain').html(row.domain || '--');
+                    $('.domain_details .zone_id').html(row.zone_id || '--');
+                    $('.domain_details .ns1').html(row.ns[0] || '--');
+                    $('.domain_details .ns2').html(row.ns[1] || '--');
+                    $('.domain_details .status').html(row.status || '--');
+                },
+                yes: function (index) {
+                    layer.close(index);
+                }
+            });
+        },
+        // 删除域名
+        del_domain: function (row) {
+            dialog.confirm({
+                title: 'Delete domain',
+                content: 'When deleting the domain name, the DDNS record will all be deleted, are you sure to delete it?',
+                yes: function () {
+                    var data = domain.get_hosting_data(row);
+                    domain.remove_zone(data, function (res) {
+                        dialog.success_msg({
+                            content: res.msg,
+                            callback: function () {
+                                domain.render_domain_table();
+                            }
+                        });
+                    });
+                }
+            });
+        },
+        // 设置供应商cookie
+        set_hosting_cookie: function (val) {
+            bt.set_cookie('cloud_dns_hosting', val);
+        },
+        // 获取供应商cookie
+        get_hosting_cookie: function () {
+            return bt.get_cookie('cloud_dns_hosting');
+        },
+        // 获取供应商数据
+        get_hosting_data: function (row) {
+            var data = {};
+            var hosting = this.get_hosting();
+            data.dns_hosting = hosting;
+            if (hosting == 'aliyun') {
+                data.zone = row.domain;
+            } else {
+                data.zone_id = row.zone_id;
+            }
+            return data;
+        },
+        // 获取供应商
+        get_hosting: function () {
+            return this.hosting_select.get_default_value();
+        },
+        // 清空缓存弹框
+        open_clear_cache: function () {
+            dialog.confirm({
+                title: '清空缓存',
+                content: '是否清空缓存？',
+                yes: function () {
+                    domain.execute_clear_cache();
+                }
+            });
+        },
+        // 执行清空缓存
+        execute_clear_cache: function () {
+            this.clear_cache(function (res) {
+                dialog.success_msg({
+                    content: res.msg,
+                    callback: function () {
+                        domain.render_domain_table();
+                    }
+                });
+            });
+        },
+        // 获取dns托管商接口
+        get_hosting_name: function (isNotMsg, callback, error) {
+            request.send({
+                tips: 'Getting hosting name, please wait...',
+                method: 'get_hosting_name',
+                isNotMsg: isNotMsg,
+                success: function (res) {
+                    callback && callback(res);
+                },
+                error: function (err) {
+                    error && error(err);
+                }
+            });
+        },
+        // 获取托管的所有域名接口
+        get_domain_list: function (data, callback) {
+            request.send({
+                tips: 'Getting domain name list, please wait...',
+                method: 'list_hosting_domains',
+                data: data,
+                success: function (res) {
+                    callback && callback(res);
+                }
+            });
+        },
+        // 创建域名接口
+        create_zone: function (data, callback) {
+            request.send({
+                tips: 'Domain name is being added, please wait...',
+                method: 'create_zone',
+                data: data,
+                success: function (res) {
+                    callback && callback(res);
+                }
+            });
+        },
+        // 清空缓存接口
+        clear_cache: function (callback) {
+            request.send({
+                tips: 'Clearing Cache, please wait...',
+                method: 'clear_cache',
+                success: function (res) {
+                    callback && callback(res);
+                }
+            });
+        },
+        // 删除托管的域名
+        remove_zone: function (data, callback) {
+            request.send({
+                tips: 'Deleting domain name, please wait...',
+                method: 'remove_zone',
+                data: data,
+                success: function (res) {
+                    callback && callback(res);
+                }
+            });
+        }
+    };
+    // 域名解析
+    var domain_parsing = {
+        // 当前域名数据
+        domain_data: {},
+        // 表格对象
+        table: {},
+        // 线路列表
+        line_list: [],
+        // 初始化
+        init: function (data) {
+            this.domain_data = data;
+            var domain = data.domain;
+            dialog.open({
+                title: '['+ domain +'] DDNS List',
+                area: ['800px','570px'],
+                content: domain_parsing_dialog.innerHTML,
+                success: function () {
+                    domain_parsing.init_table();
+                    domain_parsing.render_table();
+                }
+            });
+            // this.open_form_dialog();
+        },
+        // 初始化表格
+        init_table: function () {
+            $('#domain_parsing_table').empty();
+            var _this = this;
+            var hosting = domain.get_hosting();
+            this.table = bt_tools.table({
+                el: '#domain_parsing_table',
+                default: "No Data",
+                data: [],
+                height: 435,
+                column: [
+                    {
+                        type: 'text',
+                        width: 200,
+                        fid: 'record_name',
+                        title: 'Record Name',
+                        template: function (row) {
+                            var hosting = domain.get_hosting();
+                            var name = hosting == 'cloudflare' ? row.records : row.record_name;
+                            return '<span class="table_flex"><span class="size_ellipsis" title=\'' + name + '\'>' + name + '</span></span>';
+                        }
+                    },
+                    {
+                        fid: 'type',
+                        title: 'Type',
+                        width: 80
+                    },
+                    {
+                        type: 'text',
+                        fid: 'value',
+                        title: 'Content',
+                        width: 318,
+                        template: function (row) {
+                            var content = row.value;
+                            return '<span class="table_flex"><span class="size_ellipsis" title=\'' + content + '\'>' + content + '</span></span>';
+                        }
+                    },
+                    (hosting == 'cloudflare' ? {
+                        fid: 'status',
+                        title: 'Status',
+                        width: 100,
+                        template: function (item) {
+                            var btn = $('<div class="switch-item"></div>');
+                            btn.append('\
+                                <input class="btswitch btswitch-ios" type="checkbox" id="index_' + item.id + '" />\
+                                <label class="btswitch-btn" for="index_' + item.id + '"></label>\
+                            ');
+                            return btn;
+                        }
+                    } : ''),
+                    {
+                        fid: 'ttl',
+                        title: 'TTL',
+                        width: 80
+                    },
+                    {
+                        type: 'group',
+                        width: 100,
+                        align: 'right',
+                        title: 'Operation',
+                        group: [
+                            {
+                                title: 'Edit',
+                                event: function (row) {
+                                    domain_parsing.open_form_dialog(row, true);
+                                }
+                            },
+                            {
+                                title: 'Delete',
+                                template: function (row) {
+                                    return '<a class="btlink red">Delete</a>'
+                                },
+                                event: function (row) {
+                                    domain_parsing.open_del_confirm(row);
+                                }
+                            }
+                        ]
+                    }
+                ],
+                tootls: [
+                    {
+                        type: 'group',
+                        positon: ['left', 'top'],
+                        list: [
+                            {
+                                title: 'Add DDNS',
+                                active: true,
+                                event: function (ev) {
+                                    domain_parsing.open_form_dialog();
+                                }
+                            }
+                        ]
+                    }
+                ]
+            });
+            $('#domain_parsing_table').on('change', '.switch-item .btswitch', function () {
+                var $checkbox = $(this);
+                var checked = $checkbox.is(':checked');
+                var index = $checkbox.parents('tr').index();
+                var domain_data = domain_parsing.domain_data;
+                var data = _this.table.data[index];
+                var param = Object.assign({}, data);
+                if (hosting == 'cloudflare') {
+                    var domain = domain_data.domain;
+                    var index = data.records.indexOf(domain);
+                    param.record_name = data.records.substring(0, index - 1);
+                    delete param.records;
+                }
+                param.zone_id = domain_data.zone_id;
+                param.zone = domain_data.domain;
+                param.dns_hosting = hosting;
+                param.proxied = checked;
+                param.content = '';
+                _this.update_record(param, function (res) {
+                    data.proxied = checked;
+                    bt.msg(res);
+                }, function () {
+                    data.proxied = !checked;
+                    $checkbox.prop('checked', !checked);
+                });
+            });
+        },
+        // 渲染表格
+        render_table: function () {
+            var table = this.table;
+            var row = this.domain_data;
+            var data = domain.get_hosting_data(row);
+            this.list_zone_records(data, function (res) {
+                var msg = res.msg;
+                if (!msg) return;
+                var list = [];
+                if (request.isArray(msg)) {
+                    list = msg;
+                    domain_parsing.line_list = [];
+                } else if (request.isObject(msg)) {
+                    list = msg.records;
+                    domain_parsing.line_list = domain_parsing.get_line_list(msg);
+                }
+                table.$reader_content(list);
+            });
+        },
+        // 生成线路列表
+        get_line_list: function (data) {
+            var list = [];
+            var hosting = domain.get_hosting();
+            if (hosting == 'aliyun') {
+                var item;
+                for (let i = 0; i < data.line_ids.length; i++) {
+                    item = data.line_ids[i];
+                    list.push({
+                        label: item.LineCode,
+                        value: item.LineCode
+                    });
+                }
+            } else if (hosting == 'dnspod') {
+                for (var key in data.line_ids) {
+                    list.push({
+                        label: key,
+                        value: data.line_ids[key]
+                    });
+                }
+            }
+            return list;
+        },
+        // 添加域名解析
+        open_form_dialog: function (parsing_row, isEdit) {
+            var hosting = domain.get_hosting();
+            var record_name = '';
+            if (isEdit) record_name = hosting == 'cloudflare' ? parsing_row.records : parsing_row.record_name;
+            var title = !isEdit ? 'Add Parsing': '[' + record_name + '] Edit Parsing';
+            dialog.form({
+                title: title,
+                skin: 'parsing_form_dialog',
+                area: '600px',
+                content: domain_parsing_form_dialog.innerHTML,
+                success: function ($layer) {
+                    var _layer_this = this;
+                    this.init_form();
+                    // 类型切换
+                    $layer.find('.type_line .bt_select_list li').click(function () {
+                        var type = $(this).data('value');
+                        _layer_this.reomve_type();
+                        switch(type) {
+                            case 'MX':
+                                _layer_this.render_type_mx();
+                                break;
+                            case 'CAA':
+                                _layer_this.render_type_caa();
+                                break;
+                            case 'SRV':
+                                _layer_this.render_type_srv();
+                                break;
+                        }
+                        dialog.set_layer_center($layer);
+                    });
+                    this.set_form();
+                },
+                yes: function (index) {
+                    this.validation_form(function (data) {
+                        var api_name = !isEdit ? 'add_record' : 'update_record';
+                        domain_parsing[api_name](data, function (res) {
+                            dialog.success_msg({
+                                content: res.msg,
+                                callback: function () {
+                                    if (res.status) {
+                                        layer.close(index);
+                                        domain_parsing.render_table();
+                                    }
+                                }
+                            });
+                        });
+                    });
+                },
+                // 初始化表单
+                init_form: function () {
+                    this.init_type_select();
+                    this.init_line_select();
+                    this.init_status();
+                },
+                // 初始化type选择框
+                init_type_select: function () {
+                    var list = [
+                        {
+                            label: 'A&nbsp;-&nbsp;<span class="bt-select-tips"> Point the domain name to an IPv4 address</span>',
+                            value: 'A',
+                            isHtml: true
+                        },
+                        {
+                            label: 'CNAME&nbsp;-&nbsp;<span class="bt-select-tips">Point the domain name to another domain</span>',
+                            value: 'CNAME',
+                            isHtml: true
+                        },
+                        {
+                            label: 'NS&nbsp;-&nbsp;<span class="bt-select-tips">Specify the subdomain name to be resolved by other DNS servers.</span>',
+                            value: 'NS',
+                            isHtml: true
+                        },
+                        {
+                            label: 'MX&nbsp;-&nbsp;<span class="bt-select-tips">Point the domain name to another domain</span>',
+                            value: 'MX',
+                            isHtml: true
+                        },
+                        {
+                            label: 'TXT&nbsp;-&nbsp;<span class="bt-select-tips">Text length limit 512, usually do SPF record (anti-spam)</span>',
+                            value: 'TXT',
+                            isHtml: true
+                        },
+                        {
+                            label: 'AAAA&nbsp;-&nbsp;<span class="bt-select-tips">Point the domain name to an IPV6 address</span>',
+                            value: 'AAAA',
+                            isHtml: true
+                        },
+                        {
+                            label: 'SRV&nbsp;-&nbsp;<span class="bt-select-tips">Record the server that provides the specific service</span>',
+                            value: 'SRV',
+                            isHtml: true
+                        },
+                        {
+                            label: 'CAA&nbsp;-&nbsp;<span class="bt-select-tips">Allow domain owners to declare which certificate authorities are allowed to issue a certificate for a domain</span>',
+                            value: 'CAA',
+                            isHtml: true
+                        }
+                    ];
+                    this.type_select = new Select({
+                        el: '.domain_parsing_form .type_line .select_box',
+                        class: 'type_select',
+                        data: list
+                    });
+                },
+                // 初始化线路选择框
+                init_line_select: function () {
+                    var list = domain_parsing.line_list;
+                    if (!list || list.length <= 0) {
+                        $('.domain_parsing_form .line_item').remove();
+                        return;
+                    }
+                    this.line_select = new Select({
+                        el: '.domain_parsing_form .line_item .select_box',
+                        class: 'line_select',
+                        data: list
+                    });
+                },
+                // 初始化状态
+                init_status: function () {
+                    if (hosting == 'aliyun') {
+                        $('.domain_parsing_form .proxied_line').remove();
+                    }
+                },
+                render_type_mx: function () {
+                    this.render_line_input({
+                        el: '.content_line',
+                        lineClass: 'priority_line',
+                        label: 'MX Priority',
+                        type: 'number',
+                        name: 'priority',
+                        value: 10,
+                        placeholder: 'Please enter the MAX priority, 1~50'
+                    });
+                },
+                render_type_caa: function () {
+                    this.remove_line('content_line');
+                    this.render_line_input({
+                        el: '.ttl_line',
+                        lineClass: 'ca_domain_line',
+                        label: 'CA domain name',
+                        name: 'ca_domain_name',
+                        placeholder: 'E.g, letsencrypt.org'
+                    });
+                    this.tag_select = this.render_line_select({
+                        el: '.ca_domain_line',
+                        lineClass: 'tag_line',
+                        selectClass: 'tag_select',
+                        label: 'Tag',
+                        list: [
+                            {
+                                label: 'issue',
+                                value: 'issue'
+                            },
+                            {
+                                label: 'issuewild',
+                                value: 'issuewild'
+                            },
+                            {
+                                label: 'iodef',
+                                value: 'iodef'
+                            }
+                        ]
+                    });
+                    this.render_line_text({
+                        el: '.tag_line',
+                        lineClass: 'flags_line',
+                        label: 'Flags',
+                        text: '0'
+                    });
+                },
+                render_type_srv: function () {
+                    this.remove_line('content_line');
+                    this.render_line_input({
+                        el: '.ttl_line',
+                        lineClass: 'srv_priority_line',
+                        label: 'Priority',
+                        type: 'number',
+                        name: 'priority',
+                        placeholder: 'Integer'
+                    });
+                    this.render_line_input({
+                        el: '.srv_priority_line',
+                        lineClass: 'weight_line',
+                        label: 'Weight',
+                        type: 'number',
+                        name: 'weight',
+                        placeholder: 'Integer'
+                    });
+                    this.render_line_input({
+                        el: '.weight_line',
+                        lineClass: 'port_line',
+                        label: 'Port',
+                        type: 'number',
+                        name: 'port',
+                        placeholder: 'Integer'
+                    });
+                    this.render_line_input({
+                        el: '.port_line',
+                        lineClass: 'target_line',
+                        label: 'Target',
+                        name: 'target',
+                        placeholder: 'Valid zone name'
+                    });
+                    this.proto_select = this.render_line_select({
+                        el: '.target_line',
+                        lineClass: 'proto_line',
+                        selectClass: 'proto_select',
+                        label: 'Proto',
+                        list: [
+                            {
+                                label: '_tcp',
+                                value: '_tcp'
+                            },
+                            {
+                                label: '_udp',
+                                value: '_udp'
+                            },
+                            {
+                                label: '_tls',
+                                value: '_tls'
+                            }
+                        ]
+                    });
+                    this.render_line_text({
+                        el: '.proto_line',
+                        lineClass: 'service_line',
+                        label: 'Service',
+                        text: '_aaa.com'
+                    });
+                },
+                reomve_type: function (type) {
+                    this.render_line_input({
+                        el: '.record_name_line',
+                        lineClass: 'content_line',
+                        label: 'Content',
+                        name: 'content',
+                        placeholder: 'Parsed records, such as 1.1.1.1'
+                    });
+                    // MX
+                    this.remove_line('priority_line');
+                    // CAA
+                    this.remove_line('ca_domain_line');
+                    this.remove_line('tag_line');
+                    this.tag_select = null;
+                    this.remove_line('flags_line');
+                    // SRV
+                    this.remove_line('srv_priority_line');
+                    this.remove_line('weight_line');
+                    this.remove_line('port_line');
+                    this.remove_line('target_line');
+                    this.remove_line('proto_line');
+                    this.remove_line('service_line');
+                    this.proto_select = null;
+                },
+                // 验证表单
+                validation_form: function (callback) {
+                    var data = this.get_form_data();
+                    // 验证类型
+                    if (request.isEmptyString(data.type)) return dialog.error_msg('Type cannot be empty. Please select it!');
+                    // 验证记录名
+                    if (request.isEmptyString(data.record_name)) return dialog.error_msg('Record_name cannot be empty. Please reenter it!');
+                    // 验证记录值
+                    if (!(data.type == 'CAA' || data.type == 'SRV') && request.isEmptyString(data.content)) return dialog.error_msg('Content cannot be empty. Please reenter it!');
+                    // 验证记录缓存时间
+                    var ttl = data.ttl;
+                    var gt = 86400;
+                    var lt = data.dns_hosting == 'cloudflare' ? 60 : 600;
+                    if (request.isEmptyString(ttl)) return dialog.error_msg('Ttl cannot be empty. Please reenter it!');
+                    // if (!(ttl === 1 || request.isBetween(ttl, gt, lt))) {
+                    //     return dialog.error_msg('Ttl cannot be empty. Please reenter it!');
+                    // }
+                    data.ttl = parseInt(ttl);
+                    callback && callback(data);
+                },
+                // 获取表单值
+                get_form_data: function () {
+                    var data = {};
+                    var domain_data = domain_parsing.domain_data;
+                    var type = this.get_type();
+                    var line_id = this.get_line();
+                    var proxied = $('input[name="proxied"]').is(':checked');
+
+                    // 域名信息
+                    data.zone_id = domain_data.zone_id;
+                    data.zone = domain_data.domain;
+                    data.dns_hosting = hosting;
+                    // 类型
+                    data.type = type;
+                    // 获取input
+                    data.record_name = $('input[name="record_name"]').val();
+                    data.content = $('input[name="content"]').val();
+                    data.priority = $('input[name="priority"]').val();
+                    data.ttl = $('input[name="ttl"]').val();
+                    data.priority = '';
+
+                    // 线路id
+                    if (line_id != -1 && !request.isEmptyString(line_id)) {
+                        data.line_id = line_id;
+                    }
+
+                    // 供应商
+                    if (hosting == 'cloudflare') {
+                        data.proxied = proxied;
+                    }
+                    if (hosting == 'dnspod') {
+                        data.status = proxied ? 'enable' : 'disable';
+                    }
+
+                    // 类型
+                    if (type == 'MX') {
+                        data.priority = $('input[name="priority"]').val();
+                    }
+                    if (type == 'CAA') {
+                        data.ca_domain_name = $('input[name="ca_domain_name"]').val();
+                        data.tag = this.get_tag();
+                        data.flags = 0;
+                        data.content = '';
+                    }
+                    if (type == 'SRV') {
+                        data.priority = $('input[name="priority"]').val();
+                        data.weight = $('input[name="weight"]').val();
+                        data.port = $('input[name="port"]').val();
+                        data.target = $('input[name="target"]').val();
+                        data.proto = this.get_proto();
+                        data.service = '_aaa.com';
+                        data.content = '';
+                    }
+
+                    // 修改
+                    if (isEdit) {
+                        data.record_id = parsing_row.id;
+                    }
+                    return data;
+                },
+                // 设置表单值
+                set_form: function () {
+                    var data = parsing_row;
+                    if (!isEdit && !data) return;
+
+                    var type = data.type;
+                    this.type_select.set_default_value(type, 'value', true);
+
+                    $('input[name="content"]').val(data.value);
+                    $('input[name="ttl"]').val(data.ttl);
+
+                    var checked = false;
+                    if (hosting == 'cloudflare') {
+                        var domain_data = domain_parsing.domain_data;
+                        var domain = domain_data.domain;
+                        var index = record_name.indexOf(domain);
+                        record_name = record_name.substring(0, index - 1);
+                        checked = data.proxied;
+                    } else {
+                        checked = data.status;
+                    }
+
+                    $('input[name="proxied"]').prop('checked', checked);
+
+                    if (hosting == 'dnspod') {
+                        this.set_line(data.line, 'label');
+                    } else {
+                        this.set_line(data.line, 'value');
+                    }
+
+                    if (type == 'MX') {
+                        $('input[name="priority"]').val(data.priority);
+                    }
+
+                    if (type == 'CAA') {
+                        var arr = data.value.split(' ');
+                        var tag = arr[1];
+                        var ca_domain_name = arr[2].replace(/\"/g,'');
+                        $('input[name="ca_domain_name"]').val(ca_domain_name);
+                        this.tag_select.set_default_value(tag);
+                    }
+
+                    if (type == 'SRV') {
+                        var arr = data.value.split('\t');
+                        var weight = arr[0] || '';
+                        var port = arr[1] || '';
+                        var target = arr[2] || '';
+
+                        var service = '_aaa.com';
+                        var temp =  record_name.substring(service.length + 1, record_name.length);
+                        var proto = temp.split('.')[0];
+                        record_name = temp.substring(proto.length + 1, temp.length);
+                        $('input[name="priority"]').val(data.priority);
+                        $('input[name="weight"]').val(weight);
+                        $('input[name="port"]').val(port);
+                        $('input[name="target"]').val(target);
+                        this.proto_select.set_default_value(proto);
+                    }
+
+                    $('input[name="record_name"]').val(record_name);
+                },
+                // 获取type
+                get_type: function () {
+                    return this.type_select ? this.type_select.get_default_value() : '';
+                },
+                // 获取线路
+                get_line: function () {
+                    return this.line_select ? this.line_select.get_default_value() : '';
+                },
+                // 获取tag
+                get_tag: function () {
+                    return this.tag_select ? this.tag_select.get_default_value() : '';
+                },
+                // 获取proto
+                get_proto: function () {
+                    return this.proto_select ? this.proto_select.get_default_value() : '';
+                },
+                // 设置线路
+                set_line: function (val, key) {
+                    if (!this.line_select || !val) return -1;
+                    this.line_select.set_default_value(val, key);
+                },
+                // 获取记录名称
+                get_record_name: function (name) {
+                    if (name == '' || !request.isString(name)) return '';
+                    var domain_data = domain_parsing.domain_data;
+                    var domain = domain_data.domain;
+                    var index = name.indexOf(domain);
+                    return name.substring(0, index - 1);
+                },
+                // 渲染input框行
+                render_line_input: function (config) {
+                    var el = config.el;
+                    var type = config.type || 'text';
+                    var lineClass = config.lineClass;
+                    var label = config.label;
+                    var name = config.name;
+                    var value = config.value || '';
+                    var placeholder = config.placeholder || '';
+                    if ($('.' + lineClass).length > 0) return;
+                    $(el).after('\
+                        <div class="line ' + lineClass + '">\
+                            <span class="tname">' + label + '</span>\
+                            <div class="info-r c4">\
+                                <input class="bt-input-text" type="' + type + '" name="' + name + '" placeholder="' + placeholder + '" autocomplete="off" value="' + value + '" />\
+                            </div>\
+                        </div>\
+                    ');
+                },
+                // 渲染选择框行
+                render_line_select: function (config) {
+                    var el = config.el;
+                    var type = config.type || 'text';
+                    var lineClass = config.lineClass;
+                    var selectClass = config.selectClass;
+                    var label = config.label;
+                    if ($('.' + lineClass).length > 0) return;
+                    $(el).after('\
+                        <div class="line ' + lineClass + '">\
+                            <span class="tname">' + label + '</span>\
+                            <div class="info-r c4">\
+                                <div class="select_box"></div>\
+                            </div>\
+                        </div>\
+                    ');
+                    return new Select({
+                        el: '.domain_parsing_form .' + lineClass + ' .select_box',
+                        class: selectClass,
+                        data: config.list
+                    });
+                },
+                // 渲染文本行
+                render_line_text: function (config) {
+                    var el = config.el;
+                    var type = config.type || 'text';
+                    var lineClass = config.lineClass;
+                    var label = config.label;
+                    var text = config.text || '';
+                    if ($('.' + lineClass).length > 0) return;
+                    $(el).after('\
+                        <div class="line ' + lineClass + '">\
+                            <span class="tname">' + label + '</span>\
+                            <div class="info-r c4" style="height: 35px; line-height: 35px;">' + text + '</div>\
+                        </div>\
+                    ');
+                },
+                remove_line: function (lineClass) {
+                    var elem = $('.' + lineClass);
+                    elem.length > 0 &&  elem.remove();
+                }
+            });
+        },
+        // 打开删除确认框
+        open_del_confirm: function (row) {
+            var domain_data = this.domain_data;
+            dialog.confirm({
+                title: 'Delete the parsing',
+                content: 'Delete the selected parse record, or continue!',
+                yes: function () {
+                    var data = domain.get_hosting_data(domain_data);
+                    data.record_id = row.id;
+                    domain_parsing.remove_record(data, function (res) {
+                        dialog.success_msg({
+                            content: res.msg,
+                            callback: function () {
+                                domain_parsing.render_table();
+                            }
+                        });
+                    });
+                }
+            });
+        },
+        // 列出某个域名下的记录
+        list_zone_records: function (data, callback) {
+            request.send({
+                tips: 'Getting parsed list, please wait...',
+                method: 'list_zone_records',
+                data: data,
+                success: function (res) {
+                    callback && callback(res);
+                }
+            });
+        },
+        // 添加记录
+        add_record: function (data, callback) {
+            request.send({
+                tips: 'Parsing is being added, please wait....',
+                method: 'add_record',
+                data: data,
+                success: function (res) {
+                    callback && callback(res);
+                }
+            });
+        },
+        // 更新记录
+        update_record: function (data, callback, error) {
+            request.send({
+                tips: 'Getting change resolution, please wait...',
+                method: 'update_record',
+                data: data,
+                success: function (res) {
+                    callback && callback(res);
+                },
+                error: function (err) {
+                    error && error(err);
+                }
+            });
+        },
+        // 删除记录
+        remove_record: function (data, callback) {
+            request.send({
+                tips: 'Deleting the parse record, please wait...',
+                method: 'remove_record',
+                data: data,
+                success: function (res) {
+                    callback && callback(res);
+                }
+            });
+        }
+    };
+    // 设置
+    var setting = {
+        // 供应商选择框对象
+        hosting_select: {},
+        // 数据
+        info: {},
+        // 初始化
+        init: function () {
+            var select = this.hosting_select;
+            if (select && request.isEmptyObject(select)) {
+                var el = '.setting_form .hosting_line .select_box';
+                select = domain.init_hosting_select(el);
+                this.hosting_select = select;
+            }
+            domain.render_hosting_select(true, select, function () {
+                setting.render_form();
+                setting.render_info();
+            });
+        },
+        // 事件
+        event: function () {
+            var _this = this;
+            // 供应商选择
+            $('.setting_box').on('click', '.hosting_select li', function () {
+                var value = $(this).data('value');
+                domain.set_hosting_cookie(value);
+                _this.render_form();
+                _this.render_info();
+            });
+            // 测试
+            $('#setting_test_btn').click(function () {
+                _this.test_form();
+            });
+            // 保存
+            $('#setting_save_btn').click(function () {
+                _this.save_form();
+            });
+        },
+        // 获取供应商
+        get_hosting: function () {
+            return this.hosting_select.get_default_value();
+        },
+        // 渲染表单
+        render_form: function () {
+            var hosting = this.get_hosting();
+            switch (hosting) {
+                case 'cloudflare':
+                    this.render_cloudflare_form();
+                    break;
+                case 'aliyun':
+                    this.render_aliyun_form();
+                    break;
+                case 'dnspod':
+                    this.render_dnspod_form();
+                    break;
+            }
+        },
+        // 渲染cloudflare表单
+        render_cloudflare_form: function () {
+            var values = this.get_values('global_token', 'email');
+            this.render_form_lines([
+                { el: '.value1_line', text: 'Token', value: values[0] },
+                { el: '.value2_line', text: 'Email', value: values[1] }
+            ]);
+        },
+        // 渲染aliyun表单
+        render_aliyun_form: function () {
+            var values = this.get_values('access_key', 'secret_key');
+            this.render_form_lines([
+                { el: '.value1_line', text: 'Access Key', value: values[0] },
+                { el: '.value2_line', text: 'Secret Key', value: values[1] }
+            ]);
+        },
+        // 渲染dnspod表单
+        render_dnspod_form: function () {
+            var values = this.get_values('dp_token', 'dp_id');
+            this.render_form_lines([
+                { el: '.value1_line', text: 'Token', value: values[0] },
+                { el: '.value2_line', text: 'ID', value: values[1] }
+            ]);
+        },
+        // 获取value
+        get_values: function (key1, key2) {
+            var data = setting.info.data || [];
+            var value1 = '';
+            var value2 = '';
+            $.each(data, function (index, item) {
+                if (item.name == key1) {
+                    value1 = item.value;
+                } else if (item.name == key2) {
+                    value2 = item.value;
+                }
+            });
+            return [value1, value2];
+        },
+        // 改变表单行
+        render_form_lines: function (arr) {
+            $.each(arr, function(index, item) {
+                $(item.el + ' .tname').text(item.text);
+                $(item.el + ' input').val(item.value);
+            });
+        },
+        // 渲染info
+        render_info: function () {
+            var hosting = this.get_hosting();
+            var data = {
+                dns_hosting: hosting
+            };
+            this.get_hosting_auth_info(data, function (res) {
+                setting.info = res;
+                setting.render_form();
+            });
+        },
+        // 测试
+        test_form: function () {
+            this.validate_form(function (data) {
+                setting.check_api(data, function (res) {
+                    dialog.success_msg(res.msg);
+                });
+            });
+        },
+        // 保存
+        save_form: function () {
+            this.validate_form(function (data) {
+                setting.set_auth_info(data, function (res) {
+                    dialog.success_msg(res.msg);
+                });
+            });
+        },
+        // 验证表单
+        validate_form: function (callback) {
+            var data = this.get_form_data();
+            if (request.isEmptyString(data.dns_hosting)) return dialog.error_msg('Dns Hosting cannot be empty. Please select it!');
+            if (data.dns_hosting == 'cloudflare') {
+                if (request.isEmptyString(data.value1)) return dialog.error_msg('Token cannot be empty. Please reenter it!');
+                if (request.isEmptyString(data.value2)) return dialog.error_msg('Email cannot be empty. Please reenter it!');
+                if (!request.isEmail(data.value2)) return dialog.error_msg('Email format is incorrect. Please reenter it!');
+            } else if (data.dns_hosting == 'aliyun') {
+                if (request.isEmptyString(data.value1)) return dialog.error_msg('Access Key cannot be empty. Please reenter it!');
+                if (request.isEmptyString(data.value2)) return dialog.error_msg('Secret Key cannot be empty. Please reenter it!');
+            } else if (data.dns_hosting == 'dnspod') {
+                if (request.isEmptyString(data.value1)) return dialog.error_msg('Token cannot be empty. Please reenter it!');
+                if (request.isEmptyString(data.value2)) return dialog.error_msg('ID cannot be empty. Please reenter it!');
+            }
+            callback && callback(data);
+        },
+        // 获取表单数据
+        get_form_data: function () {
+            var data = {};
+            var hosting = this.get_hosting();
+            var value1 = $('input[name="value1"]').val();
+            var value2 = $('input[name="value2"]').val();
+            data.dns_hosting = hosting;
+            data.value1 = value1;
+            data.value2 = value2;
+            return data;
+        },
+        // 测试接口
+        check_api: function (data, callback) {
+            request.send({
+                tips: 'Test api, please wait....',
+                method: 'check_api',
+                data: data,
+                success: function (res) {
+                    callback && callback(res);
+                }
+            });
+        },
+        // 设置认证信息
+        set_auth_info: function (data, callback) {
+            request.send({
+                tips: 'Setting auth info, please wait....',
+                method: 'set_auth_info',
+                data: data,
+                success: function (res) {
+                    callback && callback(res);
+                }
+            });
+        },
+        // 获取认证信息
+        get_hosting_auth_info: function (data, callback) {
+            request.send({
+                tips: 'Getting auth info, please wait....',
+                method: 'get_hosting_auth_info',
+                data: data,
+                success: function (res) {
+                    callback && callback(res);
+                }
+            });
+        }
+    }
+    // 弹框
+    var dialog = {
+        open: function (config) {
+            layer.open({
+                type:1,
+                title: config.title,
+                closeBtn: 2,
+                skin: config.skin,
+                area: config.area,
+                content: config.content,
+                success: function (layero, index) {
+                    config.success && config.success(layero, index);
+                }
+            });
+        },
+        form: function (config) {
+            layer.open({
+                type: 1,
+                title: config.title,
+                skin: config.skin,
+                closeBtn: 2, //不显示关闭按钮
+                area: config.area || '450px',
+                btn: config.btn || ['Confirm','Cancel'],
+                content: config.content,
+                success: function (layero, index) {
+                    config.success && config.success(layero, index);
+                },
+                yes: function (index, layero) {
+                    config.yes && config.yes(index, layero);
+                },
+                btn2: function (index) {
+                    config.cancel && config.cancel();
+                    layer.close(index);
+                }
+            });
+        },
+        confirm: function (config) {
+            var defaultConfig = {
+                title: config.title ? config.title : false,
+                time: config.time ? config.time : 0,
+                shadeClose: config.shadeClose ? config.shadeClose : true,
+                closeBtn: config.closeBtn ? config.closeBtn : 2,
+                scrollbar: true,
+                shade: 0.3,
+                icon: 3,
+                area: config.area ? config.area : '360px',
+                cancel: (config.cancel ? config.cancel : function () { })
+            };
+            layer.confirm(config.content, defaultConfig, function (index) {
+                config.yes && config.yes(index);
+            }, function (index) {
+                config.close && config.close(index);
+            });
+        },
+        success_msg: function (config) {
+            var defaultConfig = {
+                icon: 1
+            };
+            var callback;
+            var content = '';
+            if (request.isObject(config)) {
+                content = config.content;
+                callback = config.callback;
+                if (config.callback) {
+                    defaultConfig.time = 1200;
+                }
+            } else if (request.isString(config)) {
+                content = config;
+            }
+            layer.msg(content, defaultConfig, function () {
+                callback && callback();
+            });
+        },
+        error_msg: function (content) {
+            if (content && request.isString(content)) {
+                layer.msg(content, { icon: 2 });
+            }
+        },
+        set_layer_center: function ($layer) {
+            var height = $(window).height();
+            var layerHeight = $layer.height();
+            var top = (height - layerHeight) / 2;
+            $layer.css({ 'top': top + 'px' });
+        }
+    }
+    // 请求对象
+    var request = {
+        plugin_name: 'cloud_dns',
+        // 判断是否为字符串
+        isString: function (val) {
+            return typeof val == 'string' && Object.prototype.toString.call(val) == '[object String]';
+        },
+        // 判断是否为对象
+        isObject: function (obj) {
+            return obj.constructor === Object && Object.prototype.toString.call(obj) == '[object Object]';
+        },
+        // 判断是否为数组
+        isArray: function (arr) {
+            return Array.isArray(arr);
+        },
+        // 判断是否为空对象
+        isEmptyObject: function (obj) {
+            return $.isEmptyObject(obj);
+        },
+        isEmptyString: function (val) {
+            if (!this.isString(val)) return true;
+            return val.trim() === '';
+        },
+        isEmail: function (val) {
+            return /^[A-Za-z0-9\u4e00-\u9fa5]+@[a-zA-Z0-9_-]+(\.[a-zA-Z0-9_-]+)+$/.test(val);
+        },
+        isBetween: function (num, gt, lt) {
+            return num <= gt && num >= lt;
+        },
+        // 发送请求
+        send: function (obj) {
+            var loadT = '';
+            if (obj.load == undefined) obj.load = 0;
+            if (obj.url == undefined) {
+                if (obj.plugin_name === undefined && this.plugin_name !== undefined) obj.plugin_name = this.plugin_name
+                if (!obj.plugin_name || !obj.method) {
+                    layer.msg('Plugin class name, or plug-in method name missing!', {icon: 2 });
+                    return false;
+                }
+            }
+            if (obj.load === 0 || obj.tips != '') {
+                loadT = layer.msg(obj.tips, {
+                    icon: 16,
+                    time: 0,
+                    shade: 0.3
+                });
+            } else if (obj.load === 1 || (obj.tips == undefined && obj.load == undefined)) {
+                loadT = layer.load();
+            }
+            $.ajax({
+                type: 'POST',
+                url: obj.url != undefined ? obj.url : ('/plugin?action=a&name=' + obj.plugin_name + '&s=' + obj.method),
+                data: obj.data || {},
+                timeout: obj.timeout || 99999999,
+                complete: function (res) {
+                    if (obj.load === 0 || obj.load === 1) layer.close(loadT);
+                },
+                success: function (rdata) {
+                    if (obj.check) {
+                        obj.success(rdata);
+                        return false
+                    }
+                    if (rdata.status === false) {
+                        if (!obj.isNotMsg) dialog.error_msg(rdata.msg);
+                        obj.error && obj.error(rdata);
+                        return false;
+                    }
+                    obj.success(rdata);
+                },
+                error: function (ex) {
+                    if (!obj.error) {
+                        if (obj.msg || obj.msg == undefined) {
+                            dialog.error_msg('Getting log list, please wait... Request process found error!');
+                        }
+                        return;
+                    }
+                    return obj.error(ex);
+                }
+            });
+        }
+    }
+    // 选择框
+    function Select (config) {
+        this.config = config;
+        this.index = 0;
+        this.data = [];
+        this.init();
+    }
+    Select.prototype = {
+        // 初始化
+        init: function () {
+            var _el = this.config.el;
+            var _class = this.config.class;
+            var data = this.config.data;
+            var _placeholder = this.config.placeholder || 'No Data';
+            var _html = bt_select.innerHTML;
+            $(_el).find('.' + _class).remove();
+            $(_el).append(_html);
+            var $select = $(_el).find('.bt_select_updown');
+            var $content = $(_el).find('.bt_select_content');
+            this.$select = $select;
+            $select.addClass(_class);
+            $content.text(_placeholder);
+            if (data && data.length > 0) {
+                this.refresh(data);
+            }
+            this.event();
+        },
+        /**
+         * 刷新
+         * list 数组 [ { label: '', value: '' } ] label: 标签; value: 值; isHtml: 是否为html
+         */
+        refresh: function (list) {
+            this.data = list;
+            var index = this.index;
+            var _html = '';
+            $.each(list, function (i, item) {
+                if (item.isHtml) {
+                    _html += '<li class="item" data-value="' + item.value + '">' + item.label + '</li>';
+                } else {
+                    _html += '<li class="item" title="' + item.label + '" data-value="' + item.value + '">' + item.label + '</li>';
+                }
+            });
+            _html += '';
+            var $ul = this.$select.find('.bt_select_list');
+            $ul.html(_html);
+            $ul.find('li').each(function (index, item) {
+                var value = $(item).attr('data-value');
+                $(item).data('value', value);
+                $(item).removeAttr('data-value');
+            });
+            this.refresh_content();
+        },
+        // 事件
+        event: function () {
+            var _this = this;
+            this.$select.find('.bt_select_list').on('click', 'li', function () {
+                var index = $(this).index();
+                var title = $(this).data('title');
+                $(this).parents('.bt_select_updown').find('.bt_select_content').text(title);
+                $(this).addClass('active').siblings('.active').removeClass('active');
+                _this.set_index(index);
+                _this.refresh_content();
+            });
+            this.$select.find('.bt_select_value').click(function (e) {
+                var $list = $(this).next();
+                $list.toggle();
+                $(document).one('click', function () {
+                    $list.hide();
+                });
+                e.stopPropagation();
+            });
+        },
+        // 设置选中值
+        set_index: function (index) {
+            this.index = index;
+        },
+        // 获取默认值
+        get_default_value: function () {
+            var data = this.data[this.index];
+            return data && data.value;
+        },
+        // 设置默认值
+        set_default_value: function (val, key, isEvent) {
+            var index = -1;
+            var list = this.data;
+            key = key || 'value';
+            for (var i = 0; i < list.length; i++) {
+                if (list[i][key] == val) {
+                    index = i;
+                    break;
+                }
+            }
+            if (index != -1) {
+                this.set_index(index);
+                this.refresh_content();
+                isEvent && this.$select.find('.bt_select_list li').eq(index).click();
+            }
+        },
+        // 渲染值
+        refresh_content: function () {
+            var list = this.data;
+            var index = this.index;
+            var $content = this.$select.find('.bt_select_content');
+            if (list[index].isHtml) {
+                $content.html(list[index].label);
+            } else {
+                $content.text(list[index].label);
+            }
+            this.$select.find('.bt_select_list li').eq(index).addClass('active').siblings('.active').removeClass('active');
+        }
+    };
+
+    cloud_dns.init();
+</script>

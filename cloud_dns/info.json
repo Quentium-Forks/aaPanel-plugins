@@ -1,0 +1,10 @@
+{
+	"title": "Cloud dns",
+	"name": "cloud_dns",
+	"ps": "Manage your cloud DNS resolution (Support: Cloudflare/DnsPods/Aliyun)",
+	"versions": "1.0",
+	"checks": "/www/server/panel/plugin/cloud_dns",
+	"author": "official",
+	"home": "http://www.aapanel.com",
+	"date": "2021-02-19"
+}
