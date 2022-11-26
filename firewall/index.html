@@ -361,23 +361,23 @@
 		  </div>
 		  <div class="bt-w-con">
 				<div class="mb5">
-				    <button class="btn btn-success btn-sm add_country_rule">Add rule</button>
-				    <button class="btn btn-default btn-sm rule_import" style="margin-left:10px" data-name="country_rule">Import rules</button>
-				    <button class="btn btn-default btn-sm rule_export" style="margin-left:10px" data-name="country_rule">Export rules</button>
+				    <button class="btn btn-success btn-sm add_area_rule">Add rule</button>
+				    <button class="btn btn-default btn-sm rule_import" style="margin-left:10px" data-name="area_rule">Import rules</button>
+				    <button class="btn btn-default btn-sm rule_export" style="margin-left:10px" data-name="area_rule">Export rules</button>
 				    <div class="pull-right">
     					<div class="search-input">
-    						<input type="text" class="search_country_val" placeholder="Please fill in a country name"/>
-    						<button type="submit" class="search_country_btn">
+    						<input type="text" class="search_area_val" placeholder="Please fill in a area name"/>
+    						<button type="submit" class="search_area_btn">
     							<span class="glyphicon glyphicon-search" aria-hidden="true"></span>
     						</button>
     					</div>
     				</div>
 				</div>
-				<div class="divtable mt10" id="config_country_table">
+				<div class="divtable mt10" id="config_area_table">
 					 <table width="100%" border="0" cellpadding="0" cellspacing="0" class="table table-hover">
 						  <thead>
 						      <tr>
-						          <th style="width: 150px">Country</th>
+						          <th style="width: 150px">Area</th>
 						          <th style="width: 90px">Strategy</th>
 						          <th style="width: 150px">Abbreviation</th>
 								  <th style="width: 80px">Port</th>
@@ -385,10 +385,10 @@
 						          <th style="text-align: right;">Operation</th>
 						      </tr>
 						  </thead>
-						  <tbody id="country_table"></tbody>
+						  <tbody id="area_table"></tbody>
 					 </table>
 				</div>
-				<div id="country_page" class="page"></div>
+				<div id="area_page" class="page"></div>
 				<!--<ul class="help-info-text c7">-->
 				<!--	 <li>这里显示的是对国家ip的放行与屏蔽！</li>-->
 				<!--</ul>-->
@@ -414,7 +414,7 @@
         rule_list:[],
         ip_list:[],
         forward_list:[],
-        country_list:[],
+        area_list:[],
         init:function(){
             this.event();
             $('.bt-w-menu p:eq(0)').click();
@@ -437,7 +437,7 @@
                         _this.create_forward_table();
                         break;
                     case 3:
-                        _this.create_country_table();
+                        _this.create_area_table();
                         break;
                     case 4:
                         _this.get_service_status(function(res){
@@ -482,7 +482,7 @@
                                 </div>\
 							</div>',
                     yes:function(index,layers){
-                        if (!$("#fileInput")[0].files[0])return layer.msg('请选择要导入的文件!',{icon:2}); 
+                        if (!$("#fileInput")[0].files[0])return layer.msg('请选择要导入的文件!',{icon:2});
                         _this.upload({name:name, _fd:$("#fileInput")[0].files[0]}, 0, index);
                     },
                     success:function(){
@@ -591,7 +591,7 @@
                             var content = $(this).val();
                             if(content=="point"){
                                 $("[name=source]").parent().parent().removeAttr("style","");
-                            }else{  
+                            }else{
                                 $("[name=source]").parent().parent().css("display","none");
                             }
                         });
@@ -599,7 +599,7 @@
                         //     var content = $(this).val();
                         //     if(content=="point"){
                         //         $("[name=types]").removeAttr("disabled");
-                        //     }else{  
+                        //     }else{
                         //         $("[name=types]").attr("disabled","disabled");
                         //     }
                         // });
@@ -695,7 +695,7 @@
                             var content = $(this).val();
                             if(content=="point"){
                                 $("[name=source]").parent().parent().removeAttr("style","");
-                            }else{  
+                            }else{
                                 $("[name=source]").parent().parent().css("display","none");
                             }
                         });
@@ -1021,8 +1021,8 @@
                     });
                 });
             });
-            $('.add_country_rule').click(function(){
-                _this.get_countrys(function(res){
+            $('.add_area_rule').click(function(){
+                _this.get_areas(function(res){
                     var _option = '';
                     for(var i = 0; i< res.length;i++){ _option += '<li brief="'+ res[i].brief +'">'+ res[i].CH +'</li>' }
                     layer.open({
@@ -1035,7 +1035,7 @@
                         btn:['Confirm','Cancel'],
                         content:'<div class="bt-form bt-form count_rule" style="padding:20px 25px 25px">\
     								 <div class="line">\
-                                    	 <span class="tname" style="width:125px">Contry</span>\
+                                    	 <span class="tname" style="width:125px">Area</span>\
                                     	 <div class="select_conter">\
                         					<span style="display: none;" class="domain_hide_value">'+res[0].CH+'</span>\
                         					<input type="text" brief="'+ res[0].brief +'" autocomplete="off"class="inbox_input domain_input" name="inbox_input" style="height: 30px;border: none;">\
@@ -1072,17 +1072,17 @@
     									 </div>\
     								 </div>\
     								 <ul class="help-info-text c7" style="padding-left: 57px;margin-top:5px;">\
-                                         <li>Only a single country name is currently supported!</li>\
+                                         <li>Only a single Area name is currently supported!</li>\
                                          <li>Please note: If this area is blocked, this area cannot be access your server!</li>\
                                      </ul>\
     							</div>',
                         yes:function(index,layers){
                             var brief = $('[name=inbox_input]').attr('brief');
-                            var country = $('[name=inbox_input]').val().toLowerCase();
+                            var area = $('[name=inbox_input]').val().toLowerCase();
                             var types = $('[name=types]').val();
                             var ports = $('[name=ports]').val();
-                            if(country == ''){
-                                layer.msg('Country name cannot be empty',{icon:2});
+                            if(area == ''){
+                                layer.msg('Area name cannot be empty',{icon:2});
                                 return false;
                             }
                             if($('[name=choose]').val()=="point"){
@@ -1092,19 +1092,19 @@
                                 }
                             }
                             var _input = $('#domain_select_list li').filter(function() {
-                                return $(this).text().toLowerCase() == country.toLowerCase();
+                                return $(this).text().toLowerCase() == area.toLowerCase();
                             });
                             if(_input.length == 1){
                                 brief = _input.attr('brief');
-                                country = _input.text();
+                                area = _input.text();
                             }else {
-                                layer.msg('Please enter the correct country name',{icon:2});
+                                layer.msg('Please enter the correct area name',{icon:2});
                                 return false;
                             }
-                            _this.create_country({types:types,brief:brief,country:country,ports:ports},function(res){
+                            _this.create_area({types:types,brief:brief,area:area,ports:ports},function(res){
                                 if(res.status){
                                     layer.close(index);
-                                    _this.create_country_table()
+                                    _this.create_area_table()
                                 }
                                 layer.msg(res.msg,{icon:res.status?1:2});
                             });
@@ -1140,21 +1140,21 @@
 				    clearTimeout(firewall.set_time);
 				    firewall.set_time = setTimeout(function(){
 				        var new_inbox = $('.inbox_input').val();
-                        var _country = $('#domain_select_list li').filter(function() {
+                        var _area = $('#domain_select_list li').filter(function() {
                             return $(this).text().toLowerCase().indexOf(new_inbox.toLowerCase()) > -1;
                         });
                         $('#domain_select_list li').hide();
-                        _country.show();
+                        _area.show();
 				    }, 1700);
 				    if(!$('#domain_select_list').hasClass('active')) $('#domain_select_list').addClass('active');
                     if (text == '') {
                         $('#domain_select_list li').show();
                     }else {
                         $('#domain_select_list li').hide();
-                        var _country = $('#domain_select_list li').filter(function() {
+                        var _area = $('#domain_select_list li').filter(function() {
                             return $(this).text().toLowerCase().indexOf(text.toLowerCase()) > -1;
                         });
-                        _country.show();
+                        _area.show();
                         //$("#domain_select_list li:contains('"+text+"')").show();
                     }
                 });
@@ -1191,10 +1191,10 @@
 				e.stopPropagation();
 			});
 
-            $('#config_country_table').on('click','.edit_country',function () {
+            $('#config_area_table').on('click','.edit_area',function () {
                 var _id = $(this).attr('data-id');
                 var index = $(this).attr('data-index');
-                res = _this.country_list[index];
+                res = _this.area_list[index];
                 layer.open({
                     type: 1,
                     area:"400px",
@@ -1205,9 +1205,9 @@
                     btn:['Confirm','Cancel'],
                     content:'<div class="bt-form bt-form" style="padding:15px 25px">\
     								 <div class="line">\
-    									 <span class="tname" style="width:100px">Country</span>\
+    									 <span class="tname" style="width:100px">Area</span>\
     									 <div class="info-r">\
-    										 <input name="country" class="bt-input-text mr5" type="text" style="width: 200px" value="'+ res.country +'" disabled=true>\
+    										 <input name="area" class="bt-input-text mr5" type="text" style="width: 200px" value="'+ res.area +'" disabled=true>\
     									 </div>\
     								 </div>\
     								 <div class="line">\
@@ -1229,11 +1229,11 @@
                     yes:function(index,layers){
                         var types = $('[name=types]').val();
                         var brief = $('[name=brief]').val();
-                        var country = $('[name=country]').val();
-                        _this.modify_country({id:_id,types:types,brief:brief,country:country},function(res){
+                        var area = $('[name=area]').val();
+                        _this.modify_area({id:_id,types:types,brief:brief,area:area},function(res){
                             if(res.status){
                                 layer.close(index);
-                                _this.create_country_table()
+                                _this.create_area_table()
                             }
                             layer.msg(res.msg,{icon:res.status?1:2});
                         });
@@ -1244,14 +1244,14 @@
                 });
             });
 
-            $('#config_country_table').on('click','.del_country',function () {
+            $('#config_area_table').on('click','.del_area',function () {
                 var _id = $(this).attr('data-id');
                 var index = $(this).attr('data-index');
-                res = _this.country_list[index];
+                res = _this.area_list[index];
                 layer.confirm('The current rule is being deleted. Do you want to continue?',{btn:['Confirm','Cancel'],icon:3,closeBtn: 2,title:'Delete Rule'},function(){
-                    _this.remove_country({id:_id, types:res.types, country:res.country, brief:res.brief, ports:res.ports},function(res){
+                    _this.remove_area({id:_id, types:res.types, area:res.country, brief:res.brief, ports:res.ports},function(res){
                         if(res.status){
-                            _this.create_country_table()
+                            _this.create_area_table()
                         }
                         layer.msg(res.msg,{icon:res.status?1:2});
                     });
@@ -1273,10 +1273,10 @@
                 _this.create_forward_table({p:_page});
                 return false;
             });
-            $('#country_page').on('click','a',function(){
+            $('#area_page').on('click','a',function(){
                 var _href = $(this).attr('href');_page = 1;
                 _page =  _href.replace(/p\=/,'');
-                _this.create_country_table({p:_page});
+                _this.create_area_table({p:_page});
                 return false;
             });
             $('.search_port_btn').click(function () {
@@ -1298,7 +1298,7 @@
                     var _val = $('.search_ip_val').val();
                     _this.create_ip_rule_table({query: _val});
                 }
-            });   
+            });
             $('.search_trans_btn').click(function () {
                 var _val = $('.search_trans_val').val();
                 _this.create_forward_table({query: _val});
@@ -1309,20 +1309,20 @@
                     _this.create_forward_table({query: _val});
                 }
             });
-            $('.search_country_btn').click(function () {
-                var _val = $('.search_country_val').val();
-                _this.create_country_table({query: _val});
+            $('.search_area_btn').click(function () {
+                var _val = $('.search_area_val').val();
+                _this.create_area_table({query: _val});
             });
-            $('.search_country_val').keyup(function (e) {
+            $('.search_area_val').keyup(function (e) {
                 if (e.keyCode == 13) {
-                    var _val = $('.search_country_val').val();
-                    _this.create_country_table({query: _val});
+                    var _val = $('.search_area_val').val();
+                    _this.create_area_table({query: _val});
                 }
             });
         },
-        get_countrys: function(callback){
+        get_areas: function(callback){
             this.send({
-                method:'get_countrys',
+                method:'get_areas',
                 tips:'Getting list of countries, please wait...',
                 success:function(res){
                     if(callback) callback(res);
@@ -1356,7 +1356,7 @@
                                     layer.close(index);
                                     if(s_data.name == 'port_rule'){ _this.create_rule_table() }
                                     else if(s_data.name == 'ip_rule'){ _this.create_ip_rule_table() }
-                                    else if(s_data.name == 'country_rule'){ _this.create_country_table() }
+                                    else if(s_data.name == 'area_rule'){ _this.create_area_table() }
                                     else{ _this.create_forward_table() }
                                 }
                                 layer.msg(res.msg,{icon:res.status?1:2});
@@ -1454,10 +1454,10 @@
                 tips:'Adding rules, please wait ...',
                 method: 'create_rules',
                 data:{
-                    protocol:data.protocol, 
-                    ports:data.ports, 
-                    types:data.types, 
-                    brief:data.brief, 
+                    protocol:data.protocol,
+                    ports:data.ports,
+                    types:data.types,
+                    brief:data.brief,
                     source:data.source
                 },
                 success:function(res){
@@ -1494,10 +1494,10 @@
                 method: 'modify_rules',
                 data:{
                     id:data.id,
-                    protocol:data.protocol, 
-                    ports:data.ports, 
-                    types:data.types, 
-                    brief:data.brief, 
+                    protocol:data.protocol,
+                    ports:data.ports,
+                    types:data.types,
+                    brief:data.brief,
                     source:data.source
                 },
                 success:function(res){
@@ -1558,7 +1558,7 @@
                 method: 'create_ip_rules',
                 data:{
                     address:data.address,
-                    types:data.types, 
+                    types:data.types,
                     brief:data.brief
                 },
                 success:function(res){
@@ -1586,8 +1586,8 @@
                 method: 'modify_ip_rules',
                 data:{
                     id:data.id,
-                    types:data.types, 
-                    brief:data.brief, 
+                    types:data.types,
+                    brief:data.brief,
                     address:data.address
                 },
                 success:function(res){
@@ -1659,10 +1659,10 @@
                 tips:'Deleting rules, please wait ...',
                 method: 'remove_forward',
                 data:{
-                    id:data.id, 
-                    protocol:data.protocol, 
-                    s_port:data.start_port, 
-                    d_ip:data.ended_ip, 
+                    id:data.id,
+                    protocol:data.protocol,
+                    s_port:data.start_port,
+                    d_ip:data.ended_ip,
                     d_port:data.ended_port
                 },
                 success:function(res){
@@ -1700,10 +1700,10 @@
 				layer.msg(res.msg,{icon:res.status?1:2})
 			})
 		},
-		create_country_table:function(obj,callback){
+		create_area_table:function(obj,callback){
             var _this = this;
             if (!obj) obj = {}
-            this.get_country_list(obj, function(rdata){
+            this.get_area_list(obj, function(rdata){
                 var _html = '', res = rdata.data;
                 for(var i = res.length - 1; i >= 0; i--){
                     _html+='<tr>\
@@ -1712,26 +1712,26 @@
                         <td style="width:110px"><span class="table_self_conter">'+ res[i].brief +'</span></td>\
                         <td><span class="table_self_conter" style="width:auto">'+ (res[i].ports==""||res[i].ports==null?"All":res[i].ports) +'</span></td>\
                         <td><span class="table_self_conter" style="width:auto">'+ res[i].addtime +'</span></td>\
-                        <td style="text-align:right;">'+'<a href="javascript:;" class="btlink del_country" data-id="'+ res[i].id +'" data-index="'+ i +'">Del</a></td>\
+                        <td style="text-align:right;">'+'<a href="javascript:;" class="btlink del_area" data-id="'+ res[i].id +'" data-index="'+ i +'">Del</a></td>\
                     </tr>'
                 }
                 if(res.length == 0) {
                     _html  += '<tr><td colspan="8" align="center">No data currently</td></tr>'
 				}
-                $('#country_table').html(_html);
-                $('#country_page').html(rdata.page);
-                _this.country_list = res;
+                $('#area_table').html(_html);
+                $('#area_page').html(rdata.page);
+                _this.area_list = res;
                 if(callback) callback();
             });
         },
         // 获取IP规则列表
-        get_country_list:function(mdata, data,callback){
+        get_area_list:function(mdata, data,callback){
             if(!mdata.p) mdata.p = 1
             if(!mdata.query) mdata.query = ''
             if(typeof data === "function") callback = data;
             this.send({
                 tips:'Getting list of rules, please wait...',
-                method: 'get_country_list',
+                method: 'get_area_list',
                 check:true,
                 data: {p: mdata.p, query: mdata.query},
                 success:function(res){
@@ -1740,13 +1740,13 @@
             });
         },
         // 创建区域规则
-        create_country: function(data,callback){
+        create_area: function(data,callback){
             if(typeof data === "function") callback = data;
             this.send({
                 tips:'Adding rules, please wait...',
-                method: 'create_country',
+                method: 'create_area',
                 data:{
-                    country:data.country,
+                    area:data.area,
                     types:data.types,
                     brief:data.brief,
                     ports:data.ports
@@ -1757,28 +1757,28 @@
             });
         },
         // 删除区域规则
-        remove_country: function(data,callback){
+        remove_area: function(data,callback){
             if(typeof data === "function") callback = data;
             this.send({
                 tips:'Deleting rules, please wait...',
-                method: 'remove_country',
-                data:{id:data.id, types:data.types, country:data.country, brief:data.brief, ports:data.ports},
+                method: 'remove_area',
+                data:{id:data.id, types:data.types, area:data.area, brief:data.brief, ports:data.ports},
                 success:function(res){
                     if(callback) callback(res)
                 }
             });
         },
 		// 编辑区域规则
-        modify_country:function(data,callback){
+        modify_area:function(data,callback){
             if(typeof data === "function") callback = data;
             this.send({
                 tips:'Editing rules, please wait...',
-                method: 'modify_country',
+                method: 'modify_area',
                 data:{
                     id:data.id,
                     types:data.types,
                     brief:data.brief,
-                    country:data.country
+                    area:data.area
                 },
                 success:function(res){
                     if(callback) callback(res)

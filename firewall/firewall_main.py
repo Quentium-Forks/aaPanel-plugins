@@ -32,7 +32,7 @@ class firewall_main:
     _trans_status = "/www/server/panel/plugin/firewall/status.json"
     _rule_path = "/www/server/panel/plugin/firewall/"
     _ips_path = "/www/server/panel/plugin/firewall/ips.txt"
-    _country_path = "/www/server/panel/plugin/firewall/country.txt"
+    _area_path = "/www/server/panel/plugin/firewall/country.txt"
     # 证书验证IP
     _white_list_file = "/www/server/panel/plugin/firewall/whitelist.txt"
     _white_list = []
@@ -1232,7 +1232,7 @@ class firewall_main:
                 return False
         return True
 
-    def handle_firewall_country(self, brief, ip_list, types, port_list):
+    def handle_firewall_area(self, brief, ip_list, types, port_list):
         try:
             public.ExecShell('firewall-cmd --permanent --zone=public --new-ipset='+ brief + ' --type=hash:net')
             xml_path = "/etc/firewalld/ipsets/%s.xml" % brief
@@ -1254,7 +1254,7 @@ class firewall_main:
         except Exception as e:
             return {"status":"error", "msg":e}
 
-    def handle_ufw_country(self, brief, ip_list, types, port_list):
+    def handle_ufw_area(self, brief, ip_list, types, port_list):
         tmp_path = '/www/server/panel/plugin/firewall/tmp.sh'
         tmp_file = open(tmp_path, 'w')
         _string = "#!/bin/bash\n"
@@ -1271,7 +1271,7 @@ class firewall_main:
             public.ExecShell('iptables -I INPUT -m set --match-set '+ brief +' src -j ' + types.upper())
 
     # 查询区域规则
-    def get_country_list(self, args):
+    def get_area_list(self, args):
         if 'p' not in args:
             args.p = 1
         ip_list = public.M('firewall_country').order("addtime desc").select()
@@ -1284,20 +1284,20 @@ class firewall_main:
         return self.get_page(ip_list, args)
 
     # 添加区域规则
-    def create_country(self, get):
+    def create_area(self, get):
         if not self.get_firewall_status(get):
             return public.returnMsg(False, self.__CREATE_STATUS_TIPS)
         brief = get.brief
         types = get.types   # types in [accept, drop]
         ports = get.ports
-        country = get.country
+        area = get.area
         rep = "^\d{1,5}(:\d{1,5})?$"
         port_list = []
         if ports:
             port_list = ports.split(',')
             for port in port_list:
                 if not re.search(rep, port): return public.returnMsg(False, 'PORT_CHECK_RANGE')
-                if public.M('firewall_country').where("country=? and ports=?",(country, port)).count() > 0: return public.returnMsg(False,'The country has already been added, please do not add it again!')
+                if public.M('firewall_country').where("country=? and ports=?",(area, port)).count() > 0: return public.returnMsg(False,'The area has already been added, please do not add it again!')
         self.get_os_info()
         content = self.get_profile(self._ips_path)
         result = json.loads(content)
@@ -1307,41 +1307,41 @@ class firewall_main:
                 ip_list = r["ips"]
                 break
         if not ip_list:
-            return public.returnMsg(True, "Please enter the correct country name!")
+            return public.returnMsg(True, "Please enter the correct area name!")
         if self.__isUfw:
-            self.handle_ufw_country(brief, ip_list, types, port_list)
+            self.handle_ufw_area(brief, ip_list, types, port_list)
         else:
             if self.__isFirewalld:
-                result = self.handle_firewall_country(brief, ip_list, types, port_list)
+                result = self.handle_firewall_area(brief, ip_list, types, port_list)
                 if result:
                     return result
             else:
-                self.handle_ufw_country(brief, ip_list, types, port_list)
+                self.handle_ufw_area(brief, ip_list, types, port_list)
         addtime = time.strftime('%Y-%m-%d %X',time.localtime())
         if port_list:
             for port in port_list:
-                public.M('firewall_country').add('country,types,brief,ports,addtime',(country,types,brief,port,addtime))
+                public.M('firewall_country').add('country,types,brief,ports,addtime',(area,types,brief,port,addtime))
         else:
-            public.M('firewall_country').add('country,types,brief,ports,addtime',(country,types,brief,'',addtime))
+            public.M('firewall_country').add('country,types,brief,ports,addtime',(area,types,brief,'',addtime))
         self.FirewallReload()
         return public.returnMsg(True,'ADD_SUCCESS')
 
     # 删除区域规则
-    def remove_country(self, get):
+    def remove_area(self, get):
         if not self.get_firewall_status(get):
             return public.returnMsg(False, self.__DEL_STATUS_TIPS)
         id = get.id
         types = get.types
         brief = get.brief
         ports = get.ports
-        country = get.country
+        area = get.area
         public.M('firewall_country').where("id=?",(id,)).delete()
         if self.__isUfw:
             if not ports:
                 public.ExecShell('iptables -D INPUT -m set --match-set '+ brief +' src -j ' + types.upper())
             else:
                 public.ExecShell('iptables -D INPUT -m set --match-set '+ brief +' src -p tcp --destination-port '+ ports +' -j ' + types.upper())
-            if not public.M('firewall_country').where("country=?",(country, )).count() > 0:
+            if not public.M('firewall_country').where("country=?",(area, )).count() > 0:
                 public.ExecShell('ipset destroy ' + brief)
         else:
             if self.__isFirewalld:
@@ -1349,30 +1349,30 @@ class firewall_main:
                     public.ExecShell('firewall-cmd --permanent --zone=public --remove-rich-rule=\'rule source ipset="'+ brief +'" ' + types +'\'')
                 else:
                     public.ExecShell('firewall-cmd --permanent --zone=public --remove-rich-rule=\'rule source ipset="'+ brief +'" port port="'+ ports +'" protocol=tcp '+ types +'\'')
-                if not public.M('firewall_country').where("country=?",(country, )).count() > 0:
+                if not public.M('firewall_country').where("country=?",(area, )).count() > 0:
                     public.ExecShell('firewall-cmd --permanent --zone=public --delete-ipset='+ brief)
             else:
                 if not ports:
                     public.ExecShell('iptables -D INPUT -m set --match-set '+ brief +' src -j ' + types.upper())
                 else:
                     public.ExecShell('iptables -D INPUT -m set --match-set '+ brief +' src -p tcp --destination-port '+ ports +' -j ' + types.upper())
-                if not public.M('firewall_country').where("country=?",(country, )).count() > 0:
+                if not public.M('firewall_country').where("country=?",(area, )).count() > 0:
                     public.ExecShell('ipset destroy ' + brief)
         self.FirewallReload()
         return public.returnMsg(True,'DEL_SUCCESS')
 
     # 编辑区域规则
-    def modify_country(self, get):
+    def modify_area(self, get):
         if not self.get_firewall_status(get):
             return public.returnMsg(False, self.__MODIFY_STATUS_TIPS)
         id = get.id
         types = get.types
         brief = get.brief
-        country = get.country
+        area = get.area
         data = public.M('firewall_country').where('id=?',(id,)).field('id,country,types,brief,addtime').find()
         _types = data.get("types", "")
         _brief = data.get("brief", "")
-        _country = data.get("country", "")
+        _area = data.get("area", "")
         if self.__isUfw:
             public.ExecShell('iptables -D INPUT -m set --match-set '+ _brief +' src -j '+ _types.upper())
             public.ExecShell('iptables -I INPUT -m set --match-set '+ brief +' src -j ' + types.upper())
@@ -1384,7 +1384,7 @@ class firewall_main:
                 public.ExecShell('iptables -D INPUT -m set --match-set '+ _brief +' src -j '+ _types.upper())
                 public.ExecShell('iptables -I INPUT -m set --match-set '+ brief +' src -j ' + types.upper())
         addtime = time.strftime('%Y-%m-%d %X',time.localtime())
-        public.M('firewall_country').where('id=?', id).update({'country':country,'types':types,'brief':brief,'addtime':addtime})
+        public.M('firewall_country').where('id=?', id).update({'country':area,'types':types,'brief':brief,'addtime':addtime})
         self.FirewallReload()
         return public.returnMsg(True, 'ADD_SUCCESS')
    
@@ -1466,8 +1466,8 @@ class firewall_main:
         elif rule_name == "trans_rule":
             filename = self._rule_path + "forward.json"
             data_list = public.M('firewall_trans').order("id desc").select()
-        elif rule_name == "country_rule":
-            filename = self._rule_path + "country.json"
+        elif rule_name == "area_rule":
+            filename = self._rule_path + "area.json"
             data_list = public.M('firewall_country').order("id desc").select()
         if not data_list:
             data_list = []
@@ -1485,8 +1485,8 @@ class firewall_main:
     def import_rules(self, get):
         if not self.get_firewall_status(get):
             return public.returnMsg(False, self.__CREATE_STATUS_TIPS)
-        rule_name = get.rule_name      # 规则名:[port_rule, ip_rule, trans_rule, country_rule]
-        file_name = get.file_name      # 文件命:[port.json, ip.json, trans.json, country.json]
+        rule_name = get.rule_name      # 规则名:[port_rule, ip_rule, trans_rule, area_rule]
+        file_name = get.file_name      # 文件命:[port.json, ip.json, trans.json, area.json]
         file_path = "{0}{1}".format(self._rule_path, file_name)
         data_list = self.get_profile(file_path)
         try:
@@ -1551,8 +1551,8 @@ class firewall_main:
                     result = self.create_forward(get)
                     if not result["status"]:
                         continue
-            elif rule_name == "country_rule":
-                table_head = ["id", "types", "country", "brief", "addtime"]
+            elif rule_name == "area_rule":
+                table_head = ["id", "types", "area", "brief", "addtime"]
                 for data in data_list:
                     res = all([field in data.keys() for field in table_head])
                     if not res:
@@ -1561,17 +1561,17 @@ class firewall_main:
                     get.types = data["types"]
                     get.ports = data["ports"]
                     get.brief = data["brief"]
-                    get.country = data["country"]
-                    result = self.create_country(get)
+                    get.area = data["area"]
+                    result = self.create_area(get)
                     if not result["status"]:
                         continue
         except:
             return {"status": False, "msg": "Import failed!"}
         return {"status": True, "msg": "Import succeeded!"}
     
-    def get_countrys(self, get):
+    def get_areas(self, get):
         result = []
-        content = self.get_profile(self._country_path)
+        content = self.get_profile(self._area_path)
         result = json.loads(content)
         # result = sorted(result, key=lambda x : x['CH'], reverse=True);
         return result
