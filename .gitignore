@@ -1,0 +1,15 @@
+# Cloud DNS plugin
+cloud_dns/cf_cache
+cloud_dns/cf_cache_account
+
+# Firewall plugin
+firewall/tmp.sh
+
+# Webhook scripts
+webhook/script/*
+
+# Config, log & private files
+*.json
+*.log
+*.pid
+*.pl
