@@ -1121,7 +1121,7 @@ systemctl restart  opendkim'''.format(domain=domain)
         if 'p' not in args:
             args.p = 1
         if 'p=' in args.p:
-            args.p = args.p.replace('p=', '')
+            args.p = args.p.split('p=')[-1]
 
         receive_mail_client = receive_mail.ReceiveMail()
         mail_list = []
