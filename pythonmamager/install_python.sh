@@ -6,7 +6,7 @@ py_path=/www/server/python_manager/versions
 mkdir -p ${py_path}
 install_python()
 {
-  wget -O /tmp/Python-${pyv}.tar.xz http://node.aapanel.com/src/Python-${pyv}.tar.xz
+  wget -O /tmp/Python-${pyv}.tar.xz https://www.python.org/ftp/python/${pyv}/Python-${pyv}.tar.xz
   cd /tmp/ && xz -d /tmp/Python-${pyv}.tar.xz && tar -xvf /tmp/Python-${pyv}.tar && cd /tmp/Python-${pyv}
   ./configure --prefix=${py_path}/${pyv}
   make && make install
@@ -16,7 +16,7 @@ install_python()
 install_pip()
 {
   cd ${vpath}
-  wget -O get-pip.py http://node.aapanel.com/install/plugin/pythonmamager/pip/get-pip${pyv:0:3}.py
+  wget -O get-pip.py https://bootstrap.pypa.io/get-pip.py
   if [ -f ${vpath}/bin/python ];then
     bin/python get-pip.py
   else
@@ -29,5 +29,3 @@ if [ "$vpath" == "" ];then
 else
   install_pip
 fi
-
-

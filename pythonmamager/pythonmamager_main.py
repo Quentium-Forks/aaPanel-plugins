@@ -834,8 +834,9 @@ WantedBy=multi-user.target
     # 获取云端python版本
     def get_cloud_version(self,get=None):
         import requests
-        res = requests.get('http://node.aapanel.com/install/plugin/pythonmamager/pyv.txt')
-        text = res.text.split('\n')
+        result = requests.get('https://endoflife.date/api/python.json')
+        parsed_result = result.json()
+        text = [x['latest'] for x in parsed_result]
         public.writeFile('{}/pyv.txt'.format(self.basedir),json.dumps(text))
         return text
 
