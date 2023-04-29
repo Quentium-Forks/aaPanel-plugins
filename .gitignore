@@ -1,3 +1,6 @@
+.vscode/
+__pycache__/
+
 # Cloud DNS plugin
 cloud_dns/cf_cache
 cloud_dns/cf_cache_account
