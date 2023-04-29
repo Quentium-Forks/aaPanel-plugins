@@ -1479,7 +1479,10 @@ class firewall_main:
         filename = args.filename
         mimetype = "application/octet-stream"
         if not os.path.exists(filename): return abort(404)
-        return send_file(filename, mimetype=mimetype, as_attachment=True, attachment_filename=os.path.basename(filename), cache_timeout=0)
+        #return send_file(filename, mimetype=mimetype, as_attachment=True, attachment_filename=os.path.basename(filename), cache_timeout=0)
+        return send_file(filename, mimetype=mimetype, as_attachment=True,
+                         download_name=os.path.basename(filename),
+                         max_age=0)
 
     # 规则导入：json
     def import_rules(self, get):

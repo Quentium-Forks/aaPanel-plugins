@@ -53,7 +53,7 @@
     },
     {
         "CH": "India",
-        "brief": "IN "
+        "brief": "IN"
     },
     {
         "CH": "Taiwan Province",
@@ -133,7 +133,7 @@
     },
     {
         "CH": "Iran",
-        "brief": "I R"
+        "brief": "IR"
     },
     {
         "CH": "Hong Kong, China",
@@ -232,7 +232,7 @@
         "brief": "SC"
     },
     {
-        "CH": "Tunisia ",
+        "CH": "Tunisia",
         "brief": "TN"
     },
     {
@@ -320,7 +320,7 @@
         "brief": "GE"
     },
     {
-        "CH": "Angola ",
+        "CH": "Angola",
         "brief": "AO"
     },
     {
@@ -428,7 +428,7 @@
         "brief": "LB"
     },
     {
-        "CH": "Nepal ",
+        "CH": "Nepal",
         "brief": "NP"
     },
     {
@@ -472,7 +472,7 @@
         "brief": "LY"
     },
     {
-        "CH": "Kyrgyzstan ",
+        "CH": "Kyrgyzstan",
         "brief": "KG"
     },
     {
@@ -516,7 +516,7 @@
         "brief": "MN"
     },
     {
-        "CH": "Brunei ",
+        "CH": "Brunei",
         "brief": "BN"
     },
     {
@@ -789,7 +789,7 @@
     },
     {
         "CH": "Vanuatu",
-        "brief": "VU "
+        "brief": "VU"
     },
     {
         "CH": "Martinique",
@@ -853,7 +853,7 @@
     },
     {
         "CH": "Cook Islands",
-        "brief": "CK "
+        "brief": "CK"
     },
     {
         "CH": "Federated States of Micronesia",
@@ -901,7 +901,7 @@
     },
     {
         "CH": "British Indian Ocean Territory",
-        "brief": "IO "
+        "brief": "IO"
     },
     {
         "CH": "Tokelau",
@@ -940,7 +940,7 @@
         "brief": "LC"
     },
     {
-        "CH": "Saint Barthelemy ",
+        "CH": "Saint Barthelemy",
         "brief": "BL"
     }
 ]
