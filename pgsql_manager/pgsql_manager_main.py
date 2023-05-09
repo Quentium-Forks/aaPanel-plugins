@@ -631,7 +631,7 @@ class pgsql_manager_main:
         head_index = '# PostgreSQL Client Authentication Configuration File'
         tmp_1 = re.search(head_index + r"(\n|.)+" + head_index,con_str)
         if tmp_1:
-        	con_str = con_str.replace(tmp_1.group(),head_index)
+            con_str = con_str.replace(tmp_1.group(),head_index)
         tmp = re.search(r"(host\s+"+database+r"\s+"+username+r"\s+[\d\./]+\s+\w+)",con_str)
         host_str = "host    {}   {}    {}    md5\n".format(database, username, listen_ip)
         if tmp:
@@ -658,15 +658,10 @@ class pgsql_manager_main:
             return {'data': result, "status": True}
 
         if int(args.get_pgsql_version) != 0 and int(args.get_pgsql_install_info) != 0:
-            bt_down_url = public.get_url()
-            pgsql_install_info = [
-                {"pgsql_version": "postgresql 14.2", "down_url": bt_down_url + "/src/postgresql-14.2.tar.gz"},
-                {"pgsql_version": "postgresql 13.6", "down_url": bt_down_url + "/src/postgresql-13.6.tar.gz"},
-                {"pgsql_version": "postgresql 12.10", "down_url": bt_down_url + "/src/postgresql-12.10.tar.gz"},
-                {"pgsql_version": "postgresql 11.15", "down_url": bt_down_url + "/src/postgresql-11.15.tar.gz"},
-                {"pgsql_version": "postgresql 10.5", "down_url": bt_down_url + "/src/postgresql-10.5.tar.gz"},
-                {"pgsql_version": "postgresql  9.6", "down_url": bt_down_url + "/src/postgresql-9.6.6.tar.gz"}
-            ]
+            import requests
+            result = requests.get('https://endoflife.date/api/postgresql.json')
+            parsed_result = result.json()
+            pgsql_install_info = [{"pgsql_version": "postgresql " + x['latest'], "down_url": "https://ftp.postgresql.org/pub/source/v" + x['latest'] + "/postgresql-15.2.tar.gz"} for x in parsed_result]
             pgsql_version = public.ExecShell('''/www/server/pgsql/bin/psql --version''')[0]
             if pgsql_version.strip():
                 is_install = "Already installed"
