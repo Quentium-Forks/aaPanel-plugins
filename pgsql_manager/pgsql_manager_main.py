@@ -136,10 +136,11 @@ class pgsql_manager_main:
         public.WriteFile(dbuser_info_path, json.dumps(dbuser_info) + "\n", mode='a')
 
         port = self.get_port(args)['data']
-        public.ExecShell('''echo "create database  {} ;"|su - postgres -c "/www/server/pgsql/bin/psql -p {}" '''.format(args.database, port))
-        public.ExecShell('''echo "create user {};"|su - postgres -c "/www/server/pgsql/bin/psql -p {}" '''.format(args.username, port))
-        public.ExecShell('''echo "alter user {} with password '{}';"|su - postgres -c "/www/server/pgsql/bin/psql -p {}" '''.format(args.username, args.password, port))
+        public.ExecShell('''echo "CREATE DATABASE  {} ;"|su - postgres -c "/www/server/pgsql/bin/psql -p {}" '''.format(args.database, port))
+        public.ExecShell('''echo "CREATE USER {};"|su - postgres -c "/www/server/pgsql/bin/psql -p {}" '''.format(args.username, port))
+        public.ExecShell('''echo "ALTER USER {} with password '{}';"|su - postgres -c "/www/server/pgsql/bin/psql -p {}" '''.format(args.username, args.password, port))
         public.ExecShell('''echo "GRANT ALL PRIVILEGES ON DATABASE {} TO {};"|su - postgres -c "/www/server/pgsql/bin/psql -p {}" '''.format(args.database, args.username, port))
+        public.ExecShell('''echo "ALTER DATABASE {} OWNER TO {};"|su - postgres -c "/www/server/pgsql/bin/psql -p {}" '''.format(args.database, args.username, port))
         config_file_path = self.get_data_directory(args)['data'] + "/pg_hba.conf"
         public.WriteFile(config_file_path.strip(), "\nhost    {}  {}    {}    md5".format(args.database, args.username, args.listen_ip), mode='a')
         public.ExecShell("/etc/init.d/pgsql reload")
