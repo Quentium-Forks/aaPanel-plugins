@@ -12,7 +12,7 @@
 #------------------------------
 
 
-import os,public,json,time
+import os,public,json,time,sys
 from BTPanel import cache
 dict_obj = public.dict_obj()
 class nodejs_main:
@@ -39,6 +39,20 @@ class nodejs_main:
         if self._registry: return self._registry
         if not os.path.exists(self._registry_file): return  'https://registry.npmjs.org/' #'https://registry.npm.taobao.org/'
         return public.readFile(self._registry_file)
+
+
+    def get_glibc_version(self):
+        '''
+            @name 获取glibc版本号
+            @author hwliang
+            @return float
+        '''
+        try:
+            result = public.ExecShell("ldd  --version|grep ldd")
+            if not result[0]: return 2.17
+            return float(result[0].split()[-1])
+        except:
+            return 2.17
 
 
     def set_registry_url(self,get):
@@ -137,7 +151,8 @@ class nodejs_main:
                 is_local = False
             except:
                 is_local = True
-        
+                return public.get_error_info()
+
         # 是否从本地读取列表
         if is_local:
             try:
@@ -146,7 +161,8 @@ class nodejs_main:
             except:
                 if os.path.exists(self._list_file):
                     os.remove(self._list_file)
-                
+                http_result = []
+
         if 'show_type' in get:
             public.writeFile(self._show_config,get.show_type)
         
@@ -161,9 +177,14 @@ class nodejs_main:
         registry_url = self.get_registry_url()
 
         cli_version = self.get_default_env(None)
+        glibc_version = self.get_glibc_version()
         for v in http_result:
             # 移除不支持此平台的版本
             if not namex in v['files']: continue
+
+            if glibc_version <= 2.17:
+                node_version = int(v['version'].replace('v','').split('.')[0])
+                if node_version >= 18: continue
 
             # 是否已安装？
             nodejs_bin = "{}/{}/bin/node".format(self._nodejs_path , v['version'])
@@ -323,7 +344,15 @@ init.module = {}
             @return string
         '''
         uname = os.uname()
-        sysname = uname.sysname.lower()
+        if sys.version_info.major == 2:
+            sysname = uname[0].lower()
+            machine = uname[-1]
+            uname = public.dict_obj()
+            uname.sysname = sysname
+            uname.machine = machine
+        else:
+            sysname = uname.sysname.lower()
+
         ext = '.tar.gz'
         if uname.machine == 'x86_64':
             return '{}-x64{}'.format(sysname,ext)
@@ -371,7 +400,25 @@ init.module = {}
         '''
         pkey = '{}_pre'.format('node_downlaod')
         import requests
-        download_res = requests.get(url,headers=public.get_requests_headers(),timeout=30,stream=True)
+        import requests.packages.urllib3.util.connection as urllib3_conn
+        from requests.packages.urllib3.exceptions import InsecureRequestWarning
+        requests.packages.urllib3.disable_warnings(InsecureRequestWarning)
+        old_family = urllib3_conn.allowed_gai_family
+        import socket
+        urllib3_conn.allowed_gai_family = lambda: socket.AF_INET
+        try:
+            download_res = requests.get(url,headers=public.get_requests_headers(),timeout=30,stream=True)
+        except Exception as ex:
+            urllib3_conn.allowed_gai_family = lambda: socket.AF_INET6
+            try:
+                download_res = requests.get(url,headers=public.get_requests_headers(),timeout=30,stream=True)
+            except:
+                return False
+            finally:
+                urllib3_conn.allowed_gai_family = old_family
+        finally:
+            urllib3_conn.allowed_gai_family = old_family
+
         headers_total_size = 63891812
         is_content_length = False
         if 'Content-Length' in download_res.headers.keys(): # 没有反回长度？
@@ -499,7 +546,7 @@ init.module = {}
         public.ExecShell("rm -rf {}".format(re_path))
         if self.get_default_env(None) == version:
             self.set_default_env(None)
-        return self.return_data(True,'卸载成功')
+        return self.return_data(True,'Uninstalled successfully')
 
 
     def get_modules(self,get):

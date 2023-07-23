@@ -1,11 +1,11 @@
 {
-  "title": "Node.js",
+  "title": "Node.js version manager",
   "name": "nodejs",
   "ps": "node.js",
-  "versions": "1.6",
+  "versions": "1.9",
   "checks": "/www/server/panel/plugin/nodejs",
-  "author": "宝塔",
-  "home": "http://www.bt.cn/bbs",
+  "author": "official",
+  "home": "http://www.aapanel.com",
   "beta": false,
   "force_message": "",
   "not_substituted":[]
