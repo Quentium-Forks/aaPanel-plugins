@@ -22,7 +22,6 @@ class pythonmamager_main:
     basedir = "/www/server/panel/plugin/pythonmamager"
     __conf = "%s/config.json" % basedir
     logpath = "%s/logs" % basedir
-    pipsource = "https://mirrors.aliyun.com/pypi/simple/"
     logs_file_tmp = "{}/py.log".format(basedir)
     access_defs = ['auto_start']
 
@@ -133,7 +132,7 @@ class pythonmamager_main:
                 return public.returnMsg(False, "The dependent file [requirements.txt] is not found in the root path, please add it before creating")
             requirementsconf = public.readFile(requirements).splitlines()
             for i in requirementsconf:
-                shell = "{} install -i {} {}".format(self.get_vpath_pip(vpath), self.pipsource, i)
+                shell = "{} install {}".format(self.get_vpath_pip(vpath), i)
                 self.write_log_tmp("|-开始安装模块：{}".format(i))
                 self.write_log_tmp("|-安装命令：{}".format(shell))
                 a = public.ExecShell(shell)
@@ -211,8 +210,8 @@ class pythonmamager_main:
         if framework == "sanic":
             return public.returnMsg(False, "Sanic framework project please use gunicorn or pyhton to start")
         self.write_log_tmp("|-开始安装uwsgi模块...")
-        a = public.ExecShell("{} install -i {} uwsgi >> {}".format(
-            self.get_vpath_pip(vpath), self.pipsource,self.logs_file_tmp))
+        a = public.ExecShell("{} install uwsgi >> {}".format(
+            self.get_vpath_pip(vpath), self.logs_file_tmp))
         self.WriteLog(a[0])
         # 添加uwcgi配置
         uconf = """[uwsgi]
@@ -247,8 +246,8 @@ max-requests = 1000""" .format(path=path, port=port, rfile=rfile, user=user)
         worker = values['worker']
         port = values['port']
         run = values['run']
-        a = public.ExecShell("{} install -i {} gunicorn gevent-websocket >> {}".format(
-                self.get_vpath_pip(vpath), self.pipsource,self.logs_file_tmp))
+        a = public.ExecShell("{} install gunicorn gevent-websocket >> {}".format(
+                self.get_vpath_pip(vpath), self.logs_file_tmp))
         self.WriteLog(a[0])
         # 添加gunicorn配置
         logformat = '%(t)s %(p)s %(h)s "%(r)s" %(s)s %(L)s %(b)s %(f)s" "%(a)s"'
@@ -454,13 +453,13 @@ pidfile = chdir + '/logs/{pjname}.pid'""".format(
         conf = self.__read_config(self.__conf)
         for i in conf:
             if i["pjname"] == get.pjname:
-                shell = "%s install -i %s %s"
+                shell = "%s install %s"
                 if get.act == "install":
                     if get.v:
                         v = "%s==%s" % (get.p, get.v)
-                        public.ExecShell(shell % (self.get_vpath_pip(i["vpath"]), self.pipsource, v))
+                        public.ExecShell(shell % (self.get_vpath_pip(i["vpath"]), v))
                     else:
-                        public.ExecShell(shell % (self.get_vpath_pip(i["vpath"]), self.pipsource, get.p))
+                        public.ExecShell(shell % (self.get_vpath_pip(i["vpath"]), get.p))
                     packages = public.ExecShell("%s list" % self.get_vpath_pip(i["vpath"]))[0]
                     if get.p in packages.lower():
                         return public.returnMsg(True, "Successful installation")
