@@ -2,9 +2,15 @@
     .tasklist {
         padding: 0;
     }
+    .tasklist::after {
+        display: block;
+        content: '';
+        width: 0;
+        clear: both;
+    }
 
     .tab-con {
-        margin-left: 15px;
+        margin-left: 125px;
     }
 
     .tab-con .SetupPostfix {
@@ -91,7 +97,7 @@
         height: 34px;
     }
     .domain_table {
-        height: 450px;
+        max-height: 450px;
         overflow: auto;
     }
     .tasklist .tab-nav span.on {
@@ -2729,10 +2735,11 @@
             });
         },
         // 打开ssl证书
-        open_certificate_view:function(status,site,sslInfo,index){
+        open_certificate_view:function(status,site,sslInfo,index, info){
             var _this = this;
             var key = status?_this.domain_list[index].ssl_info.key:'',
                 csr = status?_this.domain_list[index].ssl_info.src:'';
+            var issuer = info && info.ssl_info && info.ssl_info.issuer ? info.ssl_info.issuer : '';
             layer.open({
                 type: 1,
                 title: status=='true'?'Edit SSL':'Add SSL',
@@ -2769,7 +2776,7 @@
         						</div>\
     					        <div class='tab-block "+(status?'on':'')+"'>\
             					    <div style='margin: 10px 0px;padding: 10px;' class='alert alert-success'>\
-            					        <span style='display: inline-block;overflow: hidden;min-width: 60%;text-overflow: ellipsis;white-space: nowrap;max-width: 100%;'><b>Brand: </b>(STAGING) Let's Encrypt</span>\
+            					        <span style='display: inline-block;overflow: hidden;min-width: 60%;text-overflow: ellipsis;white-space: nowrap;max-width: 100%;'><b>Brand: </b><span class='brand-info'>" + issuer + "</span></span>\
             					       <span class='domain_name_list' style='display:inline-block;max-width: 100%;min-width: 60%;overflow:hidden;text-overflow:ellipsis;white-space: nowrap; '><b>Certified domain(s): </b>"+(status?sslInfo.toString():'none')+"</span>\
             					    </div>\
         							<div>\
@@ -2791,7 +2798,7 @@
 					</div>",
                 success: function(layers,index){
                     $.post('/site?action=GetDnsApi',function(res){
-                        _this.dnsApi = res
+                        _this.dnsApi = res;
                     })
                     $('.tab-nav-ssl span').unbind().on('click',function(e){
                         var _index = $(this).index()
@@ -3226,7 +3233,7 @@
                 })
                 $('.add_certificate').unbind().on('click',function(){
                     var index = $(this).attr('data-index')
-                    _this.open_certificate_view(rdata[index].ssl_status, rdata[index].domain, rdata[index].ssl_info.dns, index)
+                    _this.open_certificate_view(rdata[index].ssl_status, rdata[index].domain, rdata[index].ssl_info.dns, index, rdata[index])
                 })
                 $('.catch_all').click(function (e) {
                     e.preventDefault();

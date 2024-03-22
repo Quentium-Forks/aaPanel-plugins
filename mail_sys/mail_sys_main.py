@@ -14,6 +14,7 @@
 # +--------------------------------------------------------------------
 
 import binascii, base64, re, json, os, sys, time, shutil, socket
+from genericpath import isfile
 from datetime import datetime
 
 if sys.version_info[0] == 3:
@@ -200,7 +201,8 @@ class mail_sys_main:
         import requests
 
         try:
-            url = 'http://pv.sohu.com/cityjson?ie=utf-8'
+            #url = 'http://pv.sohu.com/cityjson?ie=utf-8'
+            url = 'https://ifconfig.me/ip'
             opener = requests.get(url)
             m_str = opener.text
             ip_address = re.search(r'\d+.\d+.\d+.\d+', m_str).group(0)
@@ -248,9 +250,24 @@ class mail_sys_main:
                         if str(j).strip() in ipaddress:
                             value = str(j).strip()
             if value:
-                self._session[key] = {"status": 1, "v_time": now, "value": value}
+                self._session[key] = {
+                    "status": 1,
+                    "v_time": now,
+                    "value": value
+                }
                 return True
-            self._session[key] = {"status": 0, "v_time": now, "value": error_ip}
+            if str(type(error_ip)).find("dns.rdtypes.IN.A") != -1:
+                self._session[key] = {
+                    "status": 0,
+                    "v_time": now,
+                    "value": error_ip.to_text()
+                }
+            else:
+                self._session[key] = {
+                    "status": 0,
+                    "v_time": now,
+                    "value": error_ip
+                }
             return False
         except:
             print(public.get_error_info())
@@ -325,6 +342,7 @@ class mail_sys_main:
         import db
         sql = db.Sql()
         sql._Sql__DB_FILE = '/www/vmail/postfixadmin.db'
+        sql._Sql__encrypt_keys = []
         return sql.table(table_name)
 
     def flush_domain_record(self, args):
@@ -353,9 +371,17 @@ class mail_sys_main:
                     self._gen_dkim_key(args.domain)
             except:
                 return public.returnMsg(False, 'Please check if the rspamd service is running')
-            self._gevent_jobs(args.domain, None)  # 不需要验证A记录
-        public.writeFile(self._session_conf, json.dumps(self._session))
-        return public.returnMsg(True, 'Flush successfully')
+            try:
+                self._gevent_jobs(args.domain, None)  # 不需要验证A记录
+            except:
+                public.print_log('error:{}'.format(str(public.get_error_info())))
+        try:
+            public.writeFile(self._session_conf, json.dumps(self._session))
+            return public.returnMsg(True, 'Flush successfully')
+
+        except:
+            # public.print_log('error:{}'.format(str(public.get_error_info())))
+            return public.returnMsg(False, 'Flush successfully')
 
     def get_record_in_cache(self, item):
         try:
@@ -474,6 +500,7 @@ domain {
             dkim_shell = """
     mkdir -p {dkim_path}
     rspamadm dkim_keygen -s 'default' -b 1024 -d {domain} -k /www/server/dkim/{domain}/default.private > /www/server/dkim/{domain}/default.pub
+    chmod 755 -R /www/server/dkim/{domain}
     """.format(dkim_path=dkim_path, domain=domain)
             public.ExecShell(dkim_shell)
         dkim_sign_content = self._build_dkim_sign_content(domain, dkim_path)
@@ -485,8 +512,8 @@ domain {
         if not os.path.exists('/usr/share/perl5/vendor_perl/Getopt/Long.pm'):
             os.makedirs('/usr/share/perl5/vendor_perl/Getopt')
             public.ExecShell(
-                'wget -O /usr/share/perl5/vendor_perl/Getopt/Long.pm {}/install/plugin/mail_sys/Long.pm -T 10'.format(
-                    public.get_url()))
+                'wget -O /usr/share/perl5/vendor_perl/Getopt/Long.pm {}/install/plugin/mail_sys/Long.pm -T 10'
+                .format(public.get_url()))
         if not os.path.exists('/etc/opendkim/keys/{0}/default.private'.format(domain)):
             dkim_shell = '''
 mkdir /etc/opendkim/keys/{domain}
@@ -1121,7 +1148,7 @@ systemctl restart  opendkim'''.format(domain=domain)
         if 'p' not in args:
             args.p = 1
         if 'p=' in args.p:
-            args.p = args.p.split('p=')[-1]
+            args.p = args.p.replace('p=', '')
 
         receive_mail_client = receive_mail.ReceiveMail()
         mail_list = []
@@ -1874,7 +1901,9 @@ if header :contains "X-Spam-Flag" "YES" {
         return files
 
     def get_backup_path(selfg,get):
-        return public.M('config').where("id=?", (1,)).getField('backup_path')
+        path = public.M('config').where("id=?", (1, )).getField('backup_path')
+        path = os.path.join(path, 'path')
+        return path
 
     # 数据恢复
     def restore(self, get):
@@ -1916,7 +1945,7 @@ if header :contains "X-Spam-Flag" "YES" {
             cert_key = '/etc/pki/dovecot/private/dovecot.pem'
             cert_file = '/etc/pki/dovecot/certs/dovecot.pem'
         smtpd_tls_chain_files = '\nsmtpd_tls_chain_files = {},{}'.format(cert_key, cert_file)
-        reg = '\nsmtpd_tls_chain_files\s*=(.*)'
+        reg = r'\nsmtpd_tls_chain_files\s*=(.*)'
         tmp = re.search(reg, conf)
         if tmp:
             conf = re.sub(reg, smtpd_tls_chain_files, conf)
@@ -2145,6 +2174,34 @@ local_name %s {
             return False
         return True
 
+    # 备份配置文件
+    def back_file(self, file, act=None):
+        """
+            @name 备份配置文件
+            @author zhwen<zhw@bt.cn>
+            @param file 需要备份的文件
+            @param act 如果存在，则备份一份作为默认配置
+        """
+        file_type = "_bak"
+        if act:
+            file_type = "_def"
+        public.ExecShell("/usr/bin/cp -p {0} {1}".format(
+            file, file + file_type))
+
+    # 还原配置文件
+    def restore_file(self, file, act=None):
+        """
+            @name 还原配置文件
+            @author zhwen<zhw@bt.cn>
+            @param file 需要还原的文件
+            @param act 如果存在，则还原默认配置
+        """
+        file_type = "_bak"
+        if act:
+            file_type = "_def"
+        public.ExecShell("/usr/bin/cp -p {1} {0}".format(
+            file, file + file_type))
+
     def enable_catchall(self, args):
         """
             @name 设置邮局捕获不存在的用户邮局并转发到指定邮箱
@@ -2180,7 +2237,7 @@ local_name %s {
         """
         domain = '@' + domain.strip()
         conf = public.readFile(self.postfix_main_cf)
-        reg = 'virtual_alias_maps\s*=\s*sqlite:/etc/postfix/btrule.cf'
+        reg = r'virtual_alias_maps\s*=\s*sqlite:/etc/postfix/btrule.cf'
         if not conf:
             return False
         catchall_exist = re.search(reg, conf)
