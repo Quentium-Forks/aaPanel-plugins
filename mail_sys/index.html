@@ -3667,39 +3667,6 @@
                 }
             });
         },
-        // 删除邮件_方法
-        del_mail_view: function (index) {
-            var item = this.mail_list[index],
-                path = item.path,
-                _this = this;
-            this.send({
-                tips: 'Deleting message, please wait...',
-                method: 'delete_mail',
-                data: {
-                    path: path
-                },
-                success: function (res) {
-                    if (!_this.is_mail) {
-                        _this.create_mail_list({
-                            p: 1
-                        }, function () {
-                            layer.msg(res.msg, {
-                                icon: 1
-                            });
-                        });
-                    } else {
-                        _this.create_sent_mail_list({
-                            p: 1
-                        }, function () {
-                            layer.msg(res.msg, {
-                                icon: 1
-                            });
-                        });
-                    }
-
-                }
-            });
-        },
         //获取备份设置参数
         get_backup_task_status: function (callback) {
             this.send({
@@ -3784,7 +3751,7 @@
                 method: 'delete_mail',
                 data: {path:path},
                 success: function (res) {
-                    if(_this.is_mail){
+                    if(!_this.is_mail){
                         _this.create_mail_list({p:1},function(){
                             layer.msg(res.msg,{icon:1});
                         });
@@ -3793,7 +3760,6 @@
                             layer.msg(res.msg,{icon:1});
                         });
                     }
-
                 }
             });
         },
