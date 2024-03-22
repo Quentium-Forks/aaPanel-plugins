@@ -1177,7 +1177,7 @@ systemctl restart  opendkim'''.format(domain=domain)
                             continue
                     files.append(f_info)
                 files = sorted(files, key=lambda x: x['mtime'], reverse=True)
-                page_data = public.get_page(len(files), int(args.p), 10)
+                page_data = public.get_page(len(files), int(args.p.split('?')[-1]), 10)
                 shift = int(page_data['shift'])
                 row = int(page_data['row'])
                 files = files[shift:shift + row]
